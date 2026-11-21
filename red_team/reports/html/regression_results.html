@@ -1,0 +1,118 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Evidence: Regression — SecureShop Red Team</title><style>
+:root{--navy:#0b1f3a;--navy2:#13335c;--accent:#2dd4bf;--bg:#f5f7fa;--ink:#1a2330;
+--ok:#15803d;--okbg:#dcfce7;--bad:#b91c1c;--badbg:#fee2e2;--mid:#b45309;--midbg:#fef3c7;--mut:#64748b;}
+*{box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;color:var(--ink);background:var(--bg);
+margin:0;line-height:1.55;font-size:15px}
+.wrap{max-width:900px;margin:0 auto;padding:0 28px 60px}
+.cover{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:40px 28px;margin-bottom:28px}
+.cover .wrap{padding:0 28px}
+.cover .tag{letter-spacing:.18em;text-transform:uppercase;font-size:12px;color:var(--accent)}
+.cover h1{margin:.2em 0;font-size:30px;color:#fff}
+.cover .meta{color:#c7d2e0;font-size:13px}
+h1,h2,h3{color:var(--navy);line-height:1.25}
+h2{border-bottom:2px solid #e2e8f0;padding-bottom:.25em;margin-top:1.6em}
+h3{margin-top:1.3em}
+a{color:var(--navy2)}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:13.5px}
+th,td{border:1px solid #d7dee8;padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--navy);color:#fff;font-weight:600}
+tr:nth-child(even) td{background:#fff}
+tr:nth-child(odd) td{background:#eef2f7}
+code{background:#e8edf3;padding:.1em .35em;border-radius:3px;font-size:.92em}
+pre{background:var(--navy);color:#e6edf3;padding:14px;border-radius:8px;overflow:auto;font-size:13px}
+pre code{background:none;color:inherit}
+blockquote{border-left:4px solid var(--accent);background:#eef7f6;margin:1em 0;padding:.5em 1em;color:#334155}
+.badge{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+.b-ok{background:var(--okbg);color:var(--ok)} .b-bad{background:var(--badbg);color:var(--bad)}
+.b-mid{background:var(--midbg);color:var(--mid)} .b-mut{background:#e2e8f0;color:var(--mut)}
+.footer{margin-top:40px;border-top:1px solid #e2e8f0;padding-top:12px;color:var(--mut);font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin:1.5em 0}
+.card{background:#fff;border:1px solid #d7dee8;border-radius:10px;padding:16px}
+.card h3{margin:.1em 0 .4em}.card a{text-decoration:none}
+@media print{body{background:#fff;font-size:12px}.wrap{max-width:none;padding:0 6mm}
+.cover{margin:0 0 10mm}@page{size:A4;margin:14mm}h2{page-break-after:avoid}table,pre{page-break-inside:avoid}}
+body.landscape table{font-size:10.5px}
+body.landscape td,body.landscape th{padding:5px 6px}
+@media print{@page landscape{size:A4 landscape;margin:10mm}
+body.landscape{page:landscape}body.landscape .wrap{max-width:none;padding:0 4mm}}
+</style></head>
+<body><div class="cover"><div class="wrap"><div class="tag">CET431 · Red Team</div>
+<h1>Evidence: Regression</h1>
+<div class="meta">SecureShop Security Assessment · 2026-11-22</div></div></div>
+<div class="wrap"><h1 id="secureshop-regression-results-hardened-build">SecureShop Regression Results (hardened build)</h1>
+<ul>
+<li>Target: <code>https://localhost</code> (local HTTPS, authorized)</li>
+<li>Source: <code>red_team/live_tests/run_regression.py</code> (property-based, stdlib)</li>
+<li>Each row checks the real security property, not just a status code.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Former finding</th>
+<th>Status</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T-UP HTTPS reachable</td>
+<td>-</td>
+<td>TESTED - <span class="badge b-ok">DEFENSE HELD</span></td>
+<td>GET / -&gt; 302</td>
+</tr>
+<tr>
+<td>T-H22 API docs require auth</td>
+<td>H22</td>
+<td>TESTED - <span class="badge b-ok">DEFENSE HELD</span></td>
+<td>GET /api/docs/ (no auth) -&gt; 403 (expected 401/403)</td>
+</tr>
+<tr>
+<td>T-AUTH customer JWT login</td>
+<td>-</td>
+<td>TESTED - <span class="badge b-ok">DEFENSE HELD</span></td>
+<td>token issued</td>
+</tr>
+<tr>
+<td>T-H5-list Orders list owner-scoped</td>
+<td>H5</td>
+<td>TESTED - <span class="badge b-ok">DEFENSE HELD</span></td>
+<td>list -&gt; 200; only own orders returned</td>
+</tr>
+<tr>
+<td>T-H5-detail Read another user's order id=3</td>
+<td>H5</td>
+<td>TESTED - <span class="badge b-ok">DEFENSE HELD</span></td>
+<td>GET /orders/3/ (not owner) -&gt; 404 (blocked)</td>
+</tr>
+<tr>
+<td>T-H6-price Non-staff cannot set item price</td>
+<td>H6</td>
+<td>TESTED - <span class="badge b-ok">DEFENSE HELD</span></td>
+<td>customer POST order-items price=0.01 -&gt; 403 (expected 403)</td>
+</tr>
+<tr>
+<td>T-H19 Refresh token revoked on logout</td>
+<td>H19</td>
+<td>TESTED - <span class="badge b-ok">DEFENSE HELD</span></td>
+<td>reuse blacklisted refresh -&gt; 401 (expected 401)</td>
+</tr>
+<tr>
+<td>T-H13 Login lockout after repeated failures</td>
+<td>H13</td>
+<td>TESTED - <span class="badge b-ok">DEFENSE HELD</span></td>
+<td>7 failed logins -&gt; [401, 401, 401, 401, 401, 429, 429] (expect a 429)</td>
+</tr>
+<tr>
+<td>T-H9 Cart update requires auth</td>
+<td>H9</td>
+<td>TESTED - <span class="badge b-ok">DEFENSE HELD</span></td>
+<td>no-auth update-quantity -&gt; 403 (expected 401/403)</td>
+</tr>
+</tbody>
+</table>
+<div class="footer">SecureShop Red Team · local authorized assessment · generated from
+<code>red_team/reports/</code></div></div></body></html>

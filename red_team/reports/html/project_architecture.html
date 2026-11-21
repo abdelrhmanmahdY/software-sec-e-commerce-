@@ -1,0 +1,189 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Project Architecture — SecureShop Red Team</title><style>
+:root{--navy:#0b1f3a;--navy2:#13335c;--accent:#2dd4bf;--bg:#f5f7fa;--ink:#1a2330;
+--ok:#15803d;--okbg:#dcfce7;--bad:#b91c1c;--badbg:#fee2e2;--mid:#b45309;--midbg:#fef3c7;--mut:#64748b;}
+*{box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;color:var(--ink);background:var(--bg);
+margin:0;line-height:1.55;font-size:15px}
+.wrap{max-width:900px;margin:0 auto;padding:0 28px 60px}
+.cover{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:40px 28px;margin-bottom:28px}
+.cover .wrap{padding:0 28px}
+.cover .tag{letter-spacing:.18em;text-transform:uppercase;font-size:12px;color:var(--accent)}
+.cover h1{margin:.2em 0;font-size:30px;color:#fff}
+.cover .meta{color:#c7d2e0;font-size:13px}
+h1,h2,h3{color:var(--navy);line-height:1.25}
+h2{border-bottom:2px solid #e2e8f0;padding-bottom:.25em;margin-top:1.6em}
+h3{margin-top:1.3em}
+a{color:var(--navy2)}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:13.5px}
+th,td{border:1px solid #d7dee8;padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--navy);color:#fff;font-weight:600}
+tr:nth-child(even) td{background:#fff}
+tr:nth-child(odd) td{background:#eef2f7}
+code{background:#e8edf3;padding:.1em .35em;border-radius:3px;font-size:.92em}
+pre{background:var(--navy);color:#e6edf3;padding:14px;border-radius:8px;overflow:auto;font-size:13px}
+pre code{background:none;color:inherit}
+blockquote{border-left:4px solid var(--accent);background:#eef7f6;margin:1em 0;padding:.5em 1em;color:#334155}
+.badge{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+.b-ok{background:var(--okbg);color:var(--ok)} .b-bad{background:var(--badbg);color:var(--bad)}
+.b-mid{background:var(--midbg);color:var(--mid)} .b-mut{background:#e2e8f0;color:var(--mut)}
+.footer{margin-top:40px;border-top:1px solid #e2e8f0;padding-top:12px;color:var(--mut);font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin:1.5em 0}
+.card{background:#fff;border:1px solid #d7dee8;border-radius:10px;padding:16px}
+.card h3{margin:.1em 0 .4em}.card a{text-decoration:none}
+@media print{body{background:#fff;font-size:12px}.wrap{max-width:none;padding:0 6mm}
+.cover{margin:0 0 10mm}@page{size:A4;margin:14mm}h2{page-break-after:avoid}table,pre{page-break-inside:avoid}}
+body.landscape table{font-size:10.5px}
+body.landscape td,body.landscape th{padding:5px 6px}
+@media print{@page landscape{size:A4 landscape;margin:10mm}
+body.landscape{page:landscape}body.landscape .wrap{max-width:none;padding:0 4mm}}
+</style></head>
+<body><div class="cover"><div class="wrap"><div class="tag">CET431 · Red Team</div>
+<h1>Project Architecture</h1>
+<div class="meta">SecureShop Security Assessment · 2026-11-22</div></div></div>
+<div class="wrap"><h1 id="secureshop-project-architecture-red-team-discovery">SecureShop — Project Architecture (Red Team discovery)</h1>
+<p><strong>Phase A discovery. Date: 2026-11-22.</strong> Source: read-only inspection of the current repository. This reflects the <strong>hardened</strong> version the Blue Team has shipped (not my earlier baseline).</p>
+<h2 id="1-stack">1. Stack</h2>
+<ul>
+<li><strong>Backend:</strong> Django 5.2.4 + Django REST Framework, SimpleJWT (with <code>token_blacklist</code>).</li>
+<li><strong>Frontend:</strong> Django server-rendered templates (<code>dashboard/templates/</code>) + vanilla JS <code>fetch</code>.</li>
+<li><strong>Database:</strong> PostgreSQL 16 (Docker). SQLite fallback only if <code>DATABASE_URL</code> unset.</li>
+<li><strong>Serving:</strong> Gunicorn/Django behind <strong>nginx</strong> terminating <strong>TLS (HTTPS)</strong>. <code>web</code> container is <code>expose: 8000</code> (internal only); nginx publishes <code>80</code>/<code>443</code>.</li>
+<li><strong>Config:</strong> <code>DEBUG=False</code> in Docker; secrets from env; auto-generated <code>SECRET_KEY</code> stored in a volume.</li>
+</ul>
+<blockquote>
+<p><strong>Access URL changed:</strong> the app is now at <strong><code>https://localhost/</code></strong> (self-signed cert), not <code>http://localhost:8000/</code>. Plain HTTP redirects to HTTPS (<code>SECURE_SSL_REDIRECT</code>).</p>
+</blockquote>
+<h2 id="2-django-apps">2. Django apps</h2>
+<table>
+<thead>
+<tr>
+<th>App</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>users</code></td>
+<td><code>UserProfile</code> (store_credit, email_confirmed, <strong>totp_secret/totp_enabled</strong>), <code>Coupon</code>, <strong><code>CouponUsage</code></strong>, <code>NewsletterSubscriber</code>, permissions, TOTP, forms, serializers</td>
+</tr>
+<tr>
+<td><code>products</code></td>
+<td><code>Category</code>, <code>Product</code>; <code>ProductViewSet</code> (IsAdminOrReadOnly)</td>
+</tr>
+<tr>
+<td><code>carts</code></td>
+<td><code>Cart</code>, <code>CartItem</code>; add/remove/update/checkout</td>
+</tr>
+<tr>
+<td><code>orders</code></td>
+<td><code>Order</code>, <code>OrderItem</code>; <code>OrderViewSet</code> (owner-scoped), <code>CheckoutView</code></td>
+</tr>
+<tr>
+<td><code>dashboard</code></td>
+<td>Session-based UI: shop, cart, profile, admin pages, newsletter</td>
+</tr>
+<tr>
+<td><strong><code>audit</code></strong></td>
+<td><strong>AAA Accounting</strong>: <code>AuditLog</code> model, middleware, signals, login lockout backend, audited JWT login/logout</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-authentication-aaa">3. Authentication (AAA)</h2>
+<ul>
+<li><strong>Two surfaces:</strong> Django session (<code>/dashboard/...</code>) and JWT (<code>/api/...</code>).</li>
+<li><strong>Login lockout:</strong> <code>AUTHENTICATION_BACKENDS = ["audit.backends.LockoutModelBackend"]</code>; <code>LOGIN_MAX_FAILURES=5</code> (user+IP), <code>LOGIN_MAX_FAILURES_PER_IP=20</code>, <code>LOGIN_LOCKOUT_MINUTES=15</code>. JWT login returns <strong>429</strong> when locked (<code>audit/views.py:AuditedTokenObtainPairView</code>).</li>
+<li><strong>DRF throttling:</strong> <code>anon 60/min</code>, <code>user 300/min</code>.</li>
+<li><strong>JWT:</strong> access 15 min, refresh 1 day, rotate + blacklist after rotation; logout blacklists the refresh token.</li>
+<li><strong>Passwords:</strong> Django PBKDF2; validators incl. min length 10.</li>
+<li><strong>TOTP:</strong> <code>users/totp.py</code> + profile fields — MFA groundwork (verify whether enforced).</li>
+<li><strong>Sessions:</strong> 30-min sliding idle timeout; HttpOnly, SameSite=Lax, Secure (HTTPS).</li>
+</ul>
+<h2 id="4-authorization">4. Authorization</h2>
+<ul>
+<li><strong>API:</strong> <code>users/permissions.py</code> — <code>IsStaff</code>, <code>IsStaffOrCreateReadOnly</code>; <code>OrderViewSet.get_queryset()</code> filters to <code>request.user</code> for non-staff; <code>OrderItemViewSet</code> is staff-only; <code>perform_create</code> forces server-side price.</li>
+<li><strong>Dashboard:</strong> <code>@login_required</code> + <code>@staff_required</code> (raises 403, audited) / <code>@user_passes_test(is_staff)</code>.</li>
+<li><strong>Products:</strong> <code>IsAdminOrReadOnly</code> (public read, staff write).</li>
+</ul>
+<h2 id="5-security-controls-tls-headers">5. Security controls (TLS / headers)</h2>
+<ul>
+<li>nginx TLS 1.2/1.3; <code>SECURE_PROXY_SSL_HEADER</code>, <code>SECURE_SSL_REDIRECT</code>, <code>SESSION_COOKIE_SECURE</code>, <code>CSRF_COOKIE_SECURE</code>, HSTS (configurable), <code>SECURE_CONTENT_TYPE_NOSNIFF</code>, <code>X_FRAME_OPTIONS=DENY</code>, referrer policy.</li>
+<li>CSRF middleware enabled; audit middleware records actor/IP/action.</li>
+</ul>
+<h2 id="6-security-sensitive-entry-points-to-test-live">6. Security-sensitive entry points (to test live)</h2>
+<ul>
+<li><code>POST /api/auth/login/</code> (lockout), <code>/api/auth/logout/</code> (blacklist)</li>
+<li><code>GET /api/orders/orders/</code> + <code>/&lt;id&gt;/</code> (owner scoping — was H5)</li>
+<li><code>POST /api/orders/order-items/</code> (staff-only, server price — was H6)</li>
+<li><code>POST /api/carts/orders/checkout/</code> (credit+stock+coupon — was H1/H3)</li>
+<li><code>POST /dashboard/newsletter/signup/</code> (coupon generation — was H4)</li>
+<li><code>GET /api/docs/</code> (admin-only now — was H22)</li>
+<li><code>GET /admin/users/newslettersubscriber/</code> (Django admin — access by role)</li>
+</ul>
+<h2 id="7-status-of-my-earlier-baseline-code-review-only-not-yet-live-verified">7. Status of my earlier baseline (code review only — NOT yet live-verified)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Baseline</th>
+<th>Code now</th>
+<th>Live status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>H5</td>
+<td>IDOR orders</td>
+<td>Fixed (<code>orders/views.py:18</code>)</td>
+<td><strong>RE-TEST</strong></td>
+</tr>
+<tr>
+<td>H6</td>
+<td>price/status tamper</td>
+<td>Fixed (<code>orders/serializers.py:10,29</code>)</td>
+<td>RE-TEST</td>
+</tr>
+<tr>
+<td>H1/H2</td>
+<td>checkout bypass</td>
+<td>Fixed (<code>carts/views.py:106</code>, <code>orders/views.py:45</code>)</td>
+<td>RE-TEST</td>
+</tr>
+<tr>
+<td>H3</td>
+<td>coupon reuse</td>
+<td>Fixed (<code>CouponUsage</code>)</td>
+<td>RE-TEST</td>
+</tr>
+<tr>
+<td>H4</td>
+<td>predictable coupon</td>
+<td>Needs reading <code>dashboard/views.py</code> newsletter (reported random in matrix)</td>
+<td>RE-TEST</td>
+</tr>
+<tr>
+<td>H13</td>
+<td>no lockout</td>
+<td>Fixed (<code>audit/backends.py</code>, throttling)</td>
+<td>RE-TEST</td>
+</tr>
+<tr>
+<td>H19</td>
+<td>JWT after logout</td>
+<td>Fixed (blacklist)</td>
+<td>RE-TEST</td>
+</tr>
+<tr>
+<td>H22</td>
+<td>public docs</td>
+<td>Fixed (<code>config/urls.py:22</code>)</td>
+<td>RE-TEST</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>"Fixed in code" ≠ "verified". Each row must be re-tested against the running app and recorded as its own result (<span class="badge b-ok">DEFENSE HELD</span> / <span class="badge b-bad"><span class="badge b-bad">CONFIRMED</span> VULNERABILITY</span> / <span class="badge b-mid">INCONCLUSIVE</span>). This is a <strong>regression assessment</strong> against the Blue Team's current build, kept separate from the earlier baseline.</p>
+</blockquote>
+<div class="footer">SecureShop Red Team · local authorized assessment · generated from
+<code>red_team/reports/</code></div></div></body></html>

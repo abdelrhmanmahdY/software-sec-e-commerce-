@@ -15,19 +15,19 @@ HERE = pathlib.Path(__file__).resolve().parent
 HTML_DIR = HERE / "html"
 HTML_DIR.mkdir(exist_ok=True)
 
-# (source markdown, output name, nav title)
+# (source markdown, output name, nav title, landscape)
 REPORTS = [
-    ("executive_summary.md", "executive_summary", "Executive Summary"),
-    ("project_architecture.md", "project_architecture", "Project Architecture"),
-    ("threat_model.md", "threat_model", "Threat Model"),
-    ("coverage_matrix.md", "security_coverage_matrix", "Security Coverage Matrix"),
-    ("red_team_penetration_test_report.md", "red_team_penetration_test_report", "Penetration Test Report"),
-    ("naive_vs_secureshop_comparison.md", "naive_vs_secureshop_comparison", "Naive vs SecureShop"),
-    ("static_analysis_report.md", "static_analysis_report", "Static Analysis (Bandit + SCA)"),
-    ("database_and_test_accounts.md", "database_and_test_accounts", "Database & Accounts"),
-    ("findings/RT-001-vulnerable-dependencies.md", "RT-001-vulnerable-dependencies", "Finding RT-001"),
-    ("../evidence/live/regression_results.md", "regression_results", "Evidence: Regression"),
-    ("../evidence/naive_shop/attack_results.md", "naive_attack_results", "Evidence: Naive Attacks"),
+    ("executive_summary.md", "executive_summary", "Executive Summary", False),
+    ("project_architecture.md", "project_architecture", "Project Architecture", False),
+    ("threat_model.md", "threat_model", "Threat Model", False),
+    ("coverage_matrix.md", "security_coverage_matrix", "Security Coverage Matrix", True),
+    ("red_team_penetration_test_report.md", "red_team_penetration_test_report", "Penetration Test Report", False),
+    ("naive_vs_secureshop_comparison.md", "naive_vs_secureshop_comparison", "Naive vs SecureShop", False),
+    ("static_analysis_report.md", "static_analysis_report", "Static Analysis (Bandit + SCA)", False),
+    ("database_and_test_accounts.md", "database_and_test_accounts", "Database & Accounts", False),
+    ("findings/RT-001-vulnerable-dependencies.md", "RT-001-vulnerable-dependencies", "Finding RT-001", False),
+    ("../evidence/live/regression_results.md", "regression_results", "Evidence: Regression", False),
+    ("../evidence/naive_shop/attack_results.md", "naive_attack_results", "Evidence: Naive Attacks", False),
 ]
 
 CSS = """
@@ -40,7 +40,7 @@ margin:0;line-height:1.55;font-size:15px}
 .cover{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:40px 28px;margin-bottom:28px}
 .cover .wrap{padding:0 28px}
 .cover .tag{letter-spacing:.18em;text-transform:uppercase;font-size:12px;color:var(--accent)}
-.cover h1{margin:.2em 0;font-size:30px}
+.cover h1{margin:.2em 0;font-size:30px;color:#fff}
 .cover .meta{color:#c7d2e0;font-size:13px}
 h1,h2,h3{color:var(--navy);line-height:1.25}
 h2{border-bottom:2px solid #e2e8f0;padding-bottom:.25em;margin-top:1.6em}
@@ -64,6 +64,10 @@ blockquote{border-left:4px solid var(--accent);background:#eef7f6;margin:1em 0;p
 .card h3{margin:.1em 0 .4em}.card a{text-decoration:none}
 @media print{body{background:#fff;font-size:12px}.wrap{max-width:none;padding:0 6mm}
 .cover{margin:0 0 10mm}@page{size:A4;margin:14mm}h2{page-break-after:avoid}table,pre{page-break-inside:avoid}}
+body.landscape table{font-size:10.5px}
+body.landscape td,body.landscape th{padding:5px 6px}
+@media print{@page landscape{size:A4 landscape;margin:10mm}
+body.landscape{page:landscape}body.landscape .wrap{max-width:none;padding:0 4mm}}
 """
 
 BADGES = [
@@ -81,13 +85,14 @@ def badgify(hhtml):
     return hhtml
 
 
-def render(md_text, title):
+def render(md_text, title, landscape=False):
     body = markdown.markdown(md_text, extensions=["tables", "fenced_code", "toc", "sane_lists"])
     body = badgify(body)
+    body_class = ' class="landscape"' if landscape else ""
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{_html.escape(title)} — SecureShop Red Team</title><style>{CSS}</style></head>
-<body><div class="cover"><div class="wrap"><div class="tag">CET431 · Red Team</div>
+<body{body_class}><div class="cover"><div class="wrap"><div class="tag">CET431 · Red Team</div>
 <h1>{_html.escape(title)}</h1>
 <div class="meta">SecureShop Security Assessment · 2026-11-22</div></div></div>
 <div class="wrap">{body}
@@ -97,13 +102,13 @@ def render(md_text, title):
 
 def main():
     built = []
-    for src, name, title in REPORTS:
+    for src, name, title, landscape in REPORTS:
         p = (HERE / src).resolve()
         if not p.is_file():
             print("skip (missing):", src)
             continue
         out = HTML_DIR / f"{name}.html"
-        out.write_text(render(p.read_text(encoding="utf-8"), title), encoding="utf-8")
+        out.write_text(render(p.read_text(encoding="utf-8"), title, landscape), encoding="utf-8")
         built.append((name, title))
         print("built", out.name)
 

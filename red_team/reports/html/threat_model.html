@@ -1,0 +1,156 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Threat Model — SecureShop Red Team</title><style>
+:root{--navy:#0b1f3a;--navy2:#13335c;--accent:#2dd4bf;--bg:#f5f7fa;--ink:#1a2330;
+--ok:#15803d;--okbg:#dcfce7;--bad:#b91c1c;--badbg:#fee2e2;--mid:#b45309;--midbg:#fef3c7;--mut:#64748b;}
+*{box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;color:var(--ink);background:var(--bg);
+margin:0;line-height:1.55;font-size:15px}
+.wrap{max-width:900px;margin:0 auto;padding:0 28px 60px}
+.cover{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:40px 28px;margin-bottom:28px}
+.cover .wrap{padding:0 28px}
+.cover .tag{letter-spacing:.18em;text-transform:uppercase;font-size:12px;color:var(--accent)}
+.cover h1{margin:.2em 0;font-size:30px;color:#fff}
+.cover .meta{color:#c7d2e0;font-size:13px}
+h1,h2,h3{color:var(--navy);line-height:1.25}
+h2{border-bottom:2px solid #e2e8f0;padding-bottom:.25em;margin-top:1.6em}
+h3{margin-top:1.3em}
+a{color:var(--navy2)}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:13.5px}
+th,td{border:1px solid #d7dee8;padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--navy);color:#fff;font-weight:600}
+tr:nth-child(even) td{background:#fff}
+tr:nth-child(odd) td{background:#eef2f7}
+code{background:#e8edf3;padding:.1em .35em;border-radius:3px;font-size:.92em}
+pre{background:var(--navy);color:#e6edf3;padding:14px;border-radius:8px;overflow:auto;font-size:13px}
+pre code{background:none;color:inherit}
+blockquote{border-left:4px solid var(--accent);background:#eef7f6;margin:1em 0;padding:.5em 1em;color:#334155}
+.badge{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+.b-ok{background:var(--okbg);color:var(--ok)} .b-bad{background:var(--badbg);color:var(--bad)}
+.b-mid{background:var(--midbg);color:var(--mid)} .b-mut{background:#e2e8f0;color:var(--mut)}
+.footer{margin-top:40px;border-top:1px solid #e2e8f0;padding-top:12px;color:var(--mut);font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin:1.5em 0}
+.card{background:#fff;border:1px solid #d7dee8;border-radius:10px;padding:16px}
+.card h3{margin:.1em 0 .4em}.card a{text-decoration:none}
+@media print{body{background:#fff;font-size:12px}.wrap{max-width:none;padding:0 6mm}
+.cover{margin:0 0 10mm}@page{size:A4;margin:14mm}h2{page-break-after:avoid}table,pre{page-break-inside:avoid}}
+body.landscape table{font-size:10.5px}
+body.landscape td,body.landscape th{padding:5px 6px}
+@media print{@page landscape{size:A4 landscape;margin:10mm}
+body.landscape{page:landscape}body.landscape .wrap{max-width:none;padding:0 4mm}}
+</style></head>
+<body><div class="cover"><div class="wrap"><div class="tag">CET431 · Red Team</div>
+<h1>Threat Model</h1>
+<div class="meta">SecureShop Security Assessment · 2026-11-22</div></div></div>
+<div class="wrap"><h1 id="threat-model-secureshop">Threat Model — SecureShop</h1>
+<p>STRIDE-based, tied to the actual application (routes, models, roles). Date: 2026-11-22.</p>
+<h2 id="assets">Assets</h2>
+<ul>
+<li>User accounts and credentials (<code>auth_user</code>, password hashes).</li>
+<li>Store credit balances (<code>users_userprofile.store_credit</code>).</li>
+<li>Orders and order history (<code>orders_order</code>).</li>
+<li>Product catalog &amp; pricing integrity (<code>products_product</code>).</li>
+<li>Coupons / discount integrity (<code>users_coupon</code>, <code>users_couponusage</code>).</li>
+<li>Admin control plane (Django admin, dashboard staff pages).</li>
+<li>Audit log (<code>audit_auditlog</code>) — integrity of the accountability record.</li>
+</ul>
+<h2 id="roles-actors">Roles / actors</h2>
+<ul>
+<li><strong>Anonymous visitor</strong> — can browse the catalog, register, log in.</li>
+<li><strong>Customer</strong> — owns a cart, places orders with store credit, manages own profile.</li>
+<li><strong>Staff</strong> — manages products, users, orders via the dashboard.</li>
+<li><strong>Admin (superuser)</strong> — full Django admin.</li>
+<li><strong>Attacker variants</strong> — unauthenticated, authenticated customer (abusing own session), malicious staff.</li>
+</ul>
+<h2 id="trust-boundaries">Trust boundaries</h2>
+<ol>
+<li>Browser ↔ nginx (TLS termination).</li>
+<li>nginx ↔ Django/gunicorn (private network).</li>
+<li>Django ↔ PostgreSQL.</li>
+<li>Session/JWT identity boundary (client cannot be trusted for identity or price).</li>
+</ol>
+<h2 id="entry-points">Entry points</h2>
+<p>See <code>secureshop_tests/endpoint_map.md</code>. Key sensitive ones: <code>/api/auth/login|logout</code>, <code>/api/orders/*</code>, <code>/api/carts/orders/checkout/</code>, <code>/dashboard/newsletter/signup/</code>, <code>/api/docs/</code>, <code>/admin/*</code>, <code>/dashboard/*</code>.</p>
+<h2 id="stride-mapping-with-current-defenses">STRIDE mapping (with current defenses)</h2>
+<table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Threat</th>
+<th>Example</th>
+<th>Defense in current build</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Login / JWT</td>
+<td><strong>S</strong>poofing</td>
+<td>Credential stuffing, brute force</td>
+<td>Lockout (429) + DRF throttling + audit</td>
+</tr>
+<tr>
+<td>Cart / Checkout</td>
+<td><strong>T</strong>ampering</td>
+<td>Client sets price/total</td>
+<td>Server reads <code>product.price</code>; <code>price</code> read-only</td>
+</tr>
+<tr>
+<td>Orders API</td>
+<td><strong>T</strong>ampering / <strong>I</strong>nfo disclosure</td>
+<td>IDOR to others' orders</td>
+<td><code>get_queryset</code> owner scoping → 404</td>
+</tr>
+<tr>
+<td>Coupons</td>
+<td><strong>T</strong>ampering</td>
+<td>Reuse / stack discounts</td>
+<td><code>CouponUsage</code> unique <code>(user,coupon)</code></td>
+</tr>
+<tr>
+<td>Auth tokens</td>
+<td><strong>E</strong>levation / replay</td>
+<td>Reuse refresh after logout</td>
+<td>Token blacklist on logout</td>
+</tr>
+<tr>
+<td>All actions</td>
+<td><strong>R</strong>epudiation</td>
+<td>Deny performing an action</td>
+<td><code>audit</code> app logs actor/IP/action</td>
+</tr>
+<tr>
+<td>Admin / staff pages</td>
+<td><strong>E</strong>levation</td>
+<td>Non-staff reaching admin</td>
+<td><code>IsStaff</code> / <code>@staff_required</code> / admin login gate</td>
+</tr>
+<tr>
+<td>Transport</td>
+<td><strong>I</strong>nfo disclosure</td>
+<td>Sniffing cookies/creds</td>
+<td>HTTPS, HSTS-ready, Secure+HttpOnly cookies</td>
+</tr>
+<tr>
+<td>API docs</td>
+<td><strong>I</strong>nfo disclosure</td>
+<td>Schema exposure</td>
+<td><code>public=False</code>, <code>IsAdminUser</code></td>
+</tr>
+<tr>
+<td>Checkout</td>
+<td><strong>D</strong>oS / integrity</td>
+<td>Race / oversell</td>
+<td><code>transaction.atomic</code> + <code>select_for_update</code> + stock check</td>
+</tr>
+</tbody>
+</table>
+<h2 id="abuse-cases-tested">Abuse cases tested</h2>
+<p>Client price tampering, coupon reuse, order IDOR, checkout without payment, login brute force, token replay, unauthenticated admin access — all <strong>blocked</strong> in the current build (see the penetration test report and regression results).</p>
+<h2 id="residual-risks-to-confirm">Residual risks / to confirm</h2>
+<ul>
+<li>MFA/TOTP not enforced on seeded accounts (groundwork present).</li>
+<li>Self-signed dev certificate (production should use a trusted CA).</li>
+<li>CRLF line endings in Blue Team shell scripts (build/run blocker, not a security flaw).</li>
+</ul>
+<div class="footer">SecureShop Red Team · local authorized assessment · generated from
+<code>red_team/reports/</code></div></div></body></html>
