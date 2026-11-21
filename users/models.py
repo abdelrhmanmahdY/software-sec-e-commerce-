@@ -8,6 +8,8 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     store_credit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     email_confirmed = models.BooleanField(default=False)
+    totp_secret = models.CharField(max_length=64, blank=True, default="")
+    totp_enabled = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.username} profile"

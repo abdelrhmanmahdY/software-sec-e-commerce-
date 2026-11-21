@@ -112,6 +112,11 @@ def login_view(request):
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
+            profile = getattr(user, "profile", None)
+            if profile and profile.totp_enabled and profile.totp_secret:
+                request.session["pre_2fa_user_id"] = user.pk
+                request.session["pre_2fa_backend"] = getattr(user, "backend", django_settings.AUTHENTICATION_BACKENDS[0])
+                return redirect("totp_verify")
             login(request, user)
             return redirect("dashboard_home" if user.is_staff else "shop")
         if getattr(request, "_login_locked", False):
@@ -122,6 +127,64 @@ def login_view(request):
     else:
         form = AuthenticationForm()
     return render(request, "dashboard/login.html", {"form": form})
+
+
+def totp_verify(request):
+    from users.totp import verify_totp_code
+
+    user_id = request.session.get("pre_2fa_user_id")
+    if not user_id:
+        return redirect("login")
+
+    user = get_object_or_404(User, pk=user_id)
+    profile = getattr(user, "profile", None)
+    if not profile or not profile.totp_enabled or not profile.totp_secret:
+        request.session.pop("pre_2fa_user_id", None)
+        return redirect("login")
+
+    if request.method == "POST":
+        code = request.POST.get("code", "").strip()
+        if verify_totp_code(profile.totp_secret, code):
+            backend = request.session.pop("pre_2fa_backend", django_settings.AUTHENTICATION_BACKENDS[0])
+            request.session.pop("pre_2fa_user_id", None)
+            login(request, user, backend=backend)
+            return redirect("dashboard_home" if user.is_staff else "shop")
+        messages.error(request, "Invalid 6-digit verification code. Please try again.")
+
+    return render(request, "dashboard/totp_verify.html", {"username": user.username})
+
+
+@login_required
+def totp_setup(request):
+    from users.totp import generate_totp_secret, get_otpauth_uri, verify_totp_code
+
+    profile = request.user.profile
+    if not profile.totp_secret:
+        profile.totp_secret = generate_totp_secret()
+        profile.save(update_fields=["totp_secret"])
+
+    if request.method == "POST":
+        action = request.POST.get("action", "enable")
+        if action == "disable":
+            profile.totp_enabled = False
+            profile.totp_secret = ""
+            profile.save(update_fields=["totp_enabled", "totp_secret"])
+            messages.success(request, "Two-Factor Authentication (2FA) has been disabled.")
+            return redirect("totp_setup")
+
+        code = request.POST.get("code", "").strip()
+        if verify_totp_code(profile.totp_secret, code):
+            profile.totp_enabled = True
+            profile.save(update_fields=["totp_enabled"])
+            messages.success(request, "Two-Factor Authentication (2FA) is now enabled!")
+            return redirect("totp_setup")
+        messages.error(request, "Invalid 6-digit code. Make sure your authenticator app time is synced.")
+
+    return render(request, "dashboard/totp_setup.html", {
+        "totp_enabled": profile.totp_enabled,
+        "totp_secret": profile.totp_secret,
+        "otpauth_uri": get_otpauth_uri(request.user.username, profile.totp_secret),
+    })
 
 @login_required
 def logout_view(request):
