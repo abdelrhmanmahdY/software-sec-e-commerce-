@@ -167,9 +167,13 @@
                                 <button class="btn btn-sm btn-outline-success" onclick="window.location.href='{% url 'product_update' product.id %}'">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-sm btn-outline-danger" onclick="window.location.href='{% url 'product_delete' product.id %}'">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                <form method="post" action="{% url 'product_delete' product.id %}" class="d-inline"
+                                      onsubmit="return confirm('Delete this product?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>

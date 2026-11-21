@@ -1,6 +1,7 @@
 from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import BasePermission, SAFE_METHODS
+from users.permissions import staff_required
 from .models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer
 
@@ -28,12 +29,12 @@ class ProductViewSet(viewsets.ModelViewSet):
     search_fields = ['name', 'description']
     permission_classes = [IsAdminOrReadOnly]  
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from users.permissions import staff_required
 from .models import Category
 
 @login_required
-@csrf_exempt
+@staff_required
 def ajax_add_category(request):
     if request.method == "POST":
         name = request.POST.get("name")

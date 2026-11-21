@@ -2,7 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
+from django.conf import settings as django_settings
+from django.core.mail import send_mail
+from django.views.decorators.http import require_POST
+from users.permissions import staff_required
+from audit.utils import get_client_ip
 from django.contrib.auth.models import User
 from django.utils.timezone import now, timedelta
 from django.core.paginator import Paginator
@@ -18,7 +23,7 @@ from users.models import Coupon, NewsletterSubscriber
 from django.core import signing
 
 @login_required
-@user_passes_test(lambda u: u.is_staff)
+@staff_required
 def admin_dashboard(request):
     period = request.GET.get("period", "all")
     today = now().date()
@@ -62,23 +67,26 @@ def admin_dashboard(request):
     return render(request, "dashboard/admin_dashboard.html", context)
 
 @login_required
-@user_passes_test(lambda u: u.is_staff)
+@staff_required
 def reports_view(request):
     orders = Order.objects.all().order_by("-created_at")
     total_sales = sum(sum(item.price * item.quantity for item in order.items.all()) for order in orders)
     return render(request, "dashboard/reports.html", {"orders": orders, "total_sales": total_sales})
 
 @login_required
-@user_passes_test(lambda u: u.is_staff)
+@staff_required
 def users_list(request):
     users = User.objects.all()
     return render(request, "dashboard/users.html", {"users": users})
 
 @login_required
-@user_passes_test(lambda u: u.is_staff)
+@staff_required
 def user_update_role(request, pk):
     user = get_object_or_404(User, pk=pk)
     if request.method == "POST":
+        if user.pk == request.user.pk:
+            messages.error(request, "You cannot change your own role.")
+            return redirect("users_list")
         role = request.POST.get("role")
         user.is_staff = (role == "admin")
         user.save()
@@ -87,7 +95,7 @@ def user_update_role(request, pk):
     return render(request, "dashboard/user_role_form.html", {"user": user})
 
 @login_required
-@user_passes_test(lambda u: u.is_staff)
+@staff_required
 def admin_user_delete(request, pk):
     user = get_object_or_404(User, pk=pk)
     if request.method == "POST":
@@ -106,6 +114,11 @@ def login_view(request):
             user = form.get_user()
             login(request, user)
             return redirect("dashboard_home" if user.is_staff else "shop")
+        if getattr(request, "_login_locked", False):
+            messages.error(
+                request,
+                f"Too many failed attempts. Try again in {django_settings.LOGIN_LOCKOUT_MINUTES} minutes.",
+            )
     else:
         form = AuthenticationForm()
     return render(request, "dashboard/login.html", {"form": form})
@@ -124,8 +137,17 @@ def signup_view(request):
             user.save()
             token = signing.dumps(user.pk, salt="account-confirmation")
             confirmation_url = request.build_absolute_uri(f"/dashboard/confirm/{token}/")
-            messages.success(request, "Account created! Confirm it using the confirmation link below.")
-            messages.info(request, confirmation_url)
+            send_mail(
+                "Confirm your account",
+                f"Hi {user.first_name or user.username},\n\nConfirm your account: {confirmation_url}\n\n"
+                "The link is valid for 3 days. If you did not sign up, ignore this e-mail.",
+                None,
+                [user.email],
+                fail_silently=True,
+            )
+            messages.success(request, "Account created! Check your e-mail for the confirmation link.")
+            if django_settings.DEBUG:  # convenience for local development only
+                messages.info(request, confirmation_url)
             return redirect("login")
         else:
             messages.error(request, "Please fix the errors below.")
@@ -180,7 +202,7 @@ def user_delete(request, pk):
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
 @login_required
-@user_passes_test(lambda u: u.is_staff)
+@staff_required
 def products_list(request):
     products = Product.objects.all().select_related("category")
     categories = Category.objects.all()
@@ -214,7 +236,7 @@ def products_list(request):
     return render(request, "dashboard/products.html", context)
 
 @login_required
-@user_passes_test(lambda u: u.is_staff)
+@staff_required
 def product_create(request):
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES)
@@ -227,7 +249,7 @@ def product_create(request):
     return render(request, "dashboard/product_form.html", {"form": form})
 
 @login_required
-@user_passes_test(lambda u: u.is_staff)
+@staff_required
 def product_update(request, pk):
     product = get_object_or_404(Product, pk=pk)
     if request.method == "POST":
@@ -252,7 +274,8 @@ def product_update(request, pk):
     return render(request, "dashboard/product_form.html", context)
 
 @login_required
-@user_passes_test(lambda u: u.is_staff)
+@staff_required
+@require_POST
 def product_delete(request, pk):
     product = get_object_or_404(Product, pk=pk)
     product.delete()
@@ -284,6 +307,8 @@ def order_create(request):
         if form.is_valid():
             order = form.save(commit=False)
             order.user = request.user
+            if not request.user.is_staff:
+                order.status = "Pending"
             order.save()
             messages.success(request, "Order created successfully!")
             return redirect("orders_list")
@@ -292,7 +317,7 @@ def order_create(request):
     return render(request, "dashboard/order_update.html", {"form": form})
 
 @login_required
-@user_passes_test(lambda u: u.is_staff)
+@staff_required
 def order_update(request, pk):
     order = get_object_or_404(Order, pk=pk)
     if request.method == "POST":
@@ -306,7 +331,7 @@ def order_update(request, pk):
     return render(request, "dashboard/order_update.html", {"order": order, "form": form})
 
 @login_required
-@user_passes_test(lambda u: u.is_staff)
+@staff_required
 def order_delete(request, pk):
     order = get_object_or_404(Order, pk=pk)
     if request.method == "POST":
@@ -316,7 +341,7 @@ def order_delete(request, pk):
     return render(request, "dashboard/order_confirm_delete.html", {"order": order})
 
 @login_required
-@user_passes_test(lambda u: u.is_staff)
+@staff_required
 def export_orders_csv(request):
     response = HttpResponse(content_type="text/csv")
     response["Content-Disposition"] = 'attachment; filename="orders.csv"'
@@ -461,3 +486,24 @@ def newsletter_signup(request):
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk, is_active=True)
     return render(request, "dashboard/product_detail.html", {"product": product})
+
+
+@login_required
+@staff_required
+def audit_log_view(request):
+    from audit.models import AuditLog
+
+    logs = AuditLog.objects.all()
+    action = request.GET.get("action", "")
+    username = request.GET.get("username", "").strip()
+    if action:
+        logs = logs.filter(action=action)
+    if username:
+        logs = logs.filter(username__icontains=username)
+    page_obj = Paginator(logs, 25).get_page(request.GET.get("page"))
+    return render(request, "dashboard/audit_log.html", {
+        "page_obj": page_obj,
+        "actions": AuditLog.Action.choices,
+        "selected_action": action,
+        "username": username,
+    })

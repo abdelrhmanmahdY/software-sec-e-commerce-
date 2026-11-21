@@ -1,22 +1,29 @@
 SHELL := /bin/bash
 
-.PHONY: setup up down restart migrate seed reset check test logs shell superuser
+.PHONY: setup tls-setup up down restart logs migrate seed reset check test shell superuser
 
-setup:
+# First run: configure local TLS, create .env, and start everything
+setup: tls-setup
 	cp -n .env.example .env
-	docker compose up -d --build
-	docker compose exec -T web python manage.py migrate
-	docker compose exec -T web python manage.py seed_data
+	docker compose up -d --build --wait
 
+# Install/trust mkcert CA and generate local certificates if needed
+tls-setup:
+	./scripts/setup-local-tls.sh
+
+# Normal startup
 up:
-	docker compose up -d --build
+	docker compose up -d --build --wait
 
 down:
 	docker compose down
 
 restart:
 	docker compose down
-	docker compose up -d --build
+	docker compose up -d --build --wait
+
+logs:
+	docker compose logs -f web nginx db
 
 migrate:
 	docker compose exec -T web python manage.py migrate
@@ -30,10 +37,9 @@ reset:
 check:
 	docker compose exec -T web python manage.py check
 	docker compose exec -T web python manage.py makemigrations --check --dry-run
-	docker compose exec -T web python manage.py test
 
-logs:
-	docker compose logs -f web db
+test:
+	docker compose exec -T web python manage.py test
 
 shell:
 	docker compose exec web python manage.py shell

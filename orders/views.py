@@ -5,16 +5,29 @@ from rest_framework.response import Response
 from .models import Order, OrderItem
 from .serializers import OrderSerializer, OrderItemSerializer
 from carts.models import Cart
+from users.permissions import IsStaff, IsStaffOrCreateReadOnly
 
 class OrderViewSet(viewsets.ModelViewSet):
-    queryset = Order.objects.all()
+    """Customers see/create only their own orders; only staff can edit/delete."""
     serializer_class = OrderSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsStaffOrCreateReadOnly]
+
+    def get_queryset(self):
+        qs = Order.objects.select_related("user").prefetch_related("items")
+        user = self.request.user
+        return qs if user.is_staff else qs.filter(user=user)
+
 
 class OrderItemViewSet(viewsets.ModelViewSet):
-    queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsStaff]
+
+    def get_queryset(self):
+        return OrderItem.objects.select_related("order", "product")
+
+    def perform_create(self, serializer):
+        serializer.save(price=serializer.validated_data["product"].price)
+
 
 class CheckoutView(APIView):
     permission_classes = [IsAuthenticated]

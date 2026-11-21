@@ -12,6 +12,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+# Run as an unprivileged user
+RUN useradd --create-home --uid 1000 app && mkdir -p /app/media /app/staticfiles /data && chown -R app:app /app /data
+USER app
+
 EXPOSE 8000
 
-CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+# Gunicorn speaks plain HTTP on the private Docker network; nginx terminates TLS.
+CMD ["/app/docker-entrypoint.sh"]

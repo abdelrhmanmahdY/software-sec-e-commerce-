@@ -33,7 +33,12 @@ class AddToCartView(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         cart, _ = Cart.objects.get_or_create(user=request.user)
         product_id = request.data.get("product")
-        quantity = int(request.data.get("quantity", 1))
+        try:
+            quantity = int(request.data.get("quantity", 1))
+        except (TypeError, ValueError):
+            return Response({"error": "quantity must be an integer"}, status=400)
+        if quantity < 1:
+            return Response({"error": "quantity must be at least 1"}, status=400)
 
         product = get_object_or_404(Product, id=product_id)
 
@@ -60,6 +65,7 @@ class RemoveFromCartView(generics.DestroyAPIView):
 
 
 @require_POST
+@login_required
 def UpdateCartItemQuantityView(request):
     try:
         data = json.loads(request.body)

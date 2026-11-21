@@ -7,6 +7,8 @@ class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
         fields = ['id', 'product', 'quantity', 'price']
+        read_only_fields = ['price']                 # never trust a client-supplied price
+        extra_kwargs = {'quantity': {'min_value': 1}}
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True)
@@ -24,9 +26,11 @@ class OrderSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         items_data = validated_data.pop('items', [])
         user = self.context['request'].user
+        if not user.is_staff:
+            validated_data.pop('status', None)       # customers cannot pick a status
         order = Order.objects.create(user=user, **validated_data)
         for item_data in items_data:
-            OrderItem.objects.create(order=order, **item_data)
+            OrderItem.objects.create(order=order, price=item_data['product'].price, **item_data)
         return order
 
     def update(self, instance, validated_data):
@@ -38,7 +42,7 @@ class OrderSerializer(serializers.ModelSerializer):
         if items_data is not None:
             instance.items.all().delete()
             for item_data in items_data:
-                OrderItem.objects.create(order=instance, **item_data)
+                OrderItem.objects.create(order=instance, price=item_data['product'].price, **item_data)
         return instance
 class CartItemSerializer(serializers.ModelSerializer):
     product = ProductSerializer(read_only=True)

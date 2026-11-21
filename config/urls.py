@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.shortcuts import redirect
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenRefreshView
+from audit.views import AuditedTokenObtainPairView, LogoutAPIView
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -35,7 +36,8 @@ urlpatterns = [
     path("api/carts/", include("carts.urls")),
 
     # JWT Authentication
-    path("api/auth/login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/auth/login/", AuditedTokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/auth/logout/", LogoutAPIView.as_view(), name="token_logout"),
     path("api/auth/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 
     # Swagger & Redoc

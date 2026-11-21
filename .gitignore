@@ -33,3 +33,4 @@ media/
 Thumbs.db
 .vscode/
 .idea/
+certs/*.pem

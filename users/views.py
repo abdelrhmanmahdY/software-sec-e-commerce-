@@ -10,7 +10,6 @@ from django.contrib.auth.models import User
 from .forms import CustomUserCreationForm
 from .serializers import RegisterSerializer, UserSerializer
 
-@method_decorator(csrf_exempt, name='dispatch')
 class RegisterView(APIView):
     def get(self, request):
         form = CustomUserCreationForm()
