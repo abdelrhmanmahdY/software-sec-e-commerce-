@@ -1,0 +1,286 @@
+alx-project-nexus - E-Commerce Backend
+
+Overview of the ProDev Backend Engineering Program
+
+The ProDev Backend Engineering program is a comprehensive learning journey designed to equip participants with advanced backend development skills. Through a series of milestones, including the comprehensive Airbnb Project, learners master Python, Django, database design, API development, and deployment strategies. Project Nexus serves as the capstone, allowing me to apply these skills to a real-world e-commerce backend system, showcasing technical expertise and readiness for professional opportunities.
+
+Key Technologies Covered
+
+
+
+Python: Core programming language for backend logic.
+
+Django: High-level framework for building scalable web applications.
+
+REST APIs: Implemented using Django REST Framework for CRUD operations.
+
+GraphQL: Explored for flexible data fetching (optional implementation).
+
+PostgreSQL: Relational database for efficient data management.
+
+JWT: Secure user authentication and authorization.
+
+Swagger/OpenAPI: API documentation and testing.
+
+Docker: Containerization for deployment (planned).
+
+Celery \& RabbitMQ: Background task management (planned).
+
+GitHub Actions: CI/CD pipelines for automated testing and deployment.
+
+
+
+Important Backend Development Concepts
+
+
+
+Database Design: Normalized schemas with foreign key relationships for scalability.
+
+Asynchronous Programming: Planned integration with Celery for background tasks.
+
+Caching Strategies: Intended use of Redis for performance optimization.
+
+Security: Implementation of JWT and role-based access control.
+
+
+
+Challenges Faced and Solutions Implemented
+
+
+
+Challenge: Designing an efficient database schema for e-commerce operations.
+
+Solution: Created an ERD using Draw.io to visualize and optimize relationships (e.g., User to Cart, Product to OrderItem).
+
+
+
+
+
+Challenge: Ensuring secure user authentication.
+
+Solution: Integrated JWT authentication with Django REST Framework.
+
+
+
+
+
+Challenge: Managing large datasets with filtering and pagination.
+
+Solution: Implemented Django filters and pagination in API endpoints.
+
+
+
+
+
+Challenge: Documenting APIs for frontend integration.
+
+Solution: Utilized Swagger to generate comprehensive API documentation.
+
+
+
+
+
+
+
+Best Practices and Personal Takeaways
+
+
+
+Best Practices:
+
+Followed Django conventions for app structure and ORM usage.
+
+Used environment variables for sensitive data (e.g., database credentials).
+
+Maintained clean, modular code with descriptive Git commit messages (e.g., feat: implement JWT authentication).
+
+Implemented security measures like CSRF protection and input validation.
+
+
+
+
+
+Personal Takeaways:
+
+Gained confidence in designing scalable backend systems.
+
+Learned the importance of collaboration and documentation in real-world projects.
+
+Improved problem-solving skills through iterative development and testing.
+
+
+
+
+
+
+
+Project Details
+
+
+
+Repository: https://github.com/MohamedAhmed-SUT/alx-project-nexus
+
+Hosted project : https://alx-project-nexus-production-53e7.up.railway.app/
+
+Hosted API: https://alx-project-nexus-production-53e7.up.railway.app/api/docs/
+
+Admin Panel: https://alx-project-nexus-production-53e7.up.railway.app/admin/
+
+ERD Diagram: https://drive.google.com/file/d/1Ia26xv9PQZlnbwLdQ-9RcaB1qN6G5w8g/view?usp=sharing
+
+Presentation Slides: https://docs.google.com/presentation/d/1z4o_UOKDW_0jvJ6VSJtcUD_MOooUVFktt2YEX7ZhhqU/edit?usp=sharing
+
+Demo Video: https://mega.nz/file/p64XRJhT#7ZV-G7edxcpZYuJ1OVy4Nr3ilqS4UqqEOHHUrC_fEuM
+
+
+
+Collaboration
+
+
+
+Collaborated with ProDev Backend and Frontend learners via the #ProDevProjectNexus Discord channel to align API endpoints with frontend requirements.
+
+Exchanged ideas and organized coding sessions to maximize potential.
+
+
+
+Setup Instructions
+
+
+
+### Run with Docker Compose (recommended)
+
+Requirements: Docker and Docker Compose.
+
+```bash
+git clone https://github.com/MohamedAhmed-SUT/alx-project-nexus.git
+cd alx-project-nexus
+cp .env.example .env
+
+docker compose up --build
+```
+
+Docker Compose starts PostgreSQL and Django, applies migrations, and makes the app available at:
+
+- Application/dashboard: http://localhost:8000/
+- Swagger: http://localhost:8000/api/docs/
+- Admin: http://localhost:8000/admin/
+- PostgreSQL: `localhost:5432`
+
+Useful commands:
+
+```bash
+docker compose run --rm web python manage.py createsuperuser
+docker compose run --rm web python manage.py test
+docker compose down
+# Also remove the PostgreSQL volume for a completely fresh database:
+docker compose down -v
+```
+
+### Run locally without Docker
+
+Create a virtual environment and install dependencies:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+```
+
+For PostgreSQL, set `DATABASE_URL` in `.env`, for example:
+
+```env
+SECRET_KEY=your_secret_key
+DEBUG=True
+DATABASE_URL=postgres://nexus:nexus_password@localhost:5432/nexus
+```
+
+Then apply migrations and start Django:
+
+```bash
+python manage.py migrate
+python manage.py runserver
+```
+
+Without `DATABASE_URL`, Django automatically uses the local SQLite database `db.sqlite3`.
+
+
+
+API Usage
+
+
+
+Access Swagger documentation at /api/docs/ after running the server.
+
+Example endpoints:
+
+GET /api/products/ - List all products with filtering and pagination.
+
+POST /api/auth/login/ - Authenticate and receive JWT token.
+
+POST /api/carts/ - Add items to the user's cart.
+
+
+
+
+
+
+
+Future Enhancements
+
+
+
+Integrate Docker for containerized deployment.
+
+Add Celery and RabbitMQ for background tasks (e.g., order processing).
+
+Implement Redis caching for improved performance.
+
+
+
+### Seed the database
+
+With Docker running:
+
+```bash
+docker compose exec web python manage.py migrate
+docker compose exec web python manage.py seed_data
+```
+
+To delete and rebuild sample project data:
+
+```bash
+docker compose exec web python manage.py seed_data --clear
+```
+
+Default accounts:
+
+- `admin` / `Admin!2026#Secure` — administrator and Django superuser
+- `staff` / `Staff!2026#Secure` — staff administrator
+- `customer` / `Customer!2026#Secure` — standard user
+
+The seed includes categories, products, a cart and cart items, an order and order items.
+
+
+
+Quick Docker commands:
+
+```bash
+make setup     # copy .env, build containers, migrate, and seed
+make up        # start containers
+make seed      # seed data
+make reset     # clear and reseed project data
+make check     # Django check, migration check, and tests
+make logs      # follow web and database logs
+make shell     # open Django shell
+make superuser # create an admin account
+make down      # stop containers
+```
+
+Direct Docker Compose commands:
+
+```bash
+
+
+
