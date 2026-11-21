@@ -2,6 +2,14 @@
 
 A Dockerized Django e-commerce web application developed as a Software Security project. The project combines an e-commerce workflow with security controls related to **Authentication, Authorization, and Accounting (AAA)** and HTTPS communication through an Nginx reverse proxy.
 
+> **Cross-platform setup:** Docker Compose is the recommended first run on both Windows and Linux. Native Windows users should use PowerShell; Linux users may use the shell or the Make shortcuts below. A local copy of Python, PostgreSQL, Make, or mkcert is not required.
+>
+> ```powershell
+> Copy-Item .env.example .env  # PowerShell; use `cp .env.example .env` on Linux/macOS
+> docker compose up -d --build --wait
+> docker compose exec web python manage.py createsuperuser
+> ```
+
 ## 1. Project overview
 
 The application is organized into Django modules for the main e-commerce and security responsibilities:

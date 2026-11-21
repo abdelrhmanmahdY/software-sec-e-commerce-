@@ -3,12 +3,19 @@ services:
   # One-shot job: creates a self-signed certificate in ./certs if none exists.
   # To use your own/Let's Encrypt certificate, put fullchain.pem + privkey.pem in ./certs.
   certs:
-    image: alpine:3.20
-    volumes:
-      - ./certs:/certs
-      - ./scripts/generate_certs.sh:/generate_certs.sh:ro
-    command: sh -c "apk add --no-cache bash openssl >/dev/null && bash /generate_certs.sh /certs && chmod 644 /certs/fullchain.pem"
-    restart: "no"
+      image: alpine:3.20
+      volumes:
+        - ./certs:/certs
+        - ./scripts/generate_certs.sh:/generate_certs.sh:ro
+      command:
+        - /bin/sh
+        - -c
+        - |
+          apk add --no-cache bash openssl
+          bash /generate_certs.sh /certs
+          chmod 644 /certs/fullchain.pem
+          chmod 600 /certs/privkey.pem
+      restart: "no"
 
   db:
     image: postgres:16-alpine
@@ -34,21 +41,30 @@ services:
       SECRET_KEY: ${SECRET_KEY:-}                 # empty -> auto-generated and stored in the app_data volume
       DATABASE_URL: postgres://${POSTGRES_USER:-nexus}:${POSTGRES_PASSWORD:-nexus_password}@db:5432/${POSTGRES_DB:-nexus}
       DEBUG: "False"
-      USE_HTTPS: "True"
+      USE_HTTPS: ${USE_HTTPS:-True}
+      TRUST_PROXY_HEADERS: ${TRUST_PROXY_HEADERS:-True}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1}
       CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS:-https://localhost,https://127.0.0.1}
+      SECURE_SSL_REDIRECT: ${SECURE_SSL_REDIRECT:-True}
       SECURE_HSTS_SECONDS: ${SECURE_HSTS_SECONDS:-0}
+      SECURE_HSTS_INCLUDE_SUBDOMAINS: ${SECURE_HSTS_INCLUDE_SUBDOMAINS:-False}
+      SECURE_HSTS_PRELOAD: ${SECURE_HSTS_PRELOAD:-False}
       LOGIN_MAX_FAILURES: ${LOGIN_MAX_FAILURES:-5}
+      LOGIN_MAX_FAILURES_PER_IP: ${LOGIN_MAX_FAILURES_PER_IP:-20}
       LOGIN_LOCKOUT_MINUTES: ${LOGIN_LOCKOUT_MINUTES:-15}
+      SESSION_COOKIE_AGE: ${SESSION_COOKIE_AGE:-1800}
       SEED_DATA: ${SEED_DATA:-True}               # demo data on first start; set False to skip
       DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME:-}
       DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD:-}
       DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL:-admin@example.com}
       EMAIL_BACKEND: ${EMAIL_BACKEND:-django.core.mail.backends.console.EmailBackend}
       EMAIL_HOST: ${EMAIL_HOST:-}
+      EMAIL_PORT: ${EMAIL_PORT:-587}
       EMAIL_HOST_USER: ${EMAIL_HOST_USER:-}
       EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD:-}
+      EMAIL_USE_TLS: ${EMAIL_USE_TLS:-True}
       DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL:-no-reply@localhost}
+      SECRET_KEY_FILE: ${SECRET_KEY_FILE:-/data/secret_key}
     expose:
       - "8000"            # only nginx can reach it
     volumes:

@@ -1,15 +1,9 @@
-SHELL := /bin/bash
+.PHONY: setup up down restart logs migrate seed reset check test shell superuser
 
-.PHONY: setup tls-setup up down restart logs migrate seed reset check test shell superuser
-
-# First run: configure local TLS, create .env, and start everything
-setup: tls-setup
-	cp -n .env.example .env
+# Docker Compose creates the local certificates, database, migrations, and demo data.
+# This target needs Docker Compose, but not Bash, mkcert, Python, PostgreSQL, or Make-specific shell tools.
+setup:
 	docker compose up -d --build --wait
-
-# Install/trust mkcert CA and generate local certificates if needed
-tls-setup:
-	./scripts/setup-local-tls.sh
 
 # Normal startup
 up:
