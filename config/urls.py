@@ -4,6 +4,8 @@ from django.shortcuts import redirect
 from rest_framework_simplejwt.views import TokenRefreshView
 from audit.views import AuditedTokenObtainPairView, LogoutAPIView
 from rest_framework import permissions
+from rest_framework.authentication import SessionAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from django.conf import settings
@@ -17,8 +19,9 @@ schema_view = get_schema_view(
         contact=openapi.Contact(email="youremail@example.com"),
         license=openapi.License(name="MIT License"),
     ),
-    public=True,
-    permission_classes=(permissions.AllowAny,),
+    public=False,
+    authentication_classes=(SessionAuthentication, JWTAuthentication),
+    permission_classes=(permissions.IsAdminUser,),
 )
 
 urlpatterns = [

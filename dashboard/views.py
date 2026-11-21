@@ -456,6 +456,10 @@ def confirm_email(request, token):
 
 
 def newsletter_signup(request):
+    import secrets
+    from django.core.exceptions import ValidationError
+    from django.core.validators import validate_email
+
     if request.method == "POST":
         if request.content_type == "application/json":
             try:
@@ -467,18 +471,28 @@ def newsletter_signup(request):
             email = request.POST.get("email", "").strip().lower()
         if not email:
             return JsonResponse({"success": False, "error": "Email is required."}, status=400)
+        try:
+            validate_email(email)
+        except ValidationError:
+            return JsonResponse({"success": False, "error": "Invalid email address."}, status=400)
         subscriber, created = NewsletterSubscriber.objects.get_or_create(email=email)
-        coupon_code = subscriber.coupon_code
-        if not coupon_code:
-            coupon_code = f"NEWS{User.objects.count():04d}"
+        if created or not subscriber.coupon_code:
+            coupon_code = f"NEWS-{secrets.token_hex(6).upper()}"
             Coupon.objects.get_or_create(
                 code=coupon_code,
                 defaults={"discount_percent": 10, "active": True},
             )
             subscriber.coupon_code = coupon_code
             subscriber.save(update_fields=["coupon_code"])
-        message = "You are subscribed! Use your coupon at checkout." if created else "You are already subscribed."
-        return JsonResponse({"success": True, "message": message, "coupon_code": coupon_code})
+            return JsonResponse({
+                "success": True,
+                "message": "You are subscribed! Use your coupon at checkout.",
+                "coupon_code": coupon_code,
+            })
+        return JsonResponse({
+            "success": True,
+            "message": "You are already subscribed.",
+        })
     return JsonResponse({"success": False, "error": "Invalid request."}, status=405)
 
 

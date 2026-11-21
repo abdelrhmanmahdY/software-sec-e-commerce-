@@ -33,7 +33,7 @@ check:
 	docker compose exec -T web python manage.py makemigrations --check --dry-run
 
 test:
-	docker compose exec -T web python manage.py test
+	docker compose exec -T -e SECURE_SSL_REDIRECT=False web python manage.py test
 
 shell:
 	docker compose exec web python manage.py shell

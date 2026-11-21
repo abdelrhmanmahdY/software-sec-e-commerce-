@@ -1,357 +1,103 @@
-alx-project-nexus - E-Commerce Backend
+# SecureShop — CET431 Software Security E-Commerce Project
 
-Overview of the ProDev Backend Engineering Program
+SecureShop is a hardened Django e-commerce web application built for **CET431 – Software Security (Fall 2026)**. It implements full e-commerce functionality (catalogue, cart, coupons, newsletter, store-credit checkout, user profiles, and admin dashboard) with application-level security defenses, HTTPS/TLS termination, and AAA (Authentication, Authorization, Accounting).
 
-The ProDev Backend Engineering program is a comprehensive learning journey designed to equip participants with advanced backend development skills. Through a series of milestones, including the comprehensive Airbnb Project, learners master Python, Django, database design, API development, and deployment strategies. Project Nexus serves as the capstone, allowing me to apply these skills to a real-world e-commerce backend system, showcasing technical expertise and readiness for professional opportunities.
+---
 
-Key Technologies Covered
+## Quick Start (Docker Compose — Recommended)
 
-
-
-Python: Core programming language for backend logic.
-
-Django: High-level framework for building scalable web applications.
-
-REST APIs: Implemented using Django REST Framework for CRUD operations.
-
-GraphQL: Explored for flexible data fetching (optional implementation).
-
-PostgreSQL: Relational database for efficient data management.
-
-JWT: Secure user authentication and authorization.
-
-Swagger/OpenAPI: API documentation and testing.
-
-Docker: Containerization for deployment (planned).
-
-Celery \& RabbitMQ: Background task management (planned).
-
-GitHub Actions: CI/CD pipelines for automated testing and deployment.
-
-
-
-Important Backend Development Concepts
-
-
-
-Database Design: Normalized schemas with foreign key relationships for scalability.
-
-Asynchronous Programming: Planned integration with Celery for background tasks.
-
-Caching Strategies: Intended use of Redis for performance optimization.
-
-Security: Implementation of JWT and role-based access control.
-
-
-
-Challenges Faced and Solutions Implemented
-
-
-
-Challenge: Designing an efficient database schema for e-commerce operations.
-
-Solution: Created an ERD using Draw.io to visualize and optimize relationships (e.g., User to Cart, Product to OrderItem).
-
-
-
-
-
-Challenge: Ensuring secure user authentication.
-
-Solution: Integrated JWT authentication with Django REST Framework.
-
-
-
-
-
-Challenge: Managing large datasets with filtering and pagination.
-
-Solution: Implemented Django filters and pagination in API endpoints.
-
-
-
-
-
-Challenge: Documenting APIs for frontend integration.
-
-Solution: Utilized Swagger to generate comprehensive API documentation.
-
-
-
-
-
-
-
-Best Practices and Personal Takeaways
-
-
-
-Best Practices:
-
-Followed Django conventions for app structure and ORM usage.
-
-Used environment variables for sensitive data (e.g., database credentials).
-
-Maintained clean, modular code with descriptive Git commit messages (e.g., feat: implement JWT authentication).
-
-Implemented security measures like CSRF protection and input validation.
-
-
-
-
-
-Personal Takeaways:
-
-Gained confidence in designing scalable backend systems.
-
-Learned the importance of collaboration and documentation in real-world projects.
-
-Improved problem-solving skills through iterative development and testing.
-
-
-
-
-
-
-
-Project Details
-
-
-
-Repository: https://github.com/MohamedAhmed-SUT/alx-project-nexus
-
-Hosted project : https://alx-project-nexus-production-53e7.up.railway.app/
-
-Hosted API: https://alx-project-nexus-production-53e7.up.railway.app/api/docs/
-
-Admin Panel: https://alx-project-nexus-production-53e7.up.railway.app/admin/
-
-ERD Diagram: https://drive.google.com/file/d/1Ia26xv9PQZlnbwLdQ-9RcaB1qN6G5w8g/view?usp=sharing
-
-Presentation Slides: https://docs.google.com/presentation/d/1z4o_UOKDW_0jvJ6VSJtcUD_MOooUVFktt2YEX7ZhhqU/edit?usp=sharing
-
-Demo Video: https://mega.nz/file/p64XRJhT#7ZV-G7edxcpZYuJ1OVy4Nr3ilqS4UqqEOHHUrC_fEuM
-
-
-
-Collaboration
-
-
-
-Collaborated with ProDev Backend and Frontend learners via the #ProDevProjectNexus Discord channel to align API endpoints with frontend requirements.
-
-Exchanged ideas and organized coding sessions to maximize potential.
-
-
-
-Setup Instructions
-
-## Requirements
-
-- Git
-- Docker Desktop on Windows or macOS, or Docker Engine with Docker Compose on Linux
-- Docker Desktop must be running before setup
-
-No local Python, PostgreSQL, `make`, `mkcert`, or virtual environment is required.
-
-## First run
-
-### Windows (PowerShell)
-
-```powershell
-git clone https://github.com/MohamedAhmed-SUT/alx-project-nexus.git
-cd alx-project-nexus
-Copy-Item .env.example .env
-docker compose up -d --build --wait
-```
-
-### Linux or macOS
+**Requirements:** Docker and Docker Compose.
 
 ```bash
-git clone https://github.com/MohamedAhmed-SUT/alx-project-nexus.git
-cd alx-project-nexus
-cp .env.example .env
-docker compose up -d --build --wait
+git clone https://github.com/abdelrhmanmahdY/software-sec-e-commerce-.git
+cd software-sec-e-commerce-
+chmod +x scripts/setup-local-tls.sh scripts/generate_certs.sh
+
+# Build and start PostgreSQL, Django (Gunicorn), and Nginx (HTTPS)
+make up
+
+# Apply migrations and seed demo accounts + sample data
+make migrate
+make seed
+
+# Run Django system checks and unit tests
+make check
+make test
 ```
 
-The setup automatically:
+Once running, open **`https://localhost`** (accept the self-signed certificate warning, or run `make tls-setup` if `mkcert` is installed).
 
-- generates an SSL certificate for `localhost`;
-- starts PostgreSQL, Django, and nginx;
-- generates a persistent Django `SECRET_KEY`;
-- applies database migrations; and
-- creates demo data on the first start.
+### Useful Make Commands
+- `make up` — build and start all containers (`certs`, `db`, `web`, `nginx`)
+- `make down` — stop containers
+- `make logs` — follow container logs
+- `make migrate` — run Django migrations
+- `make seed` / `make reset` — seed or clear & reseed demo data
+- `make check` — run `manage.py check` and migration checks
+- `make test` — run the Django test suite (`SECURE_SSL_REDIRECT=False`)
 
-Open:
+---
 
-- Application/dashboard: https://localhost/
-- Swagger: https://localhost/api/docs/
-- Admin: https://localhost/admin/
+## Test Accounts
 
-A browser warning is expected for the first-run self-signed local certificate.
+Seeded by `make seed` (`users/management/commands/seed_data.py`):
 
-## Create an administrator
+| Role | Username | Password | Initial Store Credit |
+|---|---|---|---|
+| Admin / Superuser | `admin` | `Admin!2026#Secure` | `$500.00` |
+| Staff | `staff` | `Staff!2026#Secure` | `$0.00` |
+| Customer | `customer` | `Customer!2026#Secure` | `$500.00` |
 
-After the containers are running:
+### Key URLs
+- **Storefront / Dashboard:** `https://localhost/`
+- **Django Admin:** `https://localhost/admin/`
+- **Audit Log (Staff only):** `https://localhost/dashboard/audit/`
+- **API Docs / Swagger (Admin only):** `https://localhost/api/docs/`
 
-```bash
-docker compose exec web python manage.py createsuperuser
+---
+
+## Architecture Overview
+
+```
+Browser / API Client
+        │  HTTPS (TLS 1.2 / 1.3, port 443; port 80 -> 301 HTTPS)
+        ▼
+  ┌───────────┐
+  │   Nginx   │  TLS termination, HSTS-ready, overwrites X-Forwarded-For,
+  │  (proxy)  │  serves /media/ read-only with X-Content-Type-Options: nosniff
+  └─────┬─────┘
+        │  HTTP (internal Docker network only, port 8000 not exposed)
+        ▼
+  ┌───────────┐
+  │  Django   │  Gunicorn (unprivileged UID 1000), WhiteNoise static files
+  │  + DRF    │  Apps: users | products | carts | orders | dashboard | audit
+  └─────┬─────┘
+        │  PostgreSQL protocol (internal Docker network)
+        ▼
+  ┌───────────┐
+  │PostgreSQL │  postgres:16-alpine (persistent volume: postgres_data)
+  └───────────┘
 ```
 
-This command is the same in PowerShell and a Linux/macOS terminal.
+### Django Applications
+- **`users`**: Custom `UserProfile` (`store_credit`, `email_confirmed`), `Coupon`, `CouponUsage` (single-use enforcement), `NewsletterSubscriber`, and RBAC permission classes (`IsStaff`, `IsStaffOrCreateReadOnly`).
+- **`products`**: `Category` and `Product` models with search, filtering, and pagination.
+- **`carts`**: Session/user `Cart`, `CartItem`, and atomic `CheckoutView` (validates stock, single-use coupons, and store credit).
+- **`orders`**: `Order`, `OrderItem`, owner-scoped `OrderViewSet` (prevents IDOR), server-side pricing, and atomic API `CheckoutView`.
+- **`dashboard`**: Web UI for storefront, cart, profile/settings, email confirmation, newsletter signup, and staff-only management/audit pages.
+- **`audit`**: `AuditLog` model, signals, middleware, brute-force lockout (`AuditedTokenObtainPairView`, `429` after 5 failures), and JWT refresh-token blacklisting (`LogoutAPIView`).
 
-## Optional Make shortcuts
+### Security Controls Summary
+- **Transport (TLS):** Nginx terminates TLS 1.2/1.3 with self-signed certs (`scripts/generate_certs.sh`) and redirects all HTTP to HTTPS; Django enforces `SESSION_COOKIE_SECURE` and `CSRF_COOKIE_SECURE`. See [docs/TLS_AAA.md](docs/TLS_AAA.md).
+- **Authentication & Sessions:** PBKDF2 password hashing, per-IP/username login lockout (`429`), JWT refresh-token blacklisting on logout, signed email-confirmation tokens.
+- **Authorization:** Object-level ownership scoping on orders (blocks IDOR), `@staff_required` / `IsAdminUser` on admin pages and `/api/docs/`.
+- **Business Logic & Input Validation:** Server-side price lookup, atomic `select_for_update()` store-credit & stock checks, single-use `CouponUsage` constraint, cryptographically random newsletter coupons (`secrets.token_hex`), generic error responses, Django ORM (SQLi-safe), template auto-escaping + `textContent` (XSS-safe), and `CsrfViewMiddleware`.
+- **Accounting:** All logins, lockouts, logouts, access denials (`403`), and model changes are recorded in `AuditLog` without logging passwords.
 
-Make can be used on Linux or on Windows through WSL/Git Bash. The Make targets contain only Docker Compose commands and do not call OS-specific setup scripts:
+---
 
-```bash
-make setup
-make superuser
-make logs
-make down
-```
-
-Native Windows users do not need Make and should use the Docker Compose commands directly.
-
-## Everyday Docker commands
-
-```bash
-docker compose ps
-docker compose logs -f web nginx db
-docker compose restart
-docker compose down
-```
-
-Run a fresh database from scratch:
-
-```bash
-docker compose down -v
-docker compose up -d --build --wait
-```
-
-`docker compose down -v` deletes PostgreSQL and app volumes, including accounts and demo data.
-
-## Security: HTTPS and AAA
-
-See [docs/TLS_AAA.md](docs/TLS_AAA.md). The Docker setup serves the app over HTTPS at **https://localhost**.
-
-## Run locally without Docker
-
-### Windows (PowerShell)
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-Copy-Item .env.example .env
-```
-
-### Linux or macOS
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-cp .env.example .env
-```
-
-For PostgreSQL, set `DATABASE_URL` in `.env`, for example:
-
-```env
-SECRET_KEY=your_secret_key
-DEBUG=True
-DATABASE_URL=postgres://nexus:nexus_password@localhost:5432/nexus
-```
-
-Then apply migrations and start Django:
-
-```bash
-python manage.py migrate
-python manage.py runserver
-```
-
-Without `DATABASE_URL`, Django automatically uses the local SQLite database `db.sqlite3`.
-
-
-
-API Usage
-
-
-
-Access Swagger documentation at /api/docs/ after running the server.
-
-Example endpoints:
-
-GET /api/products/ - List all products with filtering and pagination.
-
-POST /api/auth/login/ - Authenticate and receive JWT token.
-
-POST /api/carts/ - Add items to the user's cart.
-
-
-
-
-
-
-
-Future Enhancements
-
-
-
-Integrate Docker for containerized deployment.
-
-Add Celery and RabbitMQ for background tasks (e.g., order processing).
-
-Implement Redis caching for improved performance.
-
-
-
-### Seed the database
-
-With Docker running:
-
-```bash
-docker compose exec web python manage.py migrate
-docker compose exec web python manage.py seed_data
-```
-
-To delete and rebuild sample project data:
-
-```bash
-docker compose exec web python manage.py seed_data --clear
-```
-
-Default accounts:
-
-- `admin` / `Admin!2026#Secure` — administrator and Django superuser
-- `staff` / `Staff!2026#Secure` — staff administrator
-- `customer` / `Customer!2026#Secure` — standard user
-
-The seed includes categories, products, a cart and cart items, an order and order items.
-
-
-
-Quick Docker commands:
-
-```bash
-make setup     # build containers, migrate, and seed
-make up        # start containers
-make seed      # seed data
-make reset     # clear and reseed project data
-make check     # Django check, migration check, and tests
-make logs      # follow web and database logs
-make shell     # open Django shell
-make superuser # create an admin account
-make down      # stop containers
-```
-
-Direct Docker Compose commands:
-
-```bash
-docker compose up -d --build --wait
-docker compose exec web python manage.py migrate
-docker compose exec web python manage.py seed_data
-```
-
-
-
+## Red Team & Documentation
+- **Security Coverage Matrix:** `red_team/reports/coverage_matrix.md`
+- **Live Tests & Evidence:** `red_team/live_tests/`, `red_team/evidence/`
+- **Isolated Lab Demos (Naive vs. Defended):** `red_team/labs/`
+- **TLS & AAA Guide:** `docs/TLS_AAA.md`

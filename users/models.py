@@ -23,6 +23,21 @@ class Coupon(models.Model):
         return self.code
 
 
+class CouponUsage(models.Model):
+    """Tracks per-user coupon redemptions to prevent replay/reuse."""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="coupon_usages")
+    coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE, related_name="usages")
+    used_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["user", "coupon"], name="unique_user_coupon_usage")
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} used {self.coupon.code}"
+
+
 class NewsletterSubscriber(models.Model):
     email = models.EmailField(unique=True)
     subscribed_at = models.DateTimeField(auto_now_add=True)

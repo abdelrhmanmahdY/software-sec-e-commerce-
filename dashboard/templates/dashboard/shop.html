@@ -623,7 +623,12 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    newsletterMessage.innerHTML = '<div class="alert alert-success mb-0">Subscribed successfully! 🎉 Check your email for the coupon.</div>';
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-success mb-0';
+                    alertDiv.textContent = data.coupon_code
+                        ? `${data.message} Your coupon code: ${data.coupon_code}`
+                        : (data.message || 'Subscribed successfully!');
+                    newsletterMessage.replaceChildren(alertDiv);
                     newsletterForm.reset();
                 } else {
                     newsletterMessage.innerHTML = '<div class="alert alert-danger mb-0">Subscription failed. Please try again.</div>';

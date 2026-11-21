@@ -76,7 +76,9 @@ class Command(BaseCommand):
         customer.save()
 
         # Seed store credit balance
-        customer.profile.store_credit = Decimal("100.00")
+        admin.profile.store_credit = Decimal("500.00")
+        admin.profile.save(update_fields=["store_credit"])
+        customer.profile.store_credit = Decimal("500.00")
         customer.profile.save(update_fields=["store_credit"])
 
         categories = {}
