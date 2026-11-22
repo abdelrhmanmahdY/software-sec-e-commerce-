@@ -1,0 +1,225 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Security Requirements Audit — SecureShop Red Team</title><style>
+:root{--navy:#0b1f3a;--navy2:#13335c;--accent:#2dd4bf;--bg:#f5f7fa;--ink:#1a2330;
+--ok:#15803d;--okbg:#dcfce7;--bad:#b91c1c;--badbg:#fee2e2;--mid:#b45309;--midbg:#fef3c7;--mut:#64748b;}
+*{box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;color:var(--ink);background:var(--bg);
+margin:0;line-height:1.55;font-size:15px}
+.wrap{max-width:900px;margin:0 auto;padding:0 28px 60px}
+.cover{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:40px 28px;margin-bottom:28px}
+.cover .wrap{padding:0 28px}
+.cover .tag{letter-spacing:.18em;text-transform:uppercase;font-size:12px;color:var(--accent)}
+.cover h1{margin:.2em 0;font-size:30px;color:#fff}
+.cover .meta{color:#c7d2e0;font-size:13px}
+h1,h2,h3{color:var(--navy);line-height:1.25}
+h2{border-bottom:2px solid #e2e8f0;padding-bottom:.25em;margin-top:1.6em}
+h3{margin-top:1.3em}
+a{color:var(--navy2)}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:13.5px}
+th,td{border:1px solid #d7dee8;padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--navy);color:#fff;font-weight:600}
+tr:nth-child(even) td{background:#fff}
+tr:nth-child(odd) td{background:#eef2f7}
+code{background:#e8edf3;padding:.1em .35em;border-radius:3px;font-size:.92em}
+pre{background:var(--navy);color:#e6edf3;padding:14px;border-radius:8px;overflow:auto;font-size:13px}
+pre code{background:none;color:inherit}
+blockquote{border-left:4px solid var(--accent);background:#eef7f6;margin:1em 0;padding:.5em 1em;color:#334155}
+.badge{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+.b-ok{background:var(--okbg);color:var(--ok)} .b-bad{background:var(--badbg);color:var(--bad)}
+.b-mid{background:var(--midbg);color:var(--mid)} .b-mut{background:#e2e8f0;color:var(--mut)}
+.footer{margin-top:40px;border-top:1px solid #e2e8f0;padding-top:12px;color:var(--mut);font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin:1.5em 0}
+.card{background:#fff;border:1px solid #d7dee8;border-radius:10px;padding:16px}
+.card h3{margin:.1em 0 .4em}.card a{text-decoration:none}
+@media print{body{background:#fff;font-size:12px}.wrap{max-width:none;padding:0 6mm}
+.cover{margin:0 0 10mm}@page{size:A4;margin:14mm}h2{page-break-after:avoid}table,pre{page-break-inside:avoid}}
+body.landscape table{font-size:10.5px}
+body.landscape td,body.landscape th{padding:5px 6px}
+@media print{@page landscape{size:A4 landscape;margin:10mm}
+body.landscape{page:landscape}body.landscape .wrap{max-width:none;padding:0 4mm}}
+</style></head>
+<body class="landscape"><div class="cover"><div class="wrap"><div class="tag">CET431 · Red Team</div>
+<h1>Security Requirements Audit</h1>
+<div class="meta">SecureShop Security Assessment · 2026-11-22</div></div></div>
+<div class="wrap"><h1 id="official-security-requirements-compliance-matrix">Official Security Requirements Compliance Matrix</h1>
+<p><strong>Audit date:</strong> 2026-11-22<br />
+<strong>Sources:</strong> attached CET431 specification, <code>red_team/labs/lab1_*</code> through <code>lab5_*</code>, existing SecureShop Red Team reports and live evidence.</p>
+<h2 id="matrix">Matrix</h2>
+<table>
+<thead>
+<tr>
+<th>Course topic</th>
+<th>Applicable features</th>
+<th>Naive scenario</th>
+<th>SecureShop defense / code</th>
+<th>Manual/automated evidence</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Excessive client-side trust (Lab 1)</td>
+<td>Cart, checkout, order items</td>
+<td>Browser supplies price/total/status</td>
+<td>Server reads catalog price and restricts status/price</td>
+<td>Existing live regression test H6</td>
+<td>IMPLEMENTED &amp; VERIFIED for tested order-item price</td>
+</tr>
+<tr>
+<td>Business-rule enforcement (Lab 2.1)</td>
+<td>Coupons, checkout</td>
+<td>Coupon replay/stacking</td>
+<td><code>CouponUsage</code> unique <code>(user,coupon)</code>; coupon validation in checkout</td>
+<td>Unit/code evidence exists; live reuse not completed this audit</td>
+<td>IMPLEMENTED, NOT VERIFIED</td>
+</tr>
+<tr>
+<td>Exceptional input (Lab 2.2)</td>
+<td>Registration, cart quantities, profile</td>
+<td>Over-long/negative/empty input</td>
+<td>Django forms/serializers and quantity checks need live verification</td>
+<td>No complete browser or malformed-input evidence</td>
+<td><span class="badge b-mut">NOT TESTED</span></td>
+</tr>
+<tr>
+<td>Workflow validation (Lab 2.3)</td>
+<td>Checkout, confirmation, order state</td>
+<td>Skip payment or replay confirmation</td>
+<td>Atomic checkout, store-credit and stock checks</td>
+<td>Source exists; no live workflow or DB delta completed</td>
+<td>IMPLEMENTED, NOT VERIFIED</td>
+</tr>
+<tr>
+<td>Authentication identity and 2FA (Lab 3)</td>
+<td>Login, 2FA, sessions</td>
+<td>Client-controlled identity or weak MFA</td>
+<td>Server-side Django authentication, TOTP fields/routes exist</td>
+<td>Seed/TOTP state not enforced test; browser login passed</td>
+<td>PARTIAL</td>
+</tr>
+<tr>
+<td>Brute-force protection (Lab 3/AAA)</td>
+<td>Login, 2FA</td>
+<td>Unlimited password/code attempts</td>
+<td>Lockout backend and DRF throttling</td>
+<td>Unit test suite and existing lockout evidence; live browser/API result has prior inconclusive flag</td>
+<td>IMPLEMENTED &amp; VERIFIED by automated test, live recheck <span class="badge b-mid">INCONCLUSIVE</span></td>
+</tr>
+<tr>
+<td>Authorization / IDOR</td>
+<td>Orders, profiles, cart, admin</td>
+<td>Read/edit another user's data</td>
+<td>Owner-scoped order query, staff/admin guards</td>
+<td>Existing live H5 regression passed; browser role checks passed for Django newsletter</td>
+<td>IMPLEMENTED &amp; VERIFIED in sampled areas</td>
+</tr>
+<tr>
+<td>Least privilege</td>
+<td>Customer, staff, admin</td>
+<td>Customer reaches staff/admin operations</td>
+<td><code>is_staff</code>, <code>is_superuser</code>, staff decorators, Django admin permissions</td>
+<td>Browser: customer denied, staff got 403 at Django newsletter, admin got changelist</td>
+<td>IMPLEMENTED &amp; VERIFIED</td>
+</tr>
+<tr>
+<td>Password storage</td>
+<td>Accounts</td>
+<td>Offline hash cracking</td>
+<td>Django password hasher/PBKDF2</td>
+<td>Source/config only</td>
+<td>IMPLEMENTED, NOT VERIFIED</td>
+</tr>
+<tr>
+<td>Session security</td>
+<td>Login/logout/protected pages</td>
+<td>Replay or steal session/JWT</td>
+<td>HttpOnly/SameSite/Secure cookies; 30-minute sliding session; refresh blacklist</td>
+<td>Config/source exists; logout browser observed; refresh replay not rerun by this audit</td>
+<td>IMPLEMENTED, NOT VERIFIED</td>
+</tr>
+<tr>
+<td>Information leakage</td>
+<td>Login, errors, API docs</td>
+<td>Verbous errors/docs leak internals</td>
+<td>Generic error responses and admin-only Swagger</td>
+<td>Existing H22 live 403; customer/unauth admin URL checks</td>
+<td>PARTIAL</td>
+</tr>
+<tr>
+<td>Fail secure</td>
+<td>Checkout, auth, authorization</td>
+<td>Partial failure creates order/grants access</td>
+<td>Transactions and permission checks</td>
+<td>Unit/source evidence; malformed live workflows incomplete</td>
+<td>PARTIAL</td>
+</tr>
+<tr>
+<td>Accounting / non-repudiation</td>
+<td>Logins, 403s, models</td>
+<td>Critical actions lack audit trail</td>
+<td><code>AuditLog</code>, middleware and signals</td>
+<td>73 live audit rows observed and unit tests create audit events</td>
+<td>IMPLEMENTED &amp; VERIFIED at implementation level</td>
+</tr>
+<tr>
+<td>Behavioral anomaly detection (Lab 4)</td>
+<td>Login risk</td>
+<td>Replay typing signature</td>
+<td>No implementation found</td>
+<td>No feature in source</td>
+<td><span class="badge b-mut">NOT APPLICABLE</span> / absent</td>
+</tr>
+<tr>
+<td>Location/time/passkeys (Lab 5)</td>
+<td>Login/MFA</td>
+<td>Bypass location/time/passkey policy</td>
+<td>TOTP groundwork only; no location/passkey/time gate found</td>
+<td>Code fields/routes exist, no live TOTP enrollment/MFA enforcement test</td>
+<td>PARTIAL / not a standalone passkey/location control</td>
+</tr>
+<tr>
+<td>SQL injection</td>
+<td>Search/API/database reads</td>
+<td>Inject SQL</td>
+<td>Django ORM parameterized queries</td>
+<td>Automated/live claims in docs, not independently rerun in this audit</td>
+<td>IMPLEMENTED, NOT VERIFIED</td>
+</tr>
+<tr>
+<td>XSS</td>
+<td>Search/profile/newsletter</td>
+<td>Inject script/DOM HTML</td>
+<td>Template escaping and <code>textContent</code> claim</td>
+<td>Source claim only, no live payload test this audit</td>
+<td>IMPLEMENTED, NOT VERIFIED</td>
+</tr>
+<tr>
+<td>CSRF</td>
+<td>State-changing forms/JWT</td>
+<td>Forged state change</td>
+<td>Django CSRF middleware; secure cookies</td>
+<td>Source/config evidence; no live forged request test this audit</td>
+<td>IMPLEMENTED, NOT VERIFIED</td>
+</tr>
+<tr>
+<td>TLS and transport</td>
+<td>Login/admin/API</td>
+<td>Credential/cookie sniffing</td>
+<td>nginx TLS, secure session/CSRF cookies</td>
+<td>Browser reached HTTPS, application root and admin under HTTPS</td>
+<td>IMPLEMENTED &amp; VERIFIED</td>
+</tr>
+<tr>
+<td>Misconfiguration</td>
+<td>Debug/API docs/admin</td>
+<td>Expose schema or internals</td>
+<td><code>DEBUG=False</code>, admin permissions, Swagger <code>IsAdminUser</code></td>
+<td>Live unauth/role checks</td>
+<td>IMPLEMENTED &amp; VERIFIED for admin newsletter and API docs evidence</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Security evidence caveat:</strong> Existing reports contain several unverified or contradictory claims. They are not counted as live-verified unless a current browser run, database check, or 16-test suite output independently supports them.</p>
+<div class="footer">SecureShop Red Team · local authorized assessment · generated from
+<code>red_team/reports/</code></div></div></body></html>

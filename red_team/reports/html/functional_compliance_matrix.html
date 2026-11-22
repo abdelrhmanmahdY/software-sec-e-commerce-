@@ -1,0 +1,144 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Functional Requirements Audit — SecureShop Red Team</title><style>
+:root{--navy:#0b1f3a;--navy2:#13335c;--accent:#2dd4bf;--bg:#f5f7fa;--ink:#1a2330;
+--ok:#15803d;--okbg:#dcfce7;--bad:#b91c1c;--badbg:#fee2e2;--mid:#b45309;--midbg:#fef3c7;--mut:#64748b;}
+*{box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;color:var(--ink);background:var(--bg);
+margin:0;line-height:1.55;font-size:15px}
+.wrap{max-width:900px;margin:0 auto;padding:0 28px 60px}
+.cover{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:40px 28px;margin-bottom:28px}
+.cover .wrap{padding:0 28px}
+.cover .tag{letter-spacing:.18em;text-transform:uppercase;font-size:12px;color:var(--accent)}
+.cover h1{margin:.2em 0;font-size:30px;color:#fff}
+.cover .meta{color:#c7d2e0;font-size:13px}
+h1,h2,h3{color:var(--navy);line-height:1.25}
+h2{border-bottom:2px solid #e2e8f0;padding-bottom:.25em;margin-top:1.6em}
+h3{margin-top:1.3em}
+a{color:var(--navy2)}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:13.5px}
+th,td{border:1px solid #d7dee8;padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--navy);color:#fff;font-weight:600}
+tr:nth-child(even) td{background:#fff}
+tr:nth-child(odd) td{background:#eef2f7}
+code{background:#e8edf3;padding:.1em .35em;border-radius:3px;font-size:.92em}
+pre{background:var(--navy);color:#e6edf3;padding:14px;border-radius:8px;overflow:auto;font-size:13px}
+pre code{background:none;color:inherit}
+blockquote{border-left:4px solid var(--accent);background:#eef7f6;margin:1em 0;padding:.5em 1em;color:#334155}
+.badge{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+.b-ok{background:var(--okbg);color:var(--ok)} .b-bad{background:var(--badbg);color:var(--bad)}
+.b-mid{background:var(--midbg);color:var(--mid)} .b-mut{background:#e2e8f0;color:var(--mut)}
+.footer{margin-top:40px;border-top:1px solid #e2e8f0;padding-top:12px;color:var(--mut);font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin:1.5em 0}
+.card{background:#fff;border:1px solid #d7dee8;border-radius:10px;padding:16px}
+.card h3{margin:.1em 0 .4em}.card a{text-decoration:none}
+@media print{body{background:#fff;font-size:12px}.wrap{max-width:none;padding:0 6mm}
+.cover{margin:0 0 10mm}@page{size:A4;margin:14mm}h2{page-break-after:avoid}table,pre{page-break-inside:avoid}}
+body.landscape table{font-size:10.5px}
+body.landscape td,body.landscape th{padding:5px 6px}
+@media print{@page landscape{size:A4 landscape;margin:10mm}
+body.landscape{page:landscape}body.landscape .wrap{max-width:none;padding:0 4mm}}
+</style></head>
+<body class="landscape"><div class="cover"><div class="wrap"><div class="tag">CET431 · Red Team</div>
+<h1>Functional Requirements Audit</h1>
+<div class="meta">SecureShop Security Assessment · 2026-11-22</div></div></div>
+<div class="wrap"><h1 id="official-functional-requirements-compliance-matrix">Official Functional Requirements Compliance Matrix</h1>
+<p><strong>Audit date:</strong> 2026-11-22<br />
+<strong>Environment:</strong> SecureShop at <code>https://localhost</code> (Django 5.2.4, PostgreSQL 16)<br />
+<strong>Boundary:</strong> Read-only audit of Blue Team code/database; no application fixes or data changes were made.</p>
+<h2 id="evidence-key">Evidence key</h2>
+<ul>
+<li><strong>PASS</strong> — end-to-end browser/database verification completed.</li>
+<li><strong>PARTIAL</strong> — some workflow steps or evidence exist, but the complete requirement is not verified.</li>
+<li><strong><span class="badge b-mut">NOT TESTED</span></strong> — no reproducible end-to-end verification performed.</li>
+<li><strong>FAIL</strong> — broken or missing in an observed workflow.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Official requirement</th>
+<th style="text-align: right;">Points</th>
+<th>Status</th>
+<th>Live/browser evidence</th>
+<th>Database or source evidence</th>
+<th>Missing work</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Registration, account confirmation, login, logout</td>
+<td style="text-align: right;">5</td>
+<td>PARTIAL</td>
+<td>Admin, staff, and <code>admin@example.test</code>/<code>customer</code> login flows were browser-tested. Logout was reached and redirected to login. Registration/confirmation invalid-account behavior remains untested.</td>
+<td><code>dashboard/views.py:110,190,194</code>; signup confirmation code exists. Live seed accounts verified.</td>
+<td>Test registration, confirmation link, confirmed/unknown input, and repeat/invalid confirmation.</td>
+</tr>
+<tr>
+<td>Product catalogue, details, search/filter</td>
+<td style="text-align: right;">4</td>
+<td>PARTIAL</td>
+<td>Customer shop page loaded 4 products. Product detail/search/filter pages were not fully exercised end-to-end.</td>
+<td><code>products/models.py</code>; <code>dashboard/views.py:444,563</code>; 4 live products.</td>
+<td>Browser test details, search, filters, no-result state, and nonexistent product.</td>
+</tr>
+<tr>
+<td>Cart add/remove/quantity/session persistence</td>
+<td style="text-align: right;">4</td>
+<td>PARTIAL</td>
+<td>Logged-in customer shop loaded with cart count. Customer cart page and an existing cart can exist, but add/remove/quantity/session persistence were not proven.</td>
+<td>Live customer cart had 2 items in the earlier database snapshot; <code>carts/models.py</code>, <code>dashboard/views.py:424-437</code>.</td>
+<td>Add/remove/quantity; refresh/re-login session persistence; cross-user cart protection.</td>
+</tr>
+<tr>
+<td>Newsletter signup and coupon issuance/application</td>
+<td style="text-align: right;">3</td>
+<td>PARTIAL</td>
+<td>Newsletter form is visible on the shop, but successful subscription/coupon issuance was not completed.</td>
+<td>6 live newsletter rows; signup code at <code>dashboard/views.py:521</code>; coupon usage code exists.</td>
+<td>Submit valid/duplicate/invalid newsletter; verify DB row/coupon; apply once and reuse.</td>
+</tr>
+<tr>
+<td>Store-credit checkout and order confirmation/history</td>
+<td style="text-align: right;">5</td>
+<td><span class="badge b-mut">NOT TESTED</span></td>
+<td>No successful or rejected checkout workflow was browser-tested.</td>
+<td>Checkout source and live order rows exist.</td>
+<td>Browser checkout, insufficient credit, invalid quantity/coupon, confirmation and order history.</td>
+</tr>
+<tr>
+<td>User profile view/edit and owner-only orders</td>
+<td style="text-align: right;">3</td>
+<td>PARTIAL</td>
+<td>Profile route was reachable and a browser profile tab existed in one session. No edit was verified.</td>
+<td><code>dashboard/views.py:222,226</code>; live 5 profiles.</td>
+<td>Edit valid/invalid values; save and reload; cross-user order/profile denial.</td>
+</tr>
+<tr>
+<td>Admin management of users/products/coupons</td>
+<td style="text-align: right;">4</td>
+<td>PARTIAL</td>
+<td>Admin account reached Django dashboard and the newsletter subscriber changelist. Staff reached a staff dashboard. Customer and unauthenticated Django URLs were denied.</td>
+<td>Django admin registrations for users/coupons/newsletter; 5 live users and 5 coupons.</td>
+<td>Browser-test user, product, coupon create/edit/delete and role boundaries.</td>
+</tr>
+<tr>
+<td>Desktop/mobile usability</td>
+<td style="text-align: right;">2</td>
+<td><span class="badge b-mut">NOT TESTED</span></td>
+<td>Desktop browser was used and shop/admin pages rendered. Mobile viewport was not tested.</td>
+<td>Responsive CSS/templates exist.</td>
+<td>Run mobile viewport and navigation/form usability checks.</td>
+</tr>
+<tr>
+<td>Error handling/navigation</td>
+<td style="text-align: right;">2</td>
+<td>PARTIAL</td>
+<td>403 and login/redirect behavior was observed. JS console reported missing clock element on shop/dashboard.</td>
+<td>Django and templates exist.</td>
+<td>Document safe valid/invalid errors and resolve or record the JS console defects.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Functionality status:</strong> 0 PASS, 6 PARTIAL, 5 <span class="badge b-mut">NOT TESTED</span>, 0 FAIL. This is conservative because implementation without a reproducible browser/database workflow is not awarded full credit.</p>
+<div class="footer">SecureShop Red Team · local authorized assessment · generated from
+<code>red_team/reports/</code></div></div></body></html>

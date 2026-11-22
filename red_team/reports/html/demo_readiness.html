@@ -1,0 +1,81 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Demo and Q&amp;A Readiness — SecureShop Red Team</title><style>
+:root{--navy:#0b1f3a;--navy2:#13335c;--accent:#2dd4bf;--bg:#f5f7fa;--ink:#1a2330;
+--ok:#15803d;--okbg:#dcfce7;--bad:#b91c1c;--badbg:#fee2e2;--mid:#b45309;--midbg:#fef3c7;--mut:#64748b;}
+*{box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;color:var(--ink);background:var(--bg);
+margin:0;line-height:1.55;font-size:15px}
+.wrap{max-width:900px;margin:0 auto;padding:0 28px 60px}
+.cover{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:40px 28px;margin-bottom:28px}
+.cover .wrap{padding:0 28px}
+.cover .tag{letter-spacing:.18em;text-transform:uppercase;font-size:12px;color:var(--accent)}
+.cover h1{margin:.2em 0;font-size:30px;color:#fff}
+.cover .meta{color:#c7d2e0;font-size:13px}
+h1,h2,h3{color:var(--navy);line-height:1.25}
+h2{border-bottom:2px solid #e2e8f0;padding-bottom:.25em;margin-top:1.6em}
+h3{margin-top:1.3em}
+a{color:var(--navy2)}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:13.5px}
+th,td{border:1px solid #d7dee8;padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--navy);color:#fff;font-weight:600}
+tr:nth-child(even) td{background:#fff}
+tr:nth-child(odd) td{background:#eef2f7}
+code{background:#e8edf3;padding:.1em .35em;border-radius:3px;font-size:.92em}
+pre{background:var(--navy);color:#e6edf3;padding:14px;border-radius:8px;overflow:auto;font-size:13px}
+pre code{background:none;color:inherit}
+blockquote{border-left:4px solid var(--accent);background:#eef7f6;margin:1em 0;padding:.5em 1em;color:#334155}
+.badge{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+.b-ok{background:var(--okbg);color:var(--ok)} .b-bad{background:var(--badbg);color:var(--bad)}
+.b-mid{background:var(--midbg);color:var(--mid)} .b-mut{background:#e2e8f0;color:var(--mut)}
+.footer{margin-top:40px;border-top:1px solid #e2e8f0;padding-top:12px;color:var(--mut);font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin:1.5em 0}
+.card{background:#fff;border:1px solid #d7dee8;border-radius:10px;padding:16px}
+.card h3{margin:.1em 0 .4em}.card a{text-decoration:none}
+@media print{body{background:#fff;font-size:12px}.wrap{max-width:none;padding:0 6mm}
+.cover{margin:0 0 10mm}@page{size:A4;margin:14mm}h2{page-break-after:avoid}table,pre{page-break-inside:avoid}}
+body.landscape table{font-size:10.5px}
+body.landscape td,body.landscape th{padding:5px 6px}
+@media print{@page landscape{size:A4 landscape;margin:10mm}
+body.landscape{page:landscape}body.landscape .wrap{max-width:none;padding:0 4mm}}
+</style></head>
+<body><div class="cover"><div class="wrap"><div class="tag">CET431 · Red Team</div>
+<h1>Demo and Q&amp;A Readiness</h1>
+<div class="meta">SecureShop Security Assessment · 2026-11-22</div></div></div>
+<div class="wrap"><h1 id="1015-minute-demo-and-qa-readiness">10–15 Minute Demo and Q&amp;A Readiness</h1>
+<h2 id="readiness-partial">Readiness: PARTIAL</h2>
+<p>The project can demonstrate HTTPS login, role separation, the admin dashboard and Django newsletter access. The 10–15 minute demo is not yet complete evidence because core checkout, coupon, registration/confirmation, cart mutation and mobile workflows are not fully browser-verified.</p>
+<h2 id="proposed-sequence">Proposed sequence</h2>
+<ol>
+<li><strong>Opening — 60 seconds:</strong> show <code>https://localhost</code>, Docker containers, and the role distinction.</li>
+<li><strong>Customer — 3 minutes:</strong> login, show shop/products, open details, add/remove a cart item, open cart/profile and account history.</li>
+<li><strong>Customer boundaries — 2 minutes:</strong> navigate to <code>/admin/users/newslettersubscriber/</code> and show denial or login redirect.</li>
+<li><strong>Staff — 2 minutes:</strong> login, show staff dashboard, attempt protected Django admin newsletter URL and show 403.</li>
+<li><strong>Admin — 2 minutes:</strong> login, open Django admin and newsletter changelist; show six live subscriber rows and add/change/delete controls.</li>
+<li><strong>Security evidence — 3 minutes:</strong> show threat model, 16-test run, lockout/IDOR/unit evidence and honest unverified gaps.</li>
+<li><strong>Naive vs Secure — 2 minutes:</strong> show isolated lab scripts and explain that only verified controls count.</li>
+<li><strong>Close — 1 minute:</strong> summarize genuine findings, residual risk and next work.</li>
+</ol>
+<h2 id="role-specific-questions-to-prepare">Role-specific questions to prepare</h2>
+<ul>
+<li>Why does a customer get denied by Django admin?</li>
+<li>Why does staff get 403 while admin can view the newsletter changelist?</li>
+<li>Why is HTTP 403 not itself proof of no vulnerability?</li>
+<li>What does owner scoping mean in <code>OrderViewSet</code>?</li>
+<li>Why must checkout recompute price and total server-side?</li>
+<li>How does <code>CouponUsage</code> prevent reuse?</li>
+<li>How does the lockout backend track failures?</li>
+<li>Why can unit tests pass while browser evidence remains incomplete?</li>
+<li>How does the audit log prove/limit accountability?</li>
+<li>What is present for TOTP, and what is not enforced?</li>
+<li>Why are behavioral anomaly detection and passkeys not marked complete unless implemented?</li>
+</ul>
+<h2 id="qa-blockers">Q&amp;A blockers</h2>
+<ul>
+<li>Git history cannot currently be verified by the audit shell.</li>
+<li>Several security claims in reports need live reruns.</li>
+<li>No complete browser checkout/cart/registration evidence exists yet.</li>
+<li>Mobile behavior is not verified.</li>
+</ul>
+<div class="footer">SecureShop Red Team · local authorized assessment · generated from
+<code>red_team/reports/</code></div></div></body></html>

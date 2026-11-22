@@ -1,0 +1,132 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Documentation Compliance Audit — SecureShop Red Team</title><style>
+:root{--navy:#0b1f3a;--navy2:#13335c;--accent:#2dd4bf;--bg:#f5f7fa;--ink:#1a2330;
+--ok:#15803d;--okbg:#dcfce7;--bad:#b91c1c;--badbg:#fee2e2;--mid:#b45309;--midbg:#fef3c7;--mut:#64748b;}
+*{box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;color:var(--ink);background:var(--bg);
+margin:0;line-height:1.55;font-size:15px}
+.wrap{max-width:900px;margin:0 auto;padding:0 28px 60px}
+.cover{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:40px 28px;margin-bottom:28px}
+.cover .wrap{padding:0 28px}
+.cover .tag{letter-spacing:.18em;text-transform:uppercase;font-size:12px;color:var(--accent)}
+.cover h1{margin:.2em 0;font-size:30px;color:#fff}
+.cover .meta{color:#c7d2e0;font-size:13px}
+h1,h2,h3{color:var(--navy);line-height:1.25}
+h2{border-bottom:2px solid #e2e8f0;padding-bottom:.25em;margin-top:1.6em}
+h3{margin-top:1.3em}
+a{color:var(--navy2)}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:13.5px}
+th,td{border:1px solid #d7dee8;padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--navy);color:#fff;font-weight:600}
+tr:nth-child(even) td{background:#fff}
+tr:nth-child(odd) td{background:#eef2f7}
+code{background:#e8edf3;padding:.1em .35em;border-radius:3px;font-size:.92em}
+pre{background:var(--navy);color:#e6edf3;padding:14px;border-radius:8px;overflow:auto;font-size:13px}
+pre code{background:none;color:inherit}
+blockquote{border-left:4px solid var(--accent);background:#eef7f6;margin:1em 0;padding:.5em 1em;color:#334155}
+.badge{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+.b-ok{background:var(--okbg);color:var(--ok)} .b-bad{background:var(--badbg);color:var(--bad)}
+.b-mid{background:var(--midbg);color:var(--mid)} .b-mut{background:#e2e8f0;color:var(--mut)}
+.footer{margin-top:40px;border-top:1px solid #e2e8f0;padding-top:12px;color:var(--mut);font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin:1.5em 0}
+.card{background:#fff;border:1px solid #d7dee8;border-radius:10px;padding:16px}
+.card h3{margin:.1em 0 .4em}.card a{text-decoration:none}
+@media print{body{background:#fff;font-size:12px}.wrap{max-width:none;padding:0 6mm}
+.cover{margin:0 0 10mm}@page{size:A4;margin:14mm}h2{page-break-after:avoid}table,pre{page-break-inside:avoid}}
+body.landscape table{font-size:10.5px}
+body.landscape td,body.landscape th{padding:5px 6px}
+@media print{@page landscape{size:A4 landscape;margin:10mm}
+body.landscape{page:landscape}body.landscape .wrap{max-width:none;padding:0 4mm}}
+</style></head>
+<body><div class="cover"><div class="wrap"><div class="tag">CET431 · Red Team</div>
+<h1>Documentation Compliance Audit</h1>
+<div class="meta">SecureShop Security Assessment · 2026-11-22</div></div></div>
+<div class="wrap"><h1 id="documentation-and-evidence-compliance-matrix">Documentation and Evidence Compliance Matrix</h1>
+<p><strong>Audit date:</strong> 2026-11-22</p>
+<table>
+<thead>
+<tr>
+<th>Required item</th>
+<th>Status</th>
+<th>Actual finding</th>
+<th>Evidence / risk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>README setup/accounts/architecture</td>
+<td>PASS</td>
+<td>README contains Docker setup, seed accounts, architecture, security summary and test commands.</td>
+<td><code>README.md</code></td>
+</tr>
+<tr>
+<td>Git repository and meaningful history</td>
+<td><span class="badge b-mut">NOT TESTED</span> / <span class="badge b-mid">BLOCKED</span></td>
+<td>Repository is present, but <code>git.exe</code> was unavailable to the audit shell.</td>
+<td>Run/restore Git CLI before counting history as complete.</td>
+</tr>
+<tr>
+<td>8–12 page Security Design Report</td>
+<td>PARTIAL</td>
+<td>No clearly identified standalone 8–12 page design report was found. TLS/AAA and architecture reports exist but do not replace a complete design report.</td>
+<td><code>docs/TLS_AAA.md</code>, <code>red_team/reports/project_architecture.md</code></td>
+</tr>
+<tr>
+<td>Threat model with assets/entry points/attackers</td>
+<td>PASS</td>
+<td>STRIDE threat model exists and maps assets, roles, boundaries and entry points.</td>
+<td><code>red_team/reports/threat_model.md</code></td>
+</tr>
+<tr>
+<td>Complete Security Coverage Matrix</td>
+<td>PARTIAL</td>
+<td>Coverage matrix exists, but several entries say <span class="badge b-mut">NOT TESTED</span> or unverified. It is a useful matrix but not yet complete evidence coverage.</td>
+<td><code>red_team/reports/coverage_matrix.md</code></td>
+</tr>
+<tr>
+<td>Attack Evidence Report</td>
+<td>PARTIAL</td>
+<td>Attack evidence report exists, but many placeholders mark screenshots to insert. Live evidence folder now has some browser screenshots and regression files.</td>
+<td><code>docs/ATTACK_EVIDENCE_AND_PENTEST_REPORT.md</code>; <code>red_team/evidence/browser/</code></td>
+</tr>
+<tr>
+<td>Red Team Penetration Test Report</td>
+<td>PARTIAL</td>
+<td>Penetration report claims fixes and verification, but some rows are not independently reproduced and include evidence placeholders.</td>
+<td><code>red_team/reports/red_team_penetration_test_report.md</code></td>
+</tr>
+<tr>
+<td>Source code</td>
+<td>PASS</td>
+<td>Django source and test suite are present.</td>
+<td>Repository root and app folders</td>
+</tr>
+<tr>
+<td>Naive vs Secure comparison evidence</td>
+<td>PARTIAL</td>
+<td>Lab demos and naive attack scripts exist; browser/real-application comparison evidence is incomplete.</td>
+<td><code>red_team/labs/</code>, <code>red_team/evidence/naive_shop/attack_results.md</code></td>
+</tr>
+<tr>
+<td>Test suite and reproducible commands</td>
+<td>PASS</td>
+<td>16 Django tests ran successfully against an isolated test database on 2026-11-22.</td>
+<td>Live terminal output, <code>make test</code> equivalent command</td>
+</tr>
+<tr>
+<td>Browser evidence</td>
+<td>PARTIAL</td>
+<td>Six browser role/admin/screenshots exist, but functional workflows beyond login/shop/admin are incomplete.</td>
+<td><code>red_team/evidence/browser/</code></td>
+</tr>
+<tr>
+<td>Live database evidence</td>
+<td>PASS</td>
+<td>Live PostgreSQL vendor and migration state confirmed; safe account/role and table counts recorded.</td>
+<td>Docker shell output in this audit</td>
+</tr>
+</tbody>
+</table>
+<div class="footer">SecureShop Red Team · local authorized assessment · generated from
+<code>red_team/reports/</code></div></div></body></html>

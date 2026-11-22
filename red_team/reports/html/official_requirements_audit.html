@@ -1,0 +1,118 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Official Requirements Audit Dashboard — SecureShop Red Team</title><style>
+:root{--navy:#0b1f3a;--navy2:#13335c;--accent:#2dd4bf;--bg:#f5f7fa;--ink:#1a2330;
+--ok:#15803d;--okbg:#dcfce7;--bad:#b91c1c;--badbg:#fee2e2;--mid:#b45309;--midbg:#fef3c7;--mut:#64748b;}
+*{box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;color:var(--ink);background:var(--bg);
+margin:0;line-height:1.55;font-size:15px}
+.wrap{max-width:900px;margin:0 auto;padding:0 28px 60px}
+.cover{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:40px 28px;margin-bottom:28px}
+.cover .wrap{padding:0 28px}
+.cover .tag{letter-spacing:.18em;text-transform:uppercase;font-size:12px;color:var(--accent)}
+.cover h1{margin:.2em 0;font-size:30px;color:#fff}
+.cover .meta{color:#c7d2e0;font-size:13px}
+h1,h2,h3{color:var(--navy);line-height:1.25}
+h2{border-bottom:2px solid #e2e8f0;padding-bottom:.25em;margin-top:1.6em}
+h3{margin-top:1.3em}
+a{color:var(--navy2)}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:13.5px}
+th,td{border:1px solid #d7dee8;padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--navy);color:#fff;font-weight:600}
+tr:nth-child(even) td{background:#fff}
+tr:nth-child(odd) td{background:#eef2f7}
+code{background:#e8edf3;padding:.1em .35em;border-radius:3px;font-size:.92em}
+pre{background:var(--navy);color:#e6edf3;padding:14px;border-radius:8px;overflow:auto;font-size:13px}
+pre code{background:none;color:inherit}
+blockquote{border-left:4px solid var(--accent);background:#eef7f6;margin:1em 0;padding:.5em 1em;color:#334155}
+.badge{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+.b-ok{background:var(--okbg);color:var(--ok)} .b-bad{background:var(--badbg);color:var(--bad)}
+.b-mid{background:var(--midbg);color:var(--mid)} .b-mut{background:#e2e8f0;color:var(--mut)}
+.footer{margin-top:40px;border-top:1px solid #e2e8f0;padding-top:12px;color:var(--mut);font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin:1.5em 0}
+.card{background:#fff;border:1px solid #d7dee8;border-radius:10px;padding:16px}
+.card h3{margin:.1em 0 .4em}.card a{text-decoration:none}
+@media print{body{background:#fff;font-size:12px}.wrap{max-width:none;padding:0 6mm}
+.cover{margin:0 0 10mm}@page{size:A4;margin:14mm}h2{page-break-after:avoid}table,pre{page-break-inside:avoid}}
+body.landscape table{font-size:10.5px}
+body.landscape td,body.landscape th{padding:5px 6px}
+@media print{@page landscape{size:A4 landscape;margin:10mm}
+body.landscape{page:landscape}body.landscape .wrap{max-width:none;padding:0 4mm}}
+</style></head>
+<body><div class="cover"><div class="wrap"><div class="tag">CET431 · Red Team</div>
+<h1>Official Requirements Audit Dashboard</h1>
+<div class="meta">SecureShop Security Assessment · 2026-11-22</div></div></div>
+<div class="wrap"><h1 id="cet431-official-requirements-compliance-dashboard">CET431 Official Requirements Compliance Dashboard</h1>
+<p><strong>Audit date:</strong> 2026-11-22<br />
+<strong>Application:</strong> SecureShop, <code>https://localhost</code><br />
+<strong>Grade status:</strong> No final grade is invented. Evidence is insufficient for a reliable numeric score.</p>
+<h2 id="completion-summary">Completion summary</h2>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th style="text-align: right;">Approximate completion</th>
+<th>Basis</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Functional requirements</td>
+<td style="text-align: right;">25%</td>
+<td>Desktop login/shop/admin observed; most core workflows not end-to-end verified</td>
+</tr>
+<tr>
+<td>Security requirements</td>
+<td style="text-align: right;">35%</td>
+<td>Mixed: source/unit evidence exists, but many course topics remain live-unverified</td>
+</tr>
+<tr>
+<td>Documentation</td>
+<td style="text-align: right;">55%</td>
+<td>README, threat model and reports exist; design report/complete evidence remain gaps</td>
+</tr>
+<tr>
+<td>Testing and evidence</td>
+<td style="text-align: right;">45%</td>
+<td>16 tests passed; live database/browser evidence exists; many screenshots/requests absent</td>
+</tr>
+<tr>
+<td>Demo readiness</td>
+<td style="text-align: right;">40%</td>
+<td>Working admin/customer flows exist, but demo sequence lacks complete cart/checkout and naive comparison</td>
+</tr>
+</tbody>
+</table>
+<h2 id="critical-prioritization">Critical prioritization</h2>
+<ol>
+<li>Complete and document registration/confirmation, cart mutation, newsletter issuance, checkout and order history browser workflows.</li>
+<li>Prove coupon reuse, workflow state and client-side price checks against live database state.</li>
+<li>Replace or qualify report claims that are currently placeholders or code-only.</li>
+</ol>
+<h2 id="high-prioritization">High prioritization</h2>
+<ol>
+<li>Live-retest login lockout and JWT refresh blacklist.</li>
+<li>Re-run SQLi, XSS and CSRF checks safely and retain raw responses/screenshots.</li>
+<li>Complete mobile and invalid-input evidence.</li>
+<li>Add a standalone 8–12 page Security Design Report.</li>
+<li>Restore/verify Git history.</li>
+</ol>
+<h2 id="medium-prioritization">Medium prioritization</h2>
+<ol>
+<li>Fix or document shop/dashboard clock element JavaScript console errors.</li>
+<li>Improve report evidence index and browser screenshot naming.</li>
+<li>Complete 10–15 minute demo rehearsal and Q&amp;A notes.</li>
+</ol>
+<h2 id="core-live-findings">Core live findings</h2>
+<ul>
+<li>Customer session: shop loaded; direct Django newsletter URL returned login/authorization treatment, no subscriber data for that state.</li>
+<li>Staff: Django dashboard loaded; direct newsletter URL returned HTTP 403 with no subscriber data.</li>
+<li>Admin: Django newsletter URL loaded and displayed 6 live subscribers, plus add/change/delete controls.</li>
+<li>Unauthenticated: Django newsletter URL redirected to Django admin login.</li>
+<li>Live database: PostgreSQL 16, all migrations applied, 5 users, 6 newsletter subscribers, 4 products, 2 orders.</li>
+<li>Automated tests: 16/16 passed.</li>
+</ul>
+<h2 id="recommended-next-action">Recommended next action</h2>
+<p>Approve a second evidence-gathering phase focused on functional workflows and live security retests. Do not modify Blue Team code or database records until that evidence pass is complete.</p>
+<div class="footer">SecureShop Red Team · local authorized assessment · generated from
+<code>red_team/reports/</code></div></div></body></html>
