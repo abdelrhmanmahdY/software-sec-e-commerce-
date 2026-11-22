@@ -3,6 +3,20 @@
 **Updated:** 2026-11-22  
 Evidence is grouped by target and execution type. Historical evidence is not presented as a current live-deployment result.
 
+## Current authoritative evidence
+
+| Evidence | Target / method | Current result |
+|---|---|---|
+| [`naive_attack_20261122T055801Z_all.md`](../evidence/naive_shop/naive_attack_20261122T055801Z_all.md) | Naive Shop on `127.0.0.1:8010` | V1–V7 PASS with sanitized HTTP exchanges and impact checks. |
+| [`verify_inmemory_security_20261122T055710Z.json`](../evidence/review/verify_inmemory_security_20261122T055710Z.json) | SecureShop Django TestClient + SQLite `:memory:` | Signup activation, JWT/TOTP enforcement, session MFA/replay, and setup/disable results. |
+| [`totp_ip_lockout_20261122T055718Z.json`](../evidence/review/totp_ip_lockout_20261122T055718Z.json) | Synthetic users + SQLite `:memory:` | IP lockout after 20 failures only after test-only schema creation; missing migration is explicit. |
+| [`workflow_checks_20261122T055720Z.json`](../evidence/review/workflow_checks_20261122T055720Z.json) | Django TestClient/APIClient + SQLite `:memory:` | Actual workflow responses and state deltas for cart, stock, coupons, credit, CSRF, cookie identity and admin access. |
+| [`audit_tests_20261122T060013Z.txt`](../evidence/review/audit_tests_20261122T060013Z.txt) | Django test suite + SQLite `:memory:` | Corrected non-empty transcript; 16 tests passed. See the [evidence correction](../evidence/review/audit_test_evidence_correction_20261122.md). |
+| [`bandit_application_20261122T054622318131Z.json`](../evidence/review/bandit_application_20261122T054622318131Z.json) | Bandit application source scan | Two LOW observations; no medium/high findings. |
+| [`pip_audit_20261122T054622318131Z.json`](../evidence/review/pip_audit_20261122T054622318131Z.json) | Declared requirements | 216 advisories across 14 packages; not an exploitability assessment. |
+
+The corrected workflow evidence is the 05:57 run. The earlier workflow captures and their correction note are preserved; see [`workflow_checks_correction_20261122.md`](../evidence/review/workflow_checks_correction_20261122.md). Live SecureShop HTTPS/Docker/PostgreSQL remains NOT TESTED.
+
 | Evidence | Target / method | What it supports | Status / limits |
 |---|---|---|---|
 | [`naive_attack_20261122T021321Z.md`](../evidence/naive_shop/naive_attack_20261122T021321Z.md) | Naive Shop, local HTTP on `127.0.0.1:8010` | Raw V1–V7 requests and responses with order-state reads | Current captured run; V2 only proves repeated discount calculation; V6 proves no visible lockout response in eight attempts. |

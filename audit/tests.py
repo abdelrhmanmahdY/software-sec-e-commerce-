@@ -7,6 +7,7 @@ from rest_framework.test import APIClient
 
 from orders.models import Order
 from products.models import Category, Product
+from users.totp import get_totp_code
 
 from .models import AuditLog
 
@@ -50,6 +51,51 @@ class AuthenticationTests(TestCase):
             api.post("/api/auth/login/", {"username": "alice", "password": "bad"}, format="json")
         locked = api.post("/api/auth/login/", {"username": "alice", "password": PW}, format="json")
         self.assertEqual(locked.status_code, 429)
+
+    def test_jwt_login_requires_a_fresh_totp_code_for_enrolled_users(self):
+        user = User.objects.get(username="alice")
+        user.profile.totp_enabled = True
+        user.profile.totp_secret = "JBSWY3DPEHPK3PXP"
+        user.profile.save(update_fields=["totp_enabled", "totp_secret"])
+        api = APIClient()
+
+        missing_code = api.post(
+            "/api/auth/login/",
+            {"username": "alice", "password": PW},
+            format="json",
+        )
+        self.assertEqual(missing_code.status_code, 401)
+        self.assertNotIn("access", missing_code.data)
+
+        valid_code = get_totp_code(user.profile.totp_secret)
+        invalid_code = "000000" if valid_code != "000000" else "000001"
+        wrong_code = api.post(
+            "/api/auth/login/",
+            {"username": "alice", "password": PW, "totp_code": invalid_code},
+            format="json",
+        )
+        self.assertEqual(wrong_code.status_code, 401)
+        self.assertNotIn("access", wrong_code.data)
+
+        valid_login = api.post(
+            "/api/auth/login/",
+            {"username": "alice", "password": PW, "totp_code": valid_code},
+            format="json",
+        )
+        self.assertEqual(valid_login.status_code, 200, valid_login.data)
+        protected = APIClient()
+        protected.credentials(
+            HTTP_AUTHORIZATION=f"Bearer {valid_login.data['access']}"
+        )
+        self.assertEqual(protected.get("/api/orders/orders/").status_code, 200)
+
+        replay = APIClient().post(
+            "/api/auth/login/",
+            {"username": "alice", "password": PW, "totp_code": valid_code},
+            format="json",
+        )
+        self.assertEqual(replay.status_code, 401)
+        self.assertNotIn("access", replay.data)
 
     def test_jwt_logout_blacklists_refresh_token(self):
         api = APIClient()

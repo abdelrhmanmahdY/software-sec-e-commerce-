@@ -24,14 +24,40 @@ import ssl
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import datetime, timezone
 
 BASE = os.environ.get("SECURESHOP_URL", "https://localhost").rstrip("/")
 ACC = {
-    "customer": ("customer", "Customer!2026#Secure"),
-    "staff": ("staff", "Staff!2026#Secure"),
-    "admin": ("admin", "Admin!2026#Secure"),
+    "customer": (
+        os.environ.get("SECURESHOP_TEST_CUSTOMER_USER", ""),
+        os.environ.get("SECURESHOP_TEST_CUSTOMER_PASSWORD", ""),
+    ),
+    "staff": (
+        os.environ.get("SECURESHOP_TEST_STAFF_USER", ""),
+        os.environ.get("SECURESHOP_TEST_STAFF_PASSWORD", ""),
+    ),
+    "admin": (
+        os.environ.get("SECURESHOP_TEST_ADMIN_USER", ""),
+        os.environ.get("SECURESHOP_TEST_ADMIN_PASSWORD", ""),
+    ),
 }
-OUT = pathlib.Path(__file__).resolve().parents[1] / "evidence" / "live" / "regression_results.md"
+EVIDENCE_DIR = pathlib.Path(__file__).resolve().parents[1] / "evidence" / "live"
+_stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+OUT = pathlib.Path(
+    os.environ.get(
+        "SECURESHOP_REGRESSION_OUTPUT",
+        str(EVIDENCE_DIR / f"regression_{_stamp}.md"),
+    )
+).resolve()
+_parsed_base = urllib.parse.urlparse(BASE)
+if _parsed_base.scheme != "https" or _parsed_base.hostname not in (
+    "localhost", "127.0.0.1", "::1"
+):
+    raise SystemExit("Refusing to test anything other than local HTTPS SecureShop.")
+if OUT.parent != EVIDENCE_DIR.resolve():
+    raise SystemExit("Regression evidence must stay inside red_team/evidence/live/.")
+if OUT.exists():
+    raise SystemExit(f"Refusing to overwrite existing evidence: {OUT}")
 
 _host = urllib.parse.urlparse(BASE).hostname or ""
 _ctx = ssl.create_default_context()
@@ -83,6 +109,19 @@ def login(role):
 
 
 def main():
+    if os.environ.get("SECURESHOP_TEST_ENVIRONMENT") != "disposable":
+        print("NOT TESTED: set SECURESHOP_TEST_ENVIRONMENT=disposable for an isolated local clone.")
+        return 2
+    if any(not username or not password for username, password in ACC.values()):
+        print("NOT TESTED: provide all three disposable role-account credentials via SECURESHOP_TEST_*.")
+        return 2
+    if os.environ.get("SECURESHOP_LIVE_TESTS_AUTHORIZED") != "I AUTHORIZE TESTS ON DISPOSABLE LOCAL CLONE":
+        print(
+            "Live regression is guarded because it writes auth/audit state. "
+            "Set SECURESHOP_LIVE_TESTS_AUTHORIZED='I AUTHORIZE TESTS ON DISPOSABLE LOCAL CLONE' "
+            "only after confirming a disposable local clone."
+        )
+        return 2
     print(f"SecureShop regression  ->  {BASE}\n")
 
     # 1. reachable
@@ -100,46 +139,67 @@ def main():
     c_access, c_refresh = login("customer")
     if not c_access:
         rec("T-AUTH", "customer JWT login", "-", "INCONCLUSIVE", "no token; aborting authed tests")
-        _write(); return
+        _write()
+        return 2
     rec("T-AUTH", "customer JWT login", "-", "TESTED - DEFENSE HELD", "token issued")
 
     # 3. H5 - IDOR: customer must NOT see another user's order.
     #    Seed: order id 1 = customer's own; order id 3 = another user's.
     code_list, body_list, _ = http("GET", "/api/orders/orders/", token=c_access)
-    foreign = []
+    foreign = None
     try:
-        for o in json.loads(body_list).get("results", []):
-            if o.get("user") != 3:   # 3 = customer's id
-                foreign.append((o.get("id"), o.get("user")))
+        listing = json.loads(body_list)
+        if code_list == 200 and isinstance(listing, dict):
+            foreign = [
+                (o.get("id"), o.get("user"))
+                for o in listing.get("results", [])
+                if o.get("user") != 3
+            ]
     except Exception:
-        pass
+        foreign = None
     code_other, body_other, _ = http("GET", "/api/orders/orders/3/", token=c_access)
     if foreign:
         rec("T-H5-list", "Orders list owner-scoped", "H5", "CONFIRMED VULNERABILITY",
             f"customer saw foreign orders {foreign}")
-    else:
+    elif foreign == []:
         rec("T-H5-list", "Orders list owner-scoped", "H5", "TESTED - DEFENSE HELD",
             f"list -> {code_list}; only own orders returned")
+    else:
+        rec("T-H5-list", "Orders list owner-scoped", "H5", "INCONCLUSIVE",
+            f"could not validate order list response; HTTP {code_list}")
     if code_other == 200:
         rec("T-H5-detail", "Read another user's order id=3", "H5", "CONFIRMED VULNERABILITY",
             f"GET /orders/3/ -> 200 body[:80]={body_other[:80]!r}")
-    else:
+    elif code_other in (401, 403, 404):
         rec("T-H5-detail", "Read another user's order id=3", "H5", "TESTED - DEFENSE HELD",
             f"GET /orders/3/ (not owner) -> {code_other} (blocked)")
+    else:
+        rec("T-H5-detail", "Read another user's order id=3", "H5", "INCONCLUSIVE",
+            f"unexpected response HTTP {code_other}")
 
     # 4. H6 - non-staff cannot create order items / set price
     code, body, _ = http("POST", "/api/orders/order-items/", token=c_access,
                          json_body={"product": 1, "quantity": 1, "price": "0.01"})
     rec("T-H6-price", "Non-staff cannot set item price", "H6",
-        "TESTED - DEFENSE HELD" if code in (401, 403) else "CONFIRMED VULNERABILITY",
+        "TESTED - DEFENSE HELD" if code in (401, 403) else
+        "CONFIRMED VULNERABILITY" if code in (200, 201) else "INCONCLUSIVE",
         f"customer POST order-items price=0.01 -> {code} (expected 403)")
 
     # 5. H19 - refresh token revoked after logout
-    http("POST", "/api/auth/logout/", token=c_access, json_body={"refresh": c_refresh})
+    logout_code, _, _ = http(
+        "POST", "/api/auth/logout/", token=c_access, json_body={"refresh": c_refresh}
+    )
     code_ref, body_ref, _ = http("POST", "/api/auth/refresh/", json_body={"refresh": c_refresh})
-    rec("T-H19", "Refresh token revoked on logout", "H19",
-        "TESTED - DEFENSE HELD" if code_ref in (401, 403) else "CONFIRMED VULNERABILITY",
-        f"reuse blacklisted refresh -> {code_ref} (expected 401)")
+    if logout_code not in (200, 204, 205):
+        status = "INCONCLUSIVE"
+    elif code_ref in (401, 403):
+        status = "TESTED - DEFENSE HELD"
+    elif code_ref == 200:
+        status = "CONFIRMED VULNERABILITY"
+    else:
+        status = "INCONCLUSIVE"
+    rec("T-H19", "Refresh token revoked on logout", "H19", status,
+        f"logout -> {logout_code}; reuse blacklisted refresh -> {code_ref} (expected 401)")
 
     # 6. H13 - login lockout (throwaway username, does NOT touch real accounts)
     statuses = []
@@ -155,11 +215,17 @@ def main():
     code, _, _ = http("POST", "/api/carts/cart/update-quantity/",
                      json_body={"item_id": 1, "quantity": 1})
     rec("T-H9", "Cart update requires auth", "H9",
-        "TESTED - DEFENSE HELD" if code in (401, 403) else "CONFIRMED VULNERABILITY",
+        "TESTED - DEFENSE HELD" if code in (401, 403) else
+        "CONFIRMED VULNERABILITY" if code in (200, 201) else "INCONCLUSIVE",
         f"no-auth update-quantity -> {code} (expected 401/403)")
 
     _write()
     print(f"\nWrote -> {OUT}")
+    if any(status == "CONFIRMED VULNERABILITY" for _, _, _, status, _ in results):
+        return 1
+    if any(status != "TESTED - DEFENSE HELD" for _, _, _, status, _ in results):
+        return 2
+    return 0
 
 
 def _write():
@@ -180,4 +246,4 @@ def _write():
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

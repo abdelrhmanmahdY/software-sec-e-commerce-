@@ -1,0 +1,44 @@
+{
+  "database": "SQLite :memory:",
+  "email_backend": "locmem",
+  "jwt_mfa": {
+    "access_issued": true,
+    "invalid_totp_status": 401,
+    "password_only_access_issued": false,
+    "password_only_status": 401,
+    "protected_orders_status": 200,
+    "same_code_replay_status": 401,
+    "totp_enabled": true,
+    "totp_submitted": true,
+    "valid_totp_status": 200
+  },
+  "password_hasher_override": "PBKDF2 (test process only)",
+  "session_mfa_and_replay": {
+    "authenticated_after_totp": true,
+    "auththrottle_table_exists_after_migrations": true,
+    "last_totp_counter_recorded": true,
+    "password_login_status": 302,
+    "totp_verify_status": 302,
+    "unauthenticated_before_totp": true
+  },
+  "signup_routes": {
+    "api_active": false,
+    "api_status": 201,
+    "dashboard_active": false,
+    "dashboard_status": 302,
+    "html_active": false,
+    "html_email_confirmed": false,
+    "html_status": 302
+  },
+  "totp_lockout_blocker": null,
+  "totp_lockout_route_tested": true,
+  "totp_setup_disable": {
+    "counter_cleared_after_disable": true,
+    "disable_status": 302,
+    "disabled_after_action": true,
+    "enable_status": 302,
+    "enabled_after_valid_code": true,
+    "get_status": 200,
+    "secret_cleared_after_disable": true
+  }
+}

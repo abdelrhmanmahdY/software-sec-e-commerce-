@@ -1,4 +1,6 @@
-# Security Coverage Matrix — Red Team contribution
+# Security Coverage Matrix — Historical Red Team Contribution
+
+> **Superseded:** current statuses are in [`security_compliance_matrix.md`](security_compliance_matrix.md). The live regression results referenced below are historical and were not rerun against the current SecureShop deployment.
 
 One row per course topic (PDF item 3). This is the **Red Team** contribution; the Blue Team fills the "Defense implemented / Code location" columns as they build.
 

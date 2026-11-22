@@ -1,4 +1,6 @@
-# Red Team Penetration Test Report — SecureShop
+# Red Team Penetration Test Report — Historical SecureShop Regression
+
+> **Superseded:** this report's completed-live-regression claim is historical. The current assessment did not start Docker or test live HTTPS/PostgreSQL. Use [`FINAL_SECURITY_ASSESSMENT_REPORT.pdf`](FINAL_SECURITY_ASSESSMENT_REPORT.pdf) and [`security_compliance_matrix.md`](security_compliance_matrix.md) for current findings and evidence boundaries.
 
 **Status: Initial regression assessment (completed).** Date: 2026-11-22. Target: SecureShop local authorized build, `https://localhost` (nginx + TLS). Tester: Red Team (sole member).
 

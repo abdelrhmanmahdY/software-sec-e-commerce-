@@ -1,0 +1,65 @@
+{
+  "cart_quantity_and_stock": {
+    "cart_add_response": "{\"id\":1,\"product\":1,\"quantity\":4,\"price\":\"100.00\",\"total_price\":400.0}",
+    "cart_add_status": 200,
+    "cart_item_quantity": 4,
+    "cart_retained_after_rejection": true,
+    "checkout_rejected_over_stock": true,
+    "checkout_status": 400,
+    "credit_unchanged": true,
+    "orders_unchanged": true,
+    "quantity_over_stock_added_to_cart": true,
+    "stock_unchanged": true
+  },
+  "cookie_and_admin": {
+    "forged_user_cookie_authenticated": false,
+    "forged_user_cookie_profile_status": 302,
+    "unauthenticated_newsletter_admin_redirect": "/admin/login/?next=/admin/users/newslettersubscriber/",
+    "unauthenticated_newsletter_admin_status": 302
+  },
+  "coupon_replay": {
+    "add_second_cart_item_status": 200,
+    "cart_retained_after_rejection": true,
+    "credit_unchanged": true,
+    "orders_unchanged": true,
+    "repeat_coupon_rejected": true,
+    "repeat_coupon_status": 400,
+    "stock_unchanged": true
+  },
+  "csrf": {
+    "post_without_csrf_rejected": true,
+    "post_without_csrf_status": 403,
+    "profile_first_name_after": ""
+  },
+  "empty_input": {
+    "empty_body_content_type": "application/json",
+    "empty_body_status": 400,
+    "empty_object_content_type": "text/html; charset=utf-8",
+    "empty_object_status": 404
+  },
+  "environment": "Django TestClient; SQLite :memory:; locmem mail; synthetic account and fixtures",
+  "newsletter_coupon_generation": {
+    "issued_count": 4,
+    "random_token_format": true,
+    "response_statuses": [
+      200,
+      200,
+      200,
+      200
+    ],
+    "subscriber_rows": 4,
+    "unique_count": 4
+  },
+  "persistent_database_touched": false,
+  "store_credit_checkout": {
+    "coupon_usage_count": 1,
+    "order_created": true,
+    "order_total": "95.00",
+    "status": 200,
+    "stock_after": 1,
+    "stock_before": 2,
+    "store_credit_after": "105.00",
+    "store_credit_before": "200.00",
+    "stored_item_price": "100.00"
+  }
+}

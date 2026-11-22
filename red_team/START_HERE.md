@@ -1,4 +1,6 @@
-# START HERE — SecureShop Red Team
+# Historical Status Notes — Superseded
+
+> This older status summary contains historical claims and is not the current assessment. Use [README.md](README.md), [security_compliance_matrix.md](reports/security_compliance_matrix.md), and the final PDF for current evidence and status.
 
 This file tells you, in plain language: what's actually been done, what's still
 open, and exactly which command to run next. If you've never done a pentest

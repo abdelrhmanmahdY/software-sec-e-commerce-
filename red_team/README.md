@@ -1,10 +1,14 @@
-# Red Team — SecureShop (CET431 Software Security)
+# CET431 Red Team — SecureShop
+
+> **Current assessment status (2026-11-22):** Naive Shop V1–V7 passed on loopback. SecureShop was tested only with disposable in-memory SQLite fixtures and Django tests; live HTTPS/Docker/PostgreSQL testing is **NOT TESTED**. Open findings include password-only JWT issuance for TOTP-enabled users, an HTML signup route active before email confirmation, and a missing `AuthThrottle` migration. Do not treat older live-test summaries below as current evidence.
+
+The current topic mapping is [security_compliance_matrix.md](reports/security_compliance_matrix.md); the authoritative final assessment is [FINAL_SECURITY_ASSESSMENT_REPORT.pdf](reports/FINAL_SECURITY_ASSESSMENT_REPORT.pdf).
 
 This is the **Red Team** workspace for the SecureShop project. Everything here covers attack preparation, reproducing the course Labs, preparing test cases, and the reports.
 
 > **Academic-integrity note:** This work is educational and local, against the team's own authorized SecureShop instance only (per the PDF, items 4 and 8).
 >
-> **Update (2026-11-22):** this note originally said no attack had been run yet. That's no longer true — see **`START_HERE.md`** for the current, accurate status: live regression tests have been run against SecureShop (`evidence/live/`), and the Naive Shop comparison attacks have been run and re-verified (`evidence/naive_shop/`). `START_HERE.md` is now the up-to-date entry point; read it before this file.
+> The sections below are historical preparation notes. For current results, use the status at the top of this file, the coverage matrix, and the final PDF.
 
 ---
 
@@ -20,10 +24,10 @@ This is the **Red Team** workspace for the SecureShop project. Everything here c
 
 ---
 
-## The two tracks we work in
+## Historical track plan (superseded)
 
-- **Track 1 — Labs (active now):** reproduce what each Lab taught, on an isolated local example or on the authorized PortSwigger environment. Fully educational.
-- **Track 2 — SecureShop (prepared now, executed later):** test cases and scripts are ready, but we only run them against the Blue Team's final version during the testing window. Every hypothesis stays **Unverified**.
+- **Track 1 — Labs:** reproduce course material on isolated local examples.
+- **Track 2 — SecureShop:** this is historical preparation status; see the current assessment and coverage matrix above.
 
 ---
 
@@ -48,7 +52,7 @@ Each example prints a comparison between a **naive implementation** (falls for t
 | `UNVERIFIED` | Suspicion from reading the code, not yet confirmed by testing |
 | `NOT TESTED` | Not yet attempted (waiting for the Blue version or a manual step from you) |
 | `INCONCLUSIVE` | Tested but the result is not conclusive |
-| `CONFIRMED` | Confirmed by an authorized real test (none so far) |
+| `CONFIRMED` | Demonstrated in the stated authorized environment; historical/live scope must remain explicit |
 
 ---
 

@@ -1,32 +1,41 @@
-# Official Security Requirements Compliance Matrix
+# CET431 Security Coverage Matrix — Current Verification
 
-**Audit date:** 2026-11-22  
-**Sources:** attached CET431 specification, `red_team/labs/lab1_*` through `lab5_*`, existing SecureShop Red Team reports and live evidence.
+**Assessment date:** 2026-11-22  
+**Authoritative matrix:** this file. Results below distinguish source inspection, in-memory execution, historical evidence, and live deployment testing. SecureShop was **not** run through Docker, HTTPS, or shared PostgreSQL during this assessment.
 
-## Matrix
+| Course topic | Naive Shop scenario | SecureShop status and actual evidence | Remaining work |
+|---|---|---|---|
+| Client-controlled price | V1 — checkout accepts a client price | **VERIFIED (in-memory unit suite):** `test_client_supplied_price_and_status_are_ignored` passed in the 16-test Django suite. No live HTTPS retest. | Retest in disposable deployment after Blue Team changes. |
+| Coupon reuse/stacking | V2 — repeated `SAVE20` accepted | **VERIFIED (in-memory):** first synthetic checkout applied 10%; replay returned HTTP 400 and credit, stock, order count, and cart state stayed unchanged (`workflow_checks_20261122T055720Z.json`). | None for tested single-use path; stacking/edge cases NOT TESTED. |
+| IDOR / object authorization | V3 — Bob reads Alice's order | **VERIFIED (in-memory unit suite):** order list/detail ownership tests passed; customer mutation denied. No live deployment retest. | Retest against disposable current deployment. |
+| Workflow bypass / unpaid checkout | V4 — confirm unpaid order without payment | **NOT TESTED as the same bypass.** In-memory checkout requires store credit, checks stock, and records successful transaction deltas; no payment-bypass endpoint was exercised. | Reproduce the same workflow against a disposable SecureShop clone and inspect persisted state. |
+| Client-controlled identity / sessions | V5 — forged `user` cookie | **VERIFIED (in-memory):** `user=admin` did not authenticate; profile redirected HTTP 302. Refresh-token logout/replay is covered by a passing Django unit test, not a live retest. | Live session/token invalidation test NOT TESTED. |
+| Brute-force protection | V6 — eight bad passwords then valid login | **PARTIALLY VERIFIED:** password-lockout Django tests pass. TOTP IP lockout works after a test-only schema-editor creation: 20 failures locked the IP; another IP succeeded. A normal migrated DB lacks the throttle table, so its endpoint errors. | Add and deploy the missing migration; retest both TOTP lockout and password lockout on a disposable deployment. |
+| Unauthenticated admin / RBAC | V7 — anonymous admin data access | **VERIFIED (in-memory):** unauthenticated Django admin returned HTTP 302; API docs returned HTTP 403. Django role/authorization tests passed. | Retest live admin roles after deployment fixes. |
+| Email verification / account activation | No corresponding V1–V7 attack | **CONFIRMED GAP (in-memory):** `POST /signup/` returned HTTP 302 and created an active user with `email_confirmed=false`; dashboard/API signup created inactive users (`verify_inmemory_security_20261122T055710Z.json`). | Align signup routes; verify pre-confirmation login and protected actions are denied. |
+| MFA/TOTP enforcement | Not modeled by V1–V7 | **CONFIRMED GAP (in-memory):** password-only JWT for a TOTP-enabled synthetic user returned HTTP 200; token accessed orders with HTTP 200. | Require second factor before ordinary JWT issuance; retest valid, missing, wrong, and expired factors. |
+| TOTP setup and replay | Not modeled by V1–V7 | **PARTIALLY VERIFIED:** setup/disable worked and same-code utility replay was rejected. Verify endpoint errors after clean migrations because `audit_auththrottle` is missing. | Fix migration and test the actual endpoint, replay and lockout. |
+| JWT and refresh tokens | V5 identity analogue only | **PARTIALLY VERIFIED:** password-only JWT bypass above is confirmed; refresh blacklist unit test passed. | Retest complete JWT lifecycle in disposable deployment after MFA fix. |
+| Cookie security / sessions | V5 identity-cookie analogue | **PARTIALLY VERIFIED:** forged identity cookie denied and CSRF middleware rejected a session POST without token (403, profile unchanged). Secure cookie flags were source/config inspected only. | Inspect live cookie flags and logout invalidation over HTTPS. |
+| SQL injection | Not implemented in memory-only Naive Shop | **NOT TESTED.** ORM use is source observation, not proof of safe behavior for every endpoint. | Benign, non-destructive local probes and response/data verification. |
+| XSS | Not covered by V1–V7 | **NOT TESTED.** Template escaping claims are not runtime evidence. | Test stored/reflected output with harmless markers in disposable data. |
+| CSRF | Not covered by V1–V7 | **VERIFIED (in-memory):** session POST without CSRF token returned 403; synthetic profile remained unchanged. | Live browser/form retest NOT TESTED. |
+| Input validation / exceptional inputs | V1–V7 only partially cover malformed values | **PARTIALLY VERIFIED:** empty request body returned HTTP 400; empty JSON object returned HTTP 404. | Normalize missing-field handling and test bounds/negative/oversized values. |
+| Cart quantity and stock | Not included in V1–V7 | **PARTIAL / FINDING:** authenticated request quantity 3 produced cart quantity 4 for stock 2; checkout returned HTTP 400 `Insufficient stock`, with stock/credit/order count unchanged (`workflow_checks_20261122T055720Z.json`). | Fix first-add off-by-one and reject/limit over-stock quantities at cart update. |
+| Checkout integrity | V1/V4 related | **PARTIALLY VERIFIED (in-memory):** valid coupon+credit checkout deducted $95, stored catalog price $100, reduced stock from 2 to 1; rejected over-stock checkout changed no order/credit/stock. Workflow bypass itself NOT TESTED. | Retest tampering and error paths in disposable deployment. |
+| Race conditions / overselling | Not covered by V1–V7 | **NOT TESTED.** SQLite `:memory:` is not representative for PostgreSQL concurrency. | Use isolated PostgreSQL clone and controlled concurrent test only after authorization. |
+| Store credit / discount integrity | V1/V2 related | **VERIFIED for tested paths:** in-memory balance changed $200 → $105 after $95 checkout; coupon replay did not change it. | More discount boundaries NOT TESTED. |
+| Audit logging / non-repudiation | Not a V1–V7 attack | **VERIFIED in unit suite:** audit tests passed, including actor/IP/change data and password redaction. No live request-to-audit correlation. | Correlate a disposable live action to its audit record. |
+| Sensitive data exposure / API docs | V7 analogue | **PARTIALLY VERIFIED:** unauthenticated docs HTTP 403 and admin login redirect tested. No broad data-leak review. | Review authenticated responses and error pages with synthetic data. |
+| HTTPS, TLS, security headers | Not covered by V1–V7 | **NOT TESTED live.** Settings/source only; no TLS service started. | Validate TLS certificate, redirects, HSTS and headers on disposable local deployment. |
+| Dependency vulnerabilities | Not applicable to Naive Shop attacks | **CONFIRMED SCA findings:** pip-audit found 216 advisories across 14 packages in 64 declared dependencies. This is not proof of exploitability. | Blue Team should patch and rerun pip-audit. |
+| Fail-secure behavior | V1/V4 related | **PARTIALLY VERIFIED:** stock and coupon rejection left checked business state unchanged in in-memory fixtures. | Test storage/transaction failure cases on isolated PostgreSQL. |
+| STRIDE | Threat model, not an attack | **DOCUMENTED, PARTIALLY VERIFIED:** threat model exists; current statuses are updated here and in the final PDF. | Revisit after Blue Team fixes and live retest. |
+| Behavioral biometrics, location/time policy, passkeys | Not implemented in Naive Shop | **NOT IMPLEMENTED / NOT TESTED:** course material topics have no demonstrated SecureShop control. | Confirm whether these are project requirements; do not claim defenses without implementation/evidence. |
 
-| Course topic | Applicable features | Naive scenario | SecureShop defense / code | Manual/automated evidence | Status |
-|---|---|---|---|---|---|
-| Excessive client-side trust (Lab 1) | Cart, checkout, order items | Browser supplies price/total/status | Server reads catalog price and restricts status/price | Existing live regression test H6 | IMPLEMENTED & VERIFIED for tested order-item price |
-| Business-rule enforcement (Lab 2.1) | Coupons, checkout | Coupon replay/stacking | `CouponUsage` unique `(user,coupon)`; coupon validation in checkout | Unit/code evidence exists; live reuse not completed this audit | IMPLEMENTED, NOT VERIFIED |
-| Exceptional input (Lab 2.2) | Registration, cart quantities, profile | Over-long/negative/empty input | Django forms/serializers and quantity checks need live verification | No complete browser or malformed-input evidence | NOT TESTED |
-| Workflow validation (Lab 2.3) | Checkout, confirmation, order state | Skip payment or replay confirmation | Atomic checkout, store-credit and stock checks | Source exists; no live workflow or DB delta completed | IMPLEMENTED, NOT VERIFIED |
-| Authentication identity and 2FA (Lab 3) | Login, 2FA, sessions | Client-controlled identity or weak MFA | Server-side Django authentication, TOTP fields/routes exist | Seed/TOTP state not enforced test; browser login passed | PARTIAL |
-| Brute-force protection (Lab 3/AAA) | Login, 2FA | Unlimited password/code attempts | Lockout backend and DRF throttling | Unit test suite and existing lockout evidence; live browser/API result has prior inconclusive flag | IMPLEMENTED & VERIFIED by automated test, live recheck INCONCLUSIVE |
-| Authorization / IDOR | Orders, profiles, cart, admin | Read/edit another user's data | Owner-scoped order query, staff/admin guards | Existing live H5 regression passed; browser role checks passed for Django newsletter | IMPLEMENTED & VERIFIED in sampled areas |
-| Least privilege | Customer, staff, admin | Customer reaches staff/admin operations | `is_staff`, `is_superuser`, staff decorators, Django admin permissions | Browser: customer denied, staff got 403 at Django newsletter, admin got changelist | IMPLEMENTED & VERIFIED |
-| Password storage | Accounts | Offline hash cracking | Django password hasher/PBKDF2 | Source/config only | IMPLEMENTED, NOT VERIFIED |
-| Session security | Login/logout/protected pages | Replay or steal session/JWT | HttpOnly/SameSite/Secure cookies; 30-minute sliding session; refresh blacklist | Config/source exists; logout browser observed; refresh replay not rerun by this audit | IMPLEMENTED, NOT VERIFIED |
-| Information leakage | Login, errors, API docs | Verbous errors/docs leak internals | Generic error responses and admin-only Swagger | Existing H22 live 403; customer/unauth admin URL checks | PARTIAL |
-| Fail secure | Checkout, auth, authorization | Partial failure creates order/grants access | Transactions and permission checks | Unit/source evidence; malformed live workflows incomplete | PARTIAL |
-| Accounting / non-repudiation | Logins, 403s, models | Critical actions lack audit trail | `AuditLog`, middleware and signals | 73 live audit rows observed and unit tests create audit events | IMPLEMENTED & VERIFIED at implementation level |
-| Behavioral anomaly detection (Lab 4) | Login risk | Replay typing signature | No implementation found | No feature in source | NOT APPLICABLE / absent |
-| Location/time/passkeys (Lab 5) | Login/MFA | Bypass location/time/passkey policy | TOTP groundwork only; no location/passkey/time gate found | Code fields/routes exist, no live TOTP enrollment/MFA enforcement test | PARTIAL / not a standalone passkey/location control |
-| SQL injection | Search/API/database reads | Inject SQL | Django ORM parameterized queries | Automated/live claims in docs, not independently rerun in this audit | IMPLEMENTED, NOT VERIFIED |
-| XSS | Search/profile/newsletter | Inject script/DOM HTML | Template escaping and `textContent` claim | Source claim only, no live payload test this audit | IMPLEMENTED, NOT VERIFIED |
-| CSRF | State-changing forms/JWT | Forged state change | Django CSRF middleware; secure cookies | Source/config evidence; no live forged request test this audit | IMPLEMENTED, NOT VERIFIED |
-| TLS and transport | Login/admin/API | Credential/cookie sniffing | nginx TLS, secure session/CSRF cookies | Browser reached HTTPS, application root and admin under HTTPS | IMPLEMENTED & VERIFIED |
-| Misconfiguration | Debug/API docs/admin | Expose schema or internals | `DEBUG=False`, admin permissions, Swagger `IsAdminUser` | Live unauth/role checks | IMPLEMENTED & VERIFIED for admin newsletter and API docs evidence |
+## Evidence and status rules
 
-**Security evidence caveat:** Existing reports contain several unverified or contradictory claims. They are not counted as live-verified unless a current browser run, database check, or 16-test suite output independently supports them.
+Current evidence: Naive V1–V7 transcript `../evidence/naive_shop/naive_attack_20261122T055801Z_all.md`; latest in-memory SecureShop authentication, workflow, and TOTP evidence under `../evidence/review/`; corrected 16-test output `../evidence/review/audit_tests_20261122T060013Z.txt` (see `audit_test_evidence_correction_20261122.md`); fresh static scan JSON under `../evidence/review/`.
+
+**VERIFIED** applies only to the named test and environment. Source inspection alone is not test proof. **NOT TESTED** and **INCONCLUSIVE** are not defense claims. Historical live reports/screenshots do not establish current deployment behavior.
 

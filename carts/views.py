@@ -10,6 +10,7 @@ from decimal import Decimal
 import json
 
 from .models import Cart, CartItem
+from .services import add_cart_quantity
 from .serializers import CartSerializer, CartItemSerializer
 from products.models import Product
 from orders.models import Order, OrderItem  
@@ -42,12 +43,12 @@ class AddToCartView(generics.CreateAPIView):
 
         product = get_object_or_404(Product, id=product_id)
 
-        cart_item, created = CartItem.objects.get_or_create(
-            cart=cart,
-            product=product
-        )
-        cart_item.quantity += quantity
-        cart_item.save()
+        cart_item = add_cart_quantity(cart, product, quantity)
+        if cart_item is None:
+            return Response(
+                {"error": f"Quantity exceeds available stock for {product.name}."},
+                status=400,
+            )
 
         serializer = CartItemSerializer(cart_item)
         return Response(serializer.data)
@@ -69,12 +70,27 @@ class RemoveFromCartView(generics.DestroyAPIView):
 def UpdateCartItemQuantityView(request):
     try:
         data = json.loads(request.body)
+        if not isinstance(data, dict):
+            return JsonResponse(
+                {"success": False, "error": "A JSON object is required."},
+                status=400,
+            )
         item_id = data.get("item_id")
+        if item_id is None or item_id == "":
+            return JsonResponse(
+                {"success": False, "error": "item_id is required."},
+                status=400,
+            )
         quantity = int(data.get("quantity", 1))
         cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
 
         if quantity < 1:
             cart_item.delete()
+        elif quantity > cart_item.product.stock:
+            return JsonResponse(
+                {"success": False, "error": "Quantity exceeds available stock."},
+                status=400,
+            )
         else:
             cart_item.quantity = quantity
             cart_item.save()

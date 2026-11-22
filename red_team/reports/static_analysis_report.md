@@ -1,4 +1,16 @@
-# Static Analysis Report — Bandit (SAST) + pip-audit (SCA)
+# Static Analysis Report — Current Results and Historical Notes
+
+## Current assessment (2026-11-22)
+
+Fresh results are saved under `red_team/evidence/review/` and prior reports were not overwritten:
+
+- Bandit on SecureShop application Python paths (tests excluded): **2 LOW severity / MEDIUM confidence** findings; **0 medium/high**. They are `config/settings.py:35` (development-only fallback key) and `dashboard/views.py:282` (empty-string value flagged by the password heuristic). Neither was demonstrated exploitable.
+- pip-audit on `requirements.txt`: **216 advisories across 14 packages** (64 dependency entries). Highest counts include Pillow (76), Django (65), PyJWT (22), and cryptography (13). This is a confirmed outdated/vulnerable dependency finding; no advisory was shown exploitable in this assessment.
+- Latest artifacts are timestamped `bandit_application_*.json` and `pip_audit_*.json` in `red_team/evidence/review/`.
+
+The static scans did not include `naive_shop/` or `red_team/` in the focused Bandit count. The full-repository scan also reported intentional insecure lab credentials and test literals; those are not Blue Team findings.
+
+The analysis below is a historical report and is superseded by the current results above.
 
 Date: 2026-11-22. Tools run from the Red Team venv against the project source/dependencies.
 

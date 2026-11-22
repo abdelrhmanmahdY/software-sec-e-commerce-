@@ -4,7 +4,6 @@ from django.contrib.auth import authenticate, login, logout, update_session_auth
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.conf import settings as django_settings
-from django.core.mail import send_mail
 from django.views.decorators.http import require_POST
 from users.permissions import staff_required
 from audit.utils import (
@@ -23,8 +22,10 @@ import csv
 import json
 from users.forms import UserUpdateForm, CustomPasswordChangeForm, CustomUserCreationForm
 from users.forms import ProductForm, OrderForm
+from users.registration import create_unconfirmed_user
 from orders.models import Order, OrderItem
 from carts.models import Cart, CartItem
+from carts.services import add_cart_quantity
 from products.models import Product, Category
 from users.models import Coupon, NewsletterSubscriber
 from django.core import signing
@@ -330,21 +331,9 @@ def signup_view(request):
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.is_active = False
-            user.save()
-            token = signing.dumps(user.pk, salt="account-confirmation")
-            confirmation_url = request.build_absolute_uri(f"/dashboard/confirm/{token}/")
-            send_mail(
-                "Confirm your account",
-                f"Hi {user.first_name or user.username},\n\nConfirm your account: {confirmation_url}\n\n"
-                "The link is valid for 3 days. If you did not sign up, ignore this e-mail.",
-                None,
-                [user.email],
-                fail_silently=True,
-            )
+            confirmation_url = create_unconfirmed_user(request, form)
             messages.success(request, "Account created! Check your e-mail for the confirmation link.")
-            if django_settings.DEBUG:  # convenience for local development only
+            if django_settings.DEBUG:
                 messages.info(request, confirmation_url)
             return redirect("login")
         else:
@@ -610,16 +599,18 @@ def shop_view(request):
     cart_items_count = cart.items.count()
     if request.method == "POST":
         product_id = request.POST.get("product_id")
-        quantity = int(request.POST.get("quantity", 1))
+        try:
+            quantity = int(request.POST.get("quantity", 1))
+        except (TypeError, ValueError):
+            messages.error(request, "Quantity must be a whole number.")
+            return redirect(request.path)
+        if quantity < 1:
+            messages.error(request, "Quantity must be at least 1.")
+            return redirect(request.path)
         if product_id:
             product = get_object_or_404(Product, id=product_id, stock__gt=0)
-            if quantity <= product.stock:
-                cart_item, created = CartItem.objects.get_or_create(
-                    cart=cart, product=product, defaults={'quantity': quantity}
-                )
-                if not created:
-                    cart_item.quantity += quantity
-                    cart_item.save()
+            cart_item = add_cart_quantity(cart, product, quantity)
+            if cart_item is not None:
                 messages.success(request, f"Added {quantity} × {product.name} to your cart!")
             else:
                 messages.error(request, f"Insufficient stock for {product.name}")

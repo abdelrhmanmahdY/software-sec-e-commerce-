@@ -1,0 +1,73 @@
+Found 16 test(s).
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Operations to perform:
+  Synchronize unmigrated apps: django_extensions, django_filters, drf_yasg, messages, rest_framework, staticfiles, widget_tweaks
+  Apply all migrations: admin, audit, auth, carts, contenttypes, orders, products, sessions, token_blacklist, users
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying audit.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying products.0001_initial... OK
+  Applying carts.0001_initial... OK
+  Applying orders.0001_initial... OK
+  Applying products.0002_alter_product_options_product_created_at... OK
+  Applying sessions.0001_initial... OK
+  Applying token_blacklist.0001_initial... OK
+  Applying token_blacklist.0002_outstandingtoken_jti_hex... OK
+  Applying token_blacklist.0003_auto_20171017_2007... OK
+  Applying token_blacklist.0004_auto_20171017_2013... OK
+  Applying token_blacklist.0005_remove_outstandingtoken_jti... OK
+  Applying token_blacklist.0006_auto_20171017_2113... OK
+  Applying token_blacklist.0007_auto_20171017_2214... OK
+  Applying token_blacklist.0008_migrate_to_bigautofield... OK
+  Applying token_blacklist.0010_fix_migrate_to_bigautofield... OK
+  Applying token_blacklist.0011_linearizes_history... OK
+  Applying token_blacklist.0012_alter_outstandingtoken_user... OK
+  Applying token_blacklist.0013_alter_blacklistedtoken_options_and_more... OK
+  Applying users.0001_initial... OK
+  Applying users.0002_couponusage... OK
+  Applying users.0003_userprofile_totp... OK
+  Applying users.0004_userprofile_last_totp_counter... OK
+System check identified no issues (0 silenced).
+test_audit_page_visible_to_staff (audit.tests.AccountingTests.test_audit_page_visible_to_staff) ... D:\software-sec-e-commerce-\.venv\Lib\site-packages\django\core\handlers\base.py:61: UserWarning: No directory at: D:\software-sec-e-commerce-\staticfiles\
+  mw_instance = middleware(adapted_handler)
+ok
+test_changes_record_actor_ip_and_old_new_values_but_never_passwords (audit.tests.AccountingTests.test_changes_record_actor_ip_and_old_new_values_but_never_passwords) ... ok
+test_deleting_a_user_keeps_their_audit_trail (audit.tests.AccountingTests.test_deleting_a_user_keeps_their_audit_trail) ... ok
+test_jwt_login_lockout_returns_429_and_success_is_logged (audit.tests.AuthenticationTests.test_jwt_login_lockout_returns_429_and_success_is_logged) ... ok
+test_jwt_logout_blacklists_refresh_token (audit.tests.AuthenticationTests.test_jwt_logout_blacklists_refresh_token) ... ok
+test_lockout_after_repeated_failures_even_with_right_password (audit.tests.AuthenticationTests.test_lockout_after_repeated_failures_even_with_right_password) ... ok
+test_lockout_is_per_ip_so_a_victim_is_not_locked_from_elsewhere (audit.tests.AuthenticationTests.test_lockout_is_per_ip_so_a_victim_is_not_locked_from_elsewhere) ... ok
+test_successful_login_is_logged (audit.tests.AuthenticationTests.test_successful_login_is_logged) ... ok
+test_admin_cannot_change_own_role (audit.tests.AuthorizationTests.test_admin_cannot_change_own_role) ... ok
+test_category_ajax_is_staff_only (audit.tests.AuthorizationTests.test_category_ajax_is_staff_only) ... ok
+test_client_supplied_price_and_status_are_ignored (audit.tests.AuthorizationTests.test_client_supplied_price_and_status_are_ignored) ... ok
+test_customer_cannot_modify_or_delete_even_own_order (audit.tests.AuthorizationTests.test_customer_cannot_modify_or_delete_even_own_order) ... ok
+test_customer_cannot_see_or_edit_someone_elses_order (audit.tests.AuthorizationTests.test_customer_cannot_see_or_edit_someone_elses_order) ... ok
+test_non_staff_gets_403_on_dashboard_admin_pages_and_it_is_audited (audit.tests.AuthorizationTests.test_non_staff_gets_403_on_dashboard_admin_pages_and_it_is_audited) ... ok
+test_product_delete_requires_post (audit.tests.AuthorizationTests.test_product_delete_requires_post) ... ok
+test_staff_can_manage_orders_and_order_items_are_staff_only (audit.tests.AuthorizationTests.test_staff_can_manage_orders_and_order_items_are_staff_only) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 48.631s
+
+OK
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...

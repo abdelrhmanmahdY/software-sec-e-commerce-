@@ -1,0 +1,40 @@
+{
+  "database": "SQLite :memory:",
+  "email_backend": "locmem",
+  "jwt_mfa": {
+    "access_issued": true,
+    "protected_orders_status": 200,
+    "status": 200,
+    "totp_enabled": true,
+    "totp_submitted": false
+  },
+  "password_hasher_override": "PBKDF2 (test process only)",
+  "session_mfa_and_replay": {
+    "auththrottle_table_exists_after_migrations": false,
+    "first_totp_code_use_accepted": true,
+    "password_login_status": 302,
+    "same_code_replay_accepted": false,
+    "totp_verify_database_error": "no such table: audit_auththrottle",
+    "unauthenticated_before_totp": true
+  },
+  "signup_routes": {
+    "api_active": false,
+    "api_status": 201,
+    "dashboard_active": false,
+    "dashboard_status": 302,
+    "html_active": true,
+    "html_email_confirmed": false,
+    "html_status": 302
+  },
+  "totp_lockout_blocker": "AuthThrottle model has no committed migration/table",
+  "totp_lockout_route_tested": false,
+  "totp_setup_disable": {
+    "counter_cleared_after_disable": true,
+    "disable_status": 302,
+    "disabled_after_action": true,
+    "enable_status": 302,
+    "enabled_after_valid_code": true,
+    "get_status": 200,
+    "secret_cleared_after_disable": true
+  }
+}

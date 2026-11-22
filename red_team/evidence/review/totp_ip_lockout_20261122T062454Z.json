@@ -1,0 +1,14 @@
+{
+  "auththrottle_table_exists_after_migrations": true,
+  "codes_and_secrets_recorded": false,
+  "database": "SQLite :memory:",
+  "endpoint": "/dashboard/2fa/verify/",
+  "failed_codes_from_same_ip": 20,
+  "ip_locked_at_threshold": true,
+  "locked_followup_did_not_add_lock_rows": true,
+  "locked_followup_http": 200,
+  "other_ip_authenticated": true,
+  "same_user_from_other_ip_http": 302,
+  "synthetic_users": 6,
+  "test_only_schema_editor_created_missing_table": false
+}

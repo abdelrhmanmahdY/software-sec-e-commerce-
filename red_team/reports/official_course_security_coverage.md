@@ -1,4 +1,6 @@
-# CET431 Official Course Security Coverage Matrix — Current Baseline
+# CET431 Official Course Security Coverage Matrix — Historical Baseline
+
+> **Superseded:** use [`security_compliance_matrix.md`](security_compliance_matrix.md) for current SecureShop and Naive Shop status. This earlier document's repository HEAD and test evidence predate the current in-memory verification; its rows are preserved as history, not current defense claims.
 
 **Reviewed:** 2026-11-22  
 **Repository HEAD:** `6e33799b0b229aa8b97c3f0d3dbca9e7bc778bb5` (`main`)  

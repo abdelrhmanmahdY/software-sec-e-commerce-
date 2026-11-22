@@ -1,34 +1,23 @@
-# Executive Summary — SecureShop Red Team Assessment
+# Executive Summary — Current Red Team Assessment
 
-**Date:** 2026-11-22 · **Tester:** Red Team (sole member) · **Target:** SecureShop, local authorized build (`https://localhost`).
+**Date:** 2026-11-22 · **Target:** local SecureShop source and isolated tests; loopback-only Naive Shop.
 
-## Scope
-A browser/HTTP-level security assessment of the team's own SecureShop application, plus an isolated intentionally-vulnerable "Naive Shop" built for comparison, and a Bandit static scan. All testing was local and authorized; no external systems were touched.
+> This summary supersedes earlier reports that claimed all SecureShop attacks were blocked or that live HTTPS testing was current. No Docker service, shared PostgreSQL database, or live SecureShop HTTPS target was started in this assessment.
 
-## Headline result
-The Blue Team's current build is **well hardened**. Every vulnerability from the earlier source-review baseline (H1–H23) was **re-tested against the running application and found fixed** — verified by checking the real security property (ownership, token state, business outcome), not status codes. The intentionally-vulnerable Naive Shop demonstrates the same attacks succeeding when those controls are absent.
+## Result
 
-## Results at a glance
-| | Naive Shop | SecureShop (current build) |
-|---|---|---|
-| Client-controlled price | CONFIRMED VULNERABILITY | DEFENSE HELD (server price, read-only field) |
-| Coupon reuse | CONFIRMED VULNERABILITY | DEFENSE HELD (unique per-user constraint) |
-| IDOR on orders | CONFIRMED VULNERABILITY | DEFENSE HELD (owner-scoped queryset → 404) |
-| Workflow bypass | CONFIRMED VULNERABILITY | DEFENSE HELD (atomic credit+stock) |
-| No login lockout | CONFIRMED VULNERABILITY | DEFENSE HELD (429 after 5 fails) |
-| Broken access control | CONFIRMED VULNERABILITY | DEFENSE HELD (role checks, admin gated) |
-| Token replay after logout | n/a | DEFENSE HELD (JWT blacklist → 401) |
-| Public API docs | n/a | DEFENSE HELD (403 without admin) |
+Naive Shop is presentation-ready and all seven intended attacks reproduced against `127.0.0.1:8010`. SecureShop evidence is limited to disposable SQLite `:memory:` tests and the Django suite (16/16 passed). These verify several controls but also expose open findings:
 
-**SecureShop confirmed vulnerabilities this round: 0.** (Baseline-stage findings are retained separately for history.)
+- Password-only JWT issuance for an account with TOTP enabled; the token accessed a protected orders endpoint.
+- HTML `/signup/` creates an active account before email confirmation.
+- Clean migrations do not create `audit_auththrottle`; the TOTP verification endpoint errors before its lockout policy can run.
+- Cart add requested with quantity 3 returned quantity 4 and allowed a cart quantity above stock; checkout later rejected it without changing stock, credit, or order count.
+- pip-audit found 216 advisories across 14 packages in 64 declared dependencies. Exploitability was not assessed.
 
-## Static analysis
-Bandit on the application code: **5 LOW / medium-confidence** issues, all reviewed as **non-exploitable** (test-string "passwords", a dev-only fallback key used only when `DEBUG=True`). No high/medium severity. Dependency audit (pip-audit) results are in the dependency report.
+## Verified controls (isolated test scope only)
 
-## Notable observations (not vulnerabilities)
-- The app enforces HTTPS (HSTS-ready), secure cookies, CSRF, and a full `audit` logging trail.
-- TOTP groundwork exists but is not enforced on the seeded accounts — worth confirming the intended MFA policy.
-- The Blue Team's shell scripts use Windows (CRLF) line endings, which breaks `docker-entrypoint.sh` and the cert script on a Linux container. **Recommended fix:** add a `.gitattributes` with `*.sh text eol=lf`. (This is an operational/build issue, not a security flaw; the Red Team did not modify Blue Team files.)
+The in-memory tests observed coupon replay rejection, stock rejection without transaction-state changes, forged cookie denial, unauthenticated admin/docs denial, CSRF rejection, refresh-token blacklist behavior, IDOR/RBAC controls, password lockout, and audit-log tests. See [security_compliance_matrix.md](security_compliance_matrix.md) for precise environments and limits.
 
-## Conclusion
-Against the current build, SecureShop defends every course-relevant attack that was tested. The assessment is an **initial regression**; it should be repeated on the final submission build, and the browser-driven manual pass completed once the local TLS certificate is trusted in the browser.
+## Static analysis and final assessment
+
+Bandit application-source scan: two LOW / MEDIUM-confidence observations; no medium/high findings. pip-audit advisories are an open dependency hygiene finding. The assessment is **NOT production readiness evidence**. Live TLS, headers, SQLi/XSS, PostgreSQL races, full workflow-bypass retest, and browser behavior remain NOT TESTED.
