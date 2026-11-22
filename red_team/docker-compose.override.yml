@@ -1,0 +1,47 @@
+# Red Team override — lets the app run on a Windows host.
+#
+# WHY THIS EXISTS (blocker, not a security change):
+# The Blue Team's shell scripts (docker-entrypoint.sh, scripts/generate_certs.sh)
+# are saved with Windows CRLF line endings. In a Linux container the kernel reads
+# the shebang as "/bin/sh\r" and fails: "exec /app/docker-entrypoint.sh: no such
+# file or directory". This override runs the SAME startup steps inline, so we do
+# not modify any Blue Team file. It changes NOTHING about the app's security.
+#
+# Run with:
+#   docker compose -f docker-compose.yml -f red_team/docker-compose.override.yml up -d
+#
+# Recommended Blue Team fix: save *.sh with LF endings (add a .gitattributes:
+#   *.sh text eol=lf
+# ) so the scripts work on every host.
+
+services:
+  # Database access stays available to web and docker compose exec, without
+  # binding a Windows host port that may be occupied or reserved.
+  db:
+    ports: !reset []
+
+  certs:
+    command:
+      - /bin/sh
+      - -ec
+      - |
+        apk add --no-cache bash openssl
+        tr -d '\r' < /generate_certs.sh > /tmp/generate_certs.sh
+        bash /tmp/generate_certs.sh /certs
+        chmod 644 /certs/fullchain.pem
+        chmod 600 /certs/privkey.pem
+
+  web:
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -e
+        if [ ! -s /data/secret_key ]; then
+          python -c "import secrets; print(secrets.token_urlsafe(64))" > /data/secret_key
+          chmod 600 /data/secret_key
+        fi
+        export SECRET_KEY="$$(cat /data/secret_key)"
+        python manage.py migrate --noinput
+        python manage.py collectstatic --noinput
+        if [ ! -f /data/.seeded ]; then python manage.py seed_data && touch /data/.seeded; fi
+        exec gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3 --access-logfile -

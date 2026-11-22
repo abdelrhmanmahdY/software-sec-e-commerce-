@@ -1,0 +1,138 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Database &amp; Accounts — SecureShop Red Team</title><style>
+:root{--navy:#0b1f3a;--navy2:#13335c;--accent:#2dd4bf;--bg:#f5f7fa;--ink:#1a2330;
+--ok:#15803d;--okbg:#dcfce7;--bad:#b91c1c;--badbg:#fee2e2;--mid:#b45309;--midbg:#fef3c7;--mut:#64748b;}
+*{box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;color:var(--ink);background:var(--bg);
+margin:0;line-height:1.55;font-size:15px}
+.wrap{max-width:900px;margin:0 auto;padding:0 28px 60px}
+.cover{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:40px 28px;margin-bottom:28px}
+.cover .wrap{padding:0 28px}
+.cover .tag{letter-spacing:.18em;text-transform:uppercase;font-size:12px;color:var(--accent)}
+.cover h1{margin:.2em 0;font-size:30px;color:#fff}
+.cover .meta{color:#c7d2e0;font-size:13px}
+h1,h2,h3{color:var(--navy);line-height:1.25}
+h2{border-bottom:2px solid #e2e8f0;padding-bottom:.25em;margin-top:1.6em}
+h3{margin-top:1.3em}
+a{color:var(--navy2)}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:13.5px}
+th,td{border:1px solid #d7dee8;padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--navy);color:#fff;font-weight:600}
+tr:nth-child(even) td{background:#fff}
+tr:nth-child(odd) td{background:#eef2f7}
+code{background:#e8edf3;padding:.1em .35em;border-radius:3px;font-size:.92em}
+pre{background:var(--navy);color:#e6edf3;padding:14px;border-radius:8px;overflow:auto;font-size:13px}
+pre code{background:none;color:inherit}
+blockquote{border-left:4px solid var(--accent);background:#eef7f6;margin:1em 0;padding:.5em 1em;color:#334155}
+.badge{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+.b-ok{background:var(--okbg);color:var(--ok)} .b-bad{background:var(--badbg);color:var(--bad)}
+.b-mid{background:var(--midbg);color:var(--mid)} .b-mut{background:#e2e8f0;color:var(--mut)}
+.footer{margin-top:40px;border-top:1px solid #e2e8f0;padding-top:12px;color:var(--mut);font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin:1.5em 0}
+.card{background:#fff;border:1px solid #d7dee8;border-radius:10px;padding:16px}
+.card h3{margin:.1em 0 .4em}.card a{text-decoration:none}
+@media print{body{background:#fff;font-size:12px}.wrap{max-width:none;padding:0 6mm}
+.cover{margin:0 0 10mm}@page{size:A4;margin:14mm}h2{page-break-after:avoid}table,pre{page-break-inside:avoid}}
+body.landscape table{font-size:10.5px}
+body.landscape td,body.landscape th{padding:5px 6px}
+@media print{@page landscape{size:A4 landscape;margin:10mm}
+body.landscape{page:landscape}body.landscape .wrap{max-width:none;padding:0 4mm}}
+</style></head>
+<body><div class="cover"><div class="wrap"><div class="tag">CET431 · Red Team</div>
+<h1>Database &amp; Accounts</h1>
+<div class="meta">SecureShop Security Assessment · 2026-11-22</div></div></div>
+<div class="wrap"><h1 id="secureshop-database-test-accounts-red-team-discovery">SecureShop — Database &amp; Test Accounts (Red Team discovery)</h1>
+<p><strong>Phase A. Date: 2026-11-22.</strong> Connected to the <strong>real running database</strong> via <code>docker compose exec web python manage.py shell</code> (Django ORM). No password hashes or secrets are printed. Target is local only.</p>
+<h2 id="database">Database</h2>
+<ul>
+<li><strong>Engine:</strong> PostgreSQL 16 (Docker service <code>db</code>). Confirmed live (<code>connection.vendor = postgresql</code>).</li>
+<li><strong>Host port (Red Team run):</strong> <code>127.0.0.1:5433</code> (remapped from 5432, which was already in use on the host). Internal app still uses <code>db:5432</code>.</li>
+</ul>
+<h2 id="tables-by-app">Tables (by app)</h2>
+<p><code>auth_user</code>, <code>users_userprofile</code>, <code>users_coupon</code>, <code>users_couponusage</code>, <code>users_newslettersubscriber</code>, <code>products_category</code>, <code>products_product</code>, <code>carts_cart</code>, <code>carts_cartitem</code>, <code>orders_order</code>, <code>orders_orderitem</code>, <code>audit_auditlog</code>, <code>token_blacklist_*</code>, Django built-ins.</p>
+<h2 id="accounts-verified-from-db-no-secrets-shown">Accounts (verified from DB — no secrets shown)</h2>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>username</th>
+<th>staff</th>
+<th>superuser</th>
+<th>active</th>
+<th>store_credit</th>
+<th>totp</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>admin</code></td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>500.00</td>
+<td>off</td>
+<td><strong>Administrator</strong> (existing)</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>staff</code></td>
+<td>✓</td>
+<td>✗</td>
+<td>✓</td>
+<td>0.00</td>
+<td>off</td>
+<td><strong>Staff</strong> (existing)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>customer</code></td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+<td>500.00</td>
+<td>off</td>
+<td><strong>Customer</strong> (existing)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>admin@example.test</code></td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+<td>0.00</td>
+<td>off</td>
+<td>Customer (test account, pre-existing in DB)</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>dsad@example.test</code></td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+<td>0.00</td>
+<td>off</td>
+<td>Customer (test account, pre-existing in DB)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Existing seed accounts</strong> (from <code>seed_data</code>): <code>admin</code>, <code>staff</code>, <code>customer</code>. Passwords are documented in the project README/seed (not repeated here).</li>
+<li><strong>Pre-existing test accounts:</strong> ids 4–5 were already in the DB (created earlier through signup). Not created by this assessment.</li>
+<li><strong>Accounts created by this assessment:</strong> none yet. Any needed will be clearly named <code>rt_*</code> and documented here.</li>
+</ul>
+<h2 id="data-snapshot">Data snapshot</h2>
+<ul>
+<li><strong>Orders:</strong> 2 — order 1 → <code>customer</code>, order 3 → <code>admin@example.test</code>. (Owner-scoped by the API.)</li>
+<li><strong>Products:</strong> 4. <strong>Coupons:</strong> 5. <strong>CouponUsage:</strong> 0 (redemption tracking active). <strong>Newsletter subscribers:</strong> 6.</li>
+</ul>
+<h2 id="notes-for-testing">Notes for testing</h2>
+<ul>
+<li>Two different customer accounts exist (<code>customer</code>, <code>admin@example.test</code>), enabling a proper cross-user IDOR re-test (H5) without creating data.</li>
+<li>TOTP is <strong>off</strong> for all accounts (<code>totp_enabled=False</code>) — MFA groundwork exists in code but is not enforced on these accounts; verify whether it is required anywhere.</li>
+<li><code>staff</code> has 0 store credit; <code>customer</code> and <code>admin</code> have 500 — relevant for checkout tests.</li>
+</ul>
+<div class="footer">SecureShop Red Team · local authorized assessment · generated from
+<code>red_team/reports/</code></div></div></body></html>

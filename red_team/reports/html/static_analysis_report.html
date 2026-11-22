@@ -1,0 +1,170 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Static Analysis (Bandit + SCA) — SecureShop Red Team</title><style>
+:root{--navy:#0b1f3a;--navy2:#13335c;--accent:#2dd4bf;--bg:#f5f7fa;--ink:#1a2330;
+--ok:#15803d;--okbg:#dcfce7;--bad:#b91c1c;--badbg:#fee2e2;--mid:#b45309;--midbg:#fef3c7;--mut:#64748b;}
+*{box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;color:var(--ink);background:var(--bg);
+margin:0;line-height:1.55;font-size:15px}
+.wrap{max-width:900px;margin:0 auto;padding:0 28px 60px}
+.cover{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:40px 28px;margin-bottom:28px}
+.cover .wrap{padding:0 28px}
+.cover .tag{letter-spacing:.18em;text-transform:uppercase;font-size:12px;color:var(--accent)}
+.cover h1{margin:.2em 0;font-size:30px;color:#fff}
+.cover .meta{color:#c7d2e0;font-size:13px}
+h1,h2,h3{color:var(--navy);line-height:1.25}
+h2{border-bottom:2px solid #e2e8f0;padding-bottom:.25em;margin-top:1.6em}
+h3{margin-top:1.3em}
+a{color:var(--navy2)}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:13.5px}
+th,td{border:1px solid #d7dee8;padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--navy);color:#fff;font-weight:600}
+tr:nth-child(even) td{background:#fff}
+tr:nth-child(odd) td{background:#eef2f7}
+code{background:#e8edf3;padding:.1em .35em;border-radius:3px;font-size:.92em}
+pre{background:var(--navy);color:#e6edf3;padding:14px;border-radius:8px;overflow:auto;font-size:13px}
+pre code{background:none;color:inherit}
+blockquote{border-left:4px solid var(--accent);background:#eef7f6;margin:1em 0;padding:.5em 1em;color:#334155}
+.badge{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+.b-ok{background:var(--okbg);color:var(--ok)} .b-bad{background:var(--badbg);color:var(--bad)}
+.b-mid{background:var(--midbg);color:var(--mid)} .b-mut{background:#e2e8f0;color:var(--mut)}
+.footer{margin-top:40px;border-top:1px solid #e2e8f0;padding-top:12px;color:var(--mut);font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin:1.5em 0}
+.card{background:#fff;border:1px solid #d7dee8;border-radius:10px;padding:16px}
+.card h3{margin:.1em 0 .4em}.card a{text-decoration:none}
+@media print{body{background:#fff;font-size:12px}.wrap{max-width:none;padding:0 6mm}
+.cover{margin:0 0 10mm}@page{size:A4;margin:14mm}h2{page-break-after:avoid}table,pre{page-break-inside:avoid}}
+body.landscape table{font-size:10.5px}
+body.landscape td,body.landscape th{padding:5px 6px}
+@media print{@page landscape{size:A4 landscape;margin:10mm}
+body.landscape{page:landscape}body.landscape .wrap{max-width:none;padding:0 4mm}}
+</style></head>
+<body><div class="cover"><div class="wrap"><div class="tag">CET431 · Red Team</div>
+<h1>Static Analysis (Bandit + SCA)</h1>
+<div class="meta">SecureShop Security Assessment · 2026-11-22</div></div></div>
+<div class="wrap"><h1 id="static-analysis-report-bandit-sast-pip-audit-sca">Static Analysis Report — Bandit (SAST) + pip-audit (SCA)</h1>
+<p>Date: 2026-11-22. Tools run from the Red Team venv against the project source/dependencies.</p>
+<blockquote>
+<p>Static analysis finds code/dependency patterns. It is <strong>not</strong> proof of a remotely exploitable vulnerability — each item is reviewed below.</p>
+</blockquote>
+<h2 id="1-bandit-python-sast">1. Bandit (Python SAST)</h2>
+<p>Command: <code>bandit -r . -x ./.venv,./red_team,./staticfiles,./software-sec-e-commerce-,./naive_shop,./media -f json</code>.
+Raw output: <code>bandit_results.json</code>.</p>
+<p><strong>Result: 5 issues, all LOW severity / medium confidence, all non-exploitable.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>File:line</th>
+<th>Bandit text</th>
+<th>Review</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>B105</td>
+<td><code>audit/tests.py:31</code></td>
+<td>"hardcoded password: 'wrong'"</td>
+<td>Test fixture string. <strong>False positive.</strong></td>
+</tr>
+<tr>
+<td>B105</td>
+<td><code>audit/tests.py:40</code></td>
+<td>"hardcoded password: 'x'"</td>
+<td>Test fixture string. <strong>False positive.</strong></td>
+</tr>
+<tr>
+<td>B105</td>
+<td><code>audit/tests.py:50</code></td>
+<td>"hardcoded password: 'bad'"</td>
+<td>Test fixture string. <strong>False positive.</strong></td>
+</tr>
+<tr>
+<td>B105</td>
+<td><code>config/settings.py:35</code></td>
+<td>"hardcoded password: 'insecure-dev-only-key'"</td>
+<td>Dev-only <code>SECRET_KEY</code> fallback, used <strong>only when <code>DEBUG=True</code></strong>; production raises <code>ImproperlyConfigured</code>. <strong>Not exploitable.</strong></td>
+</tr>
+<tr>
+<td>B105</td>
+<td><code>dashboard/views.py:170</code></td>
+<td>"hardcoded password: ''"</td>
+<td>Empty-string default in a form field, not a credential. <strong>False positive.</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Conclusion:</strong> no actionable Bandit finding in the application code.</p>
+<h2 id="2-pip-audit-dependency-sca">2. pip-audit (dependency / SCA)</h2>
+<p>Command: <code>pip-audit -f json</code>. Raw output: <code>pip_audit.json</code>.</p>
+<p><strong>Result: 15 of 89 installed packages have known advisories</strong> (the pinned <code>requirements.txt</code> versions are behind current security releases). This is a real <strong>Vulnerable &amp; Outdated Components</strong> finding (OWASP A06), though exploitability depends on how each package is used.</p>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Pinned</th>
+<th>Advisories (count)</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>django</td>
+<td>5.2.4</td>
+<td>many</td>
+<td>Framework — upgrade to the latest 5.2.x patch is important</td>
+</tr>
+<tr>
+<td>djangorestframework</td>
+<td>3.16.0</td>
+<td>several</td>
+<td>API layer — upgrade</td>
+</tr>
+<tr>
+<td>cryptography</td>
+<td>45.0.5</td>
+<td>several</td>
+<td>TLS/crypto — upgrade</td>
+</tr>
+<tr>
+<td>pyjwt</td>
+<td>2.10.1</td>
+<td>several</td>
+<td>JWT auth — upgrade</td>
+</tr>
+<tr>
+<td>pillow</td>
+<td>11.3.0</td>
+<td>many</td>
+<td>Image handling — upgrade (image upload surface)</td>
+</tr>
+<tr>
+<td>requests / urllib3 / idna / certifi</td>
+<td>pinned</td>
+<td>several</td>
+<td>HTTP client chain — upgrade</td>
+</tr>
+<tr>
+<td>gunicorn</td>
+<td>21.2.0</td>
+<td>few</td>
+<td>WSGI server — upgrade</td>
+</tr>
+<tr>
+<td>sqlparse / graphql-core / scapy / python-dotenv / setuptools</td>
+<td>pinned</td>
+<td>few</td>
+<td>upgrade where used</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Severity (estimated): Medium.</strong> Many advisories are DoS or edge-case; a few (framework, crypto, image) matter more. None was shown to be remotely exploitable in this assessment — this is a <strong>patch-hygiene</strong> finding.</p>
+<p><strong>Recommendation (Blue Team):</strong>
+1. Bump <code>requirements.txt</code> to current patched versions (start with django, djangorestframework, cryptography, pyjwt, pillow, requests/urllib3, gunicorn).
+2. Re-run <code>pip-audit</code> until clean.
+3. Add dependency scanning to CI so this is caught automatically.</p>
+<h2 id="how-to-reproduce">How to reproduce</h2>
+<pre><code>.venv\Scripts\bandit -r . -x ./.venv,./red_team,./staticfiles,./software-sec-e-commerce-,./naive_shop,./media -f json -o red_team/reports/bandit_results.json
+.venv\Scripts\pip-audit -f json -o red_team/reports/pip_audit.json
+</code></pre>
+<div class="footer">SecureShop Red Team · local authorized assessment · generated from
+<code>red_team/reports/</code></div></div></body></html>

