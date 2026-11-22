@@ -34,12 +34,11 @@ goto menu
 :start_app
 echo.
 echo Starting SecureShop via Docker (this can take a minute or two)...
-echo If port 5432 is already in use on your machine, set POSTGRES_PORT first, e.g.:
-echo     set POSTGRES_PORT=5433
+echo PostgreSQL stays inside Docker; no Windows database port is required.
 docker compose -f docker-compose.yml -f red_team\docker-compose.override.yml up -d --build --wait
 if errorlevel 1 (
     echo.
-    echo Docker reported an error above. Read it before retrying — do not assume it worked.
+    echo Docker reported an error above. Read it before retrying; do not assume it worked.
 ) else (
     echo.
     echo Containers should be up. Check with: docker compose ps

@@ -22,9 +22,12 @@ any of their files.
 **What you should see:** after a minute or two, `docker compose ps` shows all
 three containers as `healthy` or `running`.
 
-**If port 5432 is already taken** (another Postgres on your machine), set an
-env var first: `set POSTGRES_PORT=5433` (Windows) or `export POSTGRES_PORT=5433`
-(Mac/Linux), then re-run the command above.
+**Database ports:** the Red Team override removes PostgreSQL's host port
+binding, avoiding occupied or reserved Windows ports such as 5432. No
+`POSTGRES_PORT` setting is needed. Django still connects internally to
+`db:5432`. For database access, use `docker compose exec db psql -U nexus -d nexus`
+(adjust the user and database if you configured different names).
+The override requires Docker Compose 2.24.0 or newer for `!reset` support.
 
 **Confirm it's actually up:**
 ```
