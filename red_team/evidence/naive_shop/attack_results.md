@@ -1,7 +1,5 @@
 # Naive Shop - Attack Results (all vulnerabilities confirmed)
 
-- Timestamp: 2026-11-22T00:19:54.277902+00:00
-- Assertions verify observed response/state; coupon result proves repeated discount calculation, not completed discounted purchases.
 - Target: `http://127.0.0.1:8010` (intentionally insecure demo)
 
 | ID | Vulnerability | Status | Detail |

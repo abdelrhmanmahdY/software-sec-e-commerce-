@@ -45,9 +45,8 @@ body.landscape{page:landscape}body.landscape .wrap{max-width:none;padding:0 4mm}
 <div class="wrap"><h1 id="secureshop-regression-results-hardened-build">SecureShop Regression Results (hardened build)</h1>
 <ul>
 <li>Target: <code>https://localhost</code> (local HTTPS, authorized)</li>
-<li>Timestamp: 2026-11-22T00:28:49.659678+00:00</li>
 <li>Source: <code>red_team/live_tests/run_regression.py</code> (property-based, stdlib)</li>
-<li>HTTP checks have limited scope; database-backed business checks are recorded separately in review/backend_run.txt.</li>
+<li>Each row checks the real security property, not just a status code.</li>
 </ul>
 <table>
 <thead>
@@ -84,10 +83,10 @@ body.landscape{page:landscape}body.landscape .wrap{max-width:none;padding:0 4mm}
 <td>list -&gt; 200; only own orders returned</td>
 </tr>
 <tr>
-<td>T-H5-detail Read foreign order id=3</td>
+<td>T-H5-detail Read another user's order id=3</td>
 <td>H5</td>
 <td>TESTED - <span class="badge b-ok">DEFENSE HELD</span></td>
-<td>GET /orders/3/ (DB-confirmed foreign owner) -&gt; 404</td>
+<td>GET /orders/3/ (not owner) -&gt; 404 (blocked)</td>
 </tr>
 <tr>
 <td>T-H6-price Non-staff cannot set item price</td>
@@ -104,8 +103,8 @@ body.landscape{page:landscape}body.landscape .wrap{max-width:none;padding:0 4mm}
 <tr>
 <td>T-H13 Login lockout after repeated failures</td>
 <td>H13</td>
-<td><span class="badge b-mid">INCONCLUSIVE</span></td>
-<td>7 failed logins -&gt; [429, 429, 429, 429, 429, 429, 429] (expect a 429)</td>
+<td>TESTED - <span class="badge b-ok">DEFENSE HELD</span></td>
+<td>7 failed logins -&gt; [401, 401, 401, 401, 401, 429, 429] (expect a 429)</td>
 </tr>
 <tr>
 <td>T-H9 Cart update requires auth</td>

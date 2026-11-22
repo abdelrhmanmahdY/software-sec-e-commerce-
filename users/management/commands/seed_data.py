@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from django.contrib.auth.models import User
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from carts.models import Cart, CartItem
@@ -22,17 +22,6 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, **options):
-        import os
-
-        admin_password = os.getenv("SEED_ADMIN_PASSWORD", "")
-        staff_password = os.getenv("SEED_STAFF_PASSWORD", "")
-        customer_password = os.getenv("SEED_CUSTOMER_PASSWORD", "")
-        if not all((admin_password, staff_password, customer_password)):
-            raise CommandError(
-                "Set SEED_ADMIN_PASSWORD, SEED_STAFF_PASSWORD, and "
-                "SEED_CUSTOMER_PASSWORD before seeding demo accounts."
-            )
-
         if options["clear"]:
             CartItem.objects.all().delete()
             Cart.objects.all().delete()
@@ -59,7 +48,7 @@ class Command(BaseCommand):
         admin.last_name = "Administrator"
         admin.is_staff = True
         admin.is_superuser = True
-        admin.set_password(admin_password)
+        admin.set_password("Admin!2026#Secure")
         admin.save()
 
         staff, _ = User.objects.get_or_create(
@@ -71,7 +60,7 @@ class Command(BaseCommand):
         staff.last_name = "Staff"
         staff.is_staff = True
         staff.is_superuser = False
-        staff.set_password(staff_password)
+        staff.set_password("Staff!2026#Secure")
         staff.save()
 
         customer, _ = User.objects.get_or_create(
@@ -83,7 +72,7 @@ class Command(BaseCommand):
         customer.last_name = "Customer"
         customer.is_staff = False
         customer.is_superuser = False
-        customer.set_password(customer_password)
+        customer.set_password("Customer!2026#Secure")
         customer.save()
 
         # Seed store credit balance
@@ -164,4 +153,8 @@ class Command(BaseCommand):
         )
 
         self.stdout.write(self.style.SUCCESS("Database seeded successfully."))
-        self.stdout.write("  demo accounts created; passwords come from SEED_*_PASSWORD environment variables")
+        self.stdout.write("  admin / Admin!2026#Secure (administrator)")
+        self.stdout.write("  staff / Staff!2026#Secure (staff)")
+        self.stdout.write("  customer / Customer!2026#Secure (standard user)")
+        self.stdout.write("  Coupon code: SUMMER2026 (valid from 2026-06-01 to 2026-08-31)")
+        self.stdout.write("  Newsletter subscribers: subscriber1@example.com, subscriber2@example.com")

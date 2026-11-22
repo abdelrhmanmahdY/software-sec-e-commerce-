@@ -17,11 +17,6 @@ HTML_DIR.mkdir(exist_ok=True)
 
 # (source markdown, output name, nav title, landscape)
 REPORTS = [
-    ("functional_compliance_matrix.md", "functional_compliance_matrix", "Functional Requirements Audit", True),
-    ("security_compliance_matrix.md", "security_compliance_matrix", "Security Requirements Audit", True),
-    ("documentation_compliance_matrix.md", "documentation_compliance_matrix", "Documentation Compliance Audit", False),
-    ("demo_readiness.md", "demo_readiness", "Demo and Q&A Readiness", False),
-    ("official_requirements_audit.md", "official_requirements_audit", "Official Requirements Audit Dashboard", False),
     ("executive_summary.md", "executive_summary", "Executive Summary", False),
     ("project_architecture.md", "project_architecture", "Project Architecture", False),
     ("threat_model.md", "threat_model", "Threat Model", False),
