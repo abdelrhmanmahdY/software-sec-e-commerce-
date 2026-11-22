@@ -2,9 +2,7 @@
 
 This is the **Red Team** workspace for the SecureShop project. Everything here covers attack preparation, reproducing the course Labs, preparing test cases, and the reports.
 
-> **Academic-integrity note:** This work is educational and local, against the team's own authorized SecureShop instance only (per the PDF, items 4 and 8).
->
-> **Update (2026-11-22):** this note originally said no attack had been run yet. That's no longer true — see **`START_HERE.md`** for the current, accurate status: live regression tests have been run against SecureShop (`evidence/live/`), and the Naive Shop comparison attacks have been run and re-verified (`evidence/naive_shop/`). `START_HERE.md` is now the up-to-date entry point; read it before this file.
+> **Academic-integrity note:** This work is educational and local. **No attack has been executed against the SecureShop application** yet, because the Blue Team is still developing it. Any real test against the application is deferred until there is a final version + authorization + an agreed **testing window** (per the PDF, items 4 and 8).
 
 ---
 
