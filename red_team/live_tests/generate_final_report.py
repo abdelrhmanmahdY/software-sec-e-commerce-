@@ -84,8 +84,10 @@ def main():
         if item.get("issue_severity") in ("MEDIUM", "HIGH")
     ]
     test_text = tests_evidence.read_text(encoding="utf-8", errors="replace")
-    if "Ran 16 tests" not in test_text or "OK" not in test_text:
-        raise RuntimeError(f"The latest Django test evidence is not a clean 16-test run: {tests_evidence}")
+    test_match = re.search(r"Ran (\d+) tests?", test_text)
+    if not test_match or "OK" not in test_text:
+        raise RuntimeError(f"The latest Django test evidence is not a clean passing run: {tests_evidence}")
+    test_count = int(test_match.group(1))
 
     results_table = [
         ("V1", "Client-controlled checkout price", "PASS", "Persisted order total was $1.00."),
@@ -97,39 +99,40 @@ def main():
         ("V7", "Unauthenticated admin access", "PASS", "Anonymous response exposed seeded admin data."),
     ]
     secure_results = [
-        ("Password-only JWT for TOTP user", "CONFIRMED GAP", auth["jwt_mfa"]),
-        ("HTML signup before email confirmation", "CONFIRMED GAP", auth["signup_routes"]),
-        ("TOTP endpoint after normal migrations", "ERROR / BLOCKED", auth["session_mfa_and_replay"]),
-        ("TOTP IP lockout with test-only schema", "VERIFIED COMPONENT", totp),
+        ("Password-only JWT for TOTP user", "FIX VERIFIED IN-MEMORY", auth["jwt_mfa"]),
+        ("HTML signup before email confirmation", "FIX VERIFIED IN-MEMORY", auth["signup_routes"]),
+        ("TOTP endpoint after normal migrations", "FIX VERIFIED IN-MEMORY", auth["session_mfa_and_replay"]),
+        ("TOTP IP lockout with repository migration", "VERIFIED IN-MEMORY", totp),
         ("Forged cookie / admin / API docs", "VERIFIED IN-MEMORY", workflow["cookie_and_admin"]),
         ("Coupon, store credit, checkout", "VERIFIED IN-MEMORY", workflow["store_credit_checkout"]),
-        ("Over-stock cart and checkout", "PARTIAL / FINDING", workflow["cart_quantity_and_stock"]),
+        ("Cart quantity and stock validation", "FIX VERIFIED IN-MEMORY", workflow["cart_quantity_and_stock"]),
+        ("Missing cart item input", "FIX VERIFIED IN-MEMORY", workflow["empty_input"]),
         ("CSRF without token", "VERIFIED IN-MEMORY", workflow["csrf"]),
     ]
     coverage_rows = [
-        ("Authentication / identity", "V5", "TOTP-enrolled user received usable password-only JWT; OPEN."),
-        ("Email verification", "—", "HTML /signup/ account active before confirmation; OPEN."),
-        ("MFA/TOTP enforcement", "—", "JWT path bypasses TOTP; OPEN."),
-        ("TOTP replay", "—", "Utility replay rejected; endpoint path blocked by missing table."),
-        ("Brute force", "V6", "Password lockout unit tests pass; TOTP policy tested only after temporary schema creation."),
-        ("JWT / refresh token", "V5", "Refresh blacklist unit test passes; MFA issuance gap remains."),
+        ("Authentication / identity", "V5", "TOTP-enrolled user receives no password-only JWT; missing, invalid, and replayed codes are rejected; valid code grants access in-memory."),
+        ("Email verification", "—", "Both HTML signup routes remain inactive until the emailed confirmation link is used; verified in-memory."),
+        ("MFA/TOTP enforcement", "—", "Password-only JWT and invalid/missing TOTP are rejected; valid code accepted in-memory."),
+        ("TOTP replay", "—", "Repeated TOTP code is rejected; normal migration creates AuthThrottle; IP lockout tested in-memory."),
+        ("Brute force", "V6", "Password lockout unit tests pass; TOTP IP lockout blocks at 20 failures after normal migrations."),
+        ("JWT / refresh token", "V5", "TOTP required at issuance for enrolled users; refresh blacklist unit test passes."),
         ("Sessions / cookies", "V5", "Forged identity cookie denied in-memory; secure flags/live session NOT TESTED."),
         ("IDOR", "V3", "Owner-scoping and mutation tests pass in-memory."),
         ("RBAC / privilege escalation", "V7", "Role tests pass in-memory; no live deployment retest."),
         ("SQL injection", "—", "NOT TESTED; ORM inspection is not runtime proof."),
         ("XSS", "—", "NOT TESTED."),
         ("CSRF", "—", "Missing-token session POST rejected; profile unchanged."),
-        ("Input validation", "—", "Empty body 400; empty JSON object 404."),
+        ("Input validation", "—", "Empty body and missing item_id JSON both return HTTP 400."),
         ("Price manipulation", "V1", "In-memory order-item client price/status test passes."),
         ("Coupon reuse / discounts", "V2", "First redemption succeeds; replay 400 with checked state unchanged."),
-        ("Cart quantity / stock", "—", "Quantity 3 yielded 4 and exceeded stock; checkout later rejected it."),
+        ("Cart quantity / stock", "—", "Requested quantity is preserved; additions and quantity updates above stock are rejected without mutation."),
         ("Checkout workflow integrity", "V4", "Same unpaid-payment bypass NOT TESTED on SecureShop."),
         ("Race conditions", "—", "NOT TESTED; SQLite is not a PostgreSQL concurrency substitute."),
         ("Store credit", "V1", "$200 to $105 after $95 synthetic checkout; replay preserved balance."),
         ("Audit logging", "—", "Unit tests verify actor/IP/change data and password redaction."),
         ("Sensitive data exposure", "V7", "Unauthenticated admin redirect and docs 403; broader leaks NOT TESTED."),
         ("HTTPS / TLS / headers", "—", "NOT TESTED live; no SecureShop service started."),
-        ("Dependency vulnerabilities", "—", f"{advisory_count} advisories across {len(audit_packages)} packages."),
+        ("Dependency vulnerabilities", "—", f"pip-audit found {advisory_count} advisories across {len(audit_packages)} packages in the current pinned requirements."),
         ("Fail-secure behavior", "—", "Stock/coupon rejection preserved checked state in-memory."),
         ("STRIDE", "—", "Threat model documented; live control validation remains incomplete."),
         ("Behavioral biometrics / location / passkeys", "—", "No demonstrated implementation; NOT TESTED / not applicable."),
@@ -137,21 +140,21 @@ def main():
     evidence_rows = [
         ("Naive V1-V7", str(naive_evidence.relative_to(ROOT)), "Current local loopback transcript."),
         ("Auth / signup / JWT / TOTP", str(auth_evidence.relative_to(ROOT)), "SQLite :memory:, synthetic identities."),
-        ("TOTP IP lockout", str(totp_evidence.relative_to(ROOT)), "Temporary schema-editor-created table; secrets excluded."),
+        ("TOTP IP lockout", str(totp_evidence.relative_to(ROOT)), "Repository migrations; no schema-editor patch; secrets excluded."),
         ("Workflows / access", str(workflow_evidence.relative_to(ROOT)), "SQLite :memory:, actual request/response summaries and state deltas."),
-        ("Django tests", str(tests_evidence.relative_to(ROOT)), "16 tests passed in SQLite :memory:."),
+        ("Django tests", str(tests_evidence.relative_to(ROOT)), f"{test_count} tests passed in SQLite :memory:."),
         ("Bandit", str(bandit_evidence.relative_to(ROOT)), "Application paths only; tests excluded."),
         ("pip-audit", str(audit_evidence.relative_to(ROOT)), "64 declared dependencies; advisory JSON."),
         ("Naive screenshots", "red_team/evidence/naive_shop/naive-shop-home.png; naive-shop-admin.png", "Presentation evidence; not a substitute for raw exchanges."),
         ("Historical baseline", "red_team/evidence/live/regression_results.md", "Historical only; not rerun or counted as current live result."),
     ]
     finding_rows = [
-        ("RT-01", "HIGH", "audit/views.py:26-29; config/urls.py:41-44", "Password-only JWT issued to TOTP-enabled account; token accessed protected orders.", "Require MFA before usable JWT issuance; retest all factor paths."),
-        ("RT-02", "MEDIUM", "users/views.py:25-26; users/urls.py:5; config/urls.py:34", "HTML /signup/ created active user with email_confirmed=false.", "Unify registration activation policy; require confirmation before login/protected actions."),
-        ("RT-03", "MEDIUM", "audit/models.py:164-197; audit/migrations/0001_initial.py:13-33", "AuthThrottle table absent after migrations; TOTP verification raises no-such-table.", "Add migration and verify clean install/upgrade plus endpoint lockout."),
-        ("RT-04", "MEDIUM", "requirements.txt:14-63", f"pip-audit found {advisory_count} advisories across {len(audit_packages)} declared packages; exploitability not established.", "Review package advisories, upgrade compatible dependencies, rerun tests and audit."),
-        ("RT-05", "LOW", "carts/views.py:44-49; carts/models.py:27", "First cart add requested quantity 3 returned 4 and allowed quantity above stock; checkout later rejected.", "Correct first-add quantity and validate requested stock at cart mutation."),
-        ("RT-06", "LOW", "carts/views.py:69-73", "An empty JSON object on quantity update returned 404 instead of a field-validation 400.", "Return consistent validation errors for missing item_id."),
+        ("RT-01", "HIGH", "FIX VERIFIED IN-MEMORY", "audit/views.py:26-29; config/urls.py:41-44", "Password-only JWT was issued to a TOTP-enabled account.", "Require a fresh, unused TOTP code before issuing usable tokens."),
+        ("RT-02", "MEDIUM", "FIX VERIFIED IN-MEMORY", "users/registration.py; users/views.py:25-26", "HTML signup activated an account before email confirmation.", "Keep accounts inactive until the signed confirmation link is used."),
+        ("RT-03", "MEDIUM", "MIGRATION ADDED; FIX VERIFIED IN-MEMORY", "audit/models.py:164-197; audit/migrations/0002_alter_auditlog_action_auththrottle.py", "AuthThrottle was absent after migrations and TOTP verification failed.", "Apply the new migration during the authorized deployment update."),
+        ("RT-04", "MEDIUM", "PINNED REQUIREMENTS UPDATED; SCA CLEAN", "requirements.txt", "Prior pip-audit reported 216 advisories across 14 packages.", "Current pip-audit reports zero known advisories; rebuild and retest deployment images separately."),
+        ("RT-05", "LOW", "FIX VERIFIED IN-MEMORY", "carts/services.py; carts/views.py:44-49", "First cart add incremented quantity by one and over-stock quantities were accepted.", "Shared cart service uses the requested quantity and rejects stock excess."),
+        ("RT-06", "LOW", "FIX VERIFIED IN-MEMORY", "carts/views.py:69-83", "A missing item_id produced HTTP 404 rather than a validation response.", "Missing identifiers now return HTTP 400 without mutation."),
     ]
 
     sections = []
