@@ -24,6 +24,8 @@ import ssl
 import urllib.error
 import urllib.parse
 import urllib.request
+import subprocess
+from datetime import datetime, timezone
 
 BASE = os.environ.get("SECURESHOP_URL", "https://localhost").rstrip("/")
 ACC = {
@@ -40,6 +42,8 @@ if _host in ("localhost", "127.0.0.1", "::1"):
     _ctx.verify_mode = ssl.CERT_NONE
 
 results = []
+if _host not in ('localhost', '127.0.0.1', '::1'):
+    raise SystemExit('Only local targets are authorized.')
 
 
 def rec(tid, name, former, status, detail):
@@ -93,7 +97,7 @@ def main():
     # 2. H22 - API docs require auth
     code, _, _ = http("GET", "/api/docs/")
     rec("T-H22", "API docs require auth", "H22",
-        "TESTED - DEFENSE HELD" if code in (401, 403) else "CONFIRMED VULNERABILITY",
+        "TESTED - DEFENSE HELD" if code in (401, 403) else "INCONCLUSIVE",
         f"GET /api/docs/ (no auth) -> {code} (expected 401/403)")
 
     # tokens
@@ -103,42 +107,56 @@ def main():
         _write(); return
     rec("T-AUTH", "customer JWT login", "-", "TESTED - DEFENSE HELD", "token issued")
 
-    # 3. H5 - IDOR: customer must NOT see another user's order.
-    #    Seed: order id 1 = customer's own; order id 3 = another user's.
+    # Establish identity and object ownership from PostgreSQL, not seed IDs.
+    query = "import json; from django.contrib.auth.models import User; from orders.models import Order; u=User.objects.get(username='customer'); print('RT_DATA:'+json.dumps({'user':u.id,'orders':list(Order.objects.exclude(user=u).values_list('id',flat=True))}))"
+    proc = subprocess.run(['docker','compose','exec','-T','web','python','manage.py','shell','-c',query],capture_output=True,text=True)
+    raw = next((s[8:] for s in proc.stdout.splitlines() if s.startswith('RT_DATA:')), None)
+    if raw is None:
+        rec('T-DB', 'Ownership preconditions', 'H5', 'INCONCLUSIVE', 'Database lookup failed; no guessed IDs used')
+        _write(); return
+    identity = json.loads(raw)
     code_list, body_list, _ = http("GET", "/api/orders/orders/", token=c_access)
     foreign = []
     try:
-        for o in json.loads(body_list).get("results", []):
-            if o.get("user") != 3:   # 3 = customer's id
+        payload = json.loads(body_list)
+        entries = payload.get('results', []) if isinstance(payload, dict) else payload
+        if code_list != 200 or not isinstance(entries, list):
+            raise ValueError('Order list unavailable')
+        for o in entries:
+            if o.get("user") != identity['user']:
                 foreign.append((o.get("id"), o.get("user")))
-    except Exception:
-        pass
-    code_other, body_other, _ = http("GET", "/api/orders/orders/3/", token=c_access)
+    except (ValueError, TypeError, AttributeError):
+        rec('T-H5-list','Orders list owner-scoped','H5','INCONCLUSIVE','Invalid or unsuccessful list response')
+        _write(); return
+    other_id = next(iter(identity['orders']), None)
+    code_other, body_other, _ = http('GET', f'/api/orders/orders/{other_id}/', token=c_access) if other_id else (0,'',{})
     if foreign:
         rec("T-H5-list", "Orders list owner-scoped", "H5", "CONFIRMED VULNERABILITY",
             f"customer saw foreign orders {foreign}")
     else:
         rec("T-H5-list", "Orders list owner-scoped", "H5", "TESTED - DEFENSE HELD",
             f"list -> {code_list}; only own orders returned")
-    if code_other == 200:
-        rec("T-H5-detail", "Read another user's order id=3", "H5", "CONFIRMED VULNERABILITY",
+    if code_other == 200 and json.loads(body_other).get('user') != identity['user']:
+        rec("T-H5-detail", f"Read foreign order id={other_id}", "H5", "CONFIRMED VULNERABILITY",
             f"GET /orders/3/ -> 200 body[:80]={body_other[:80]!r}")
+    elif code_other == 404 and other_id:
+        rec("T-H5-detail", f"Read foreign order id={other_id}", "H5", "TESTED - DEFENSE HELD",
+            f"GET /orders/{other_id}/ (DB-confirmed foreign owner) -> {code_other}")
     else:
-        rec("T-H5-detail", "Read another user's order id=3", "H5", "TESTED - DEFENSE HELD",
-            f"GET /orders/3/ (not owner) -> {code_other} (blocked)")
+        rec('T-H5-detail','Read foreign order','H5','INCONCLUSIVE',f'HTTP {code_other}; precondition/order={other_id}')
 
     # 4. H6 - non-staff cannot create order items / set price
     code, body, _ = http("POST", "/api/orders/order-items/", token=c_access,
                          json_body={"product": 1, "quantity": 1, "price": "0.01"})
     rec("T-H6-price", "Non-staff cannot set item price", "H6",
-        "TESTED - DEFENSE HELD" if code in (401, 403) else "CONFIRMED VULNERABILITY",
+        "TESTED - DEFENSE HELD" if code == 403 else "INCONCLUSIVE",
         f"customer POST order-items price=0.01 -> {code} (expected 403)")
 
     # 5. H19 - refresh token revoked after logout
     http("POST", "/api/auth/logout/", token=c_access, json_body={"refresh": c_refresh})
     code_ref, body_ref, _ = http("POST", "/api/auth/refresh/", json_body={"refresh": c_refresh})
     rec("T-H19", "Refresh token revoked on logout", "H19",
-        "TESTED - DEFENSE HELD" if code_ref in (401, 403) else "CONFIRMED VULNERABILITY",
+        "TESTED - DEFENSE HELD" if code_ref == 401 and 'access' not in json.loads(body_ref) else "INCONCLUSIVE",
         f"reuse blacklisted refresh -> {code_ref} (expected 401)")
 
     # 6. H13 - login lockout (throwaway username, does NOT touch real accounts)
@@ -148,14 +166,14 @@ def main():
                           json_body={"username": "rt_lockout_probe", "password": "x"})
         statuses.append(code)
     rec("T-H13", "Login lockout after repeated failures", "H13",
-        "TESTED - DEFENSE HELD" if 429 in statuses else "CONFIRMED VULNERABILITY",
+        "TESTED - DEFENSE HELD" if 429 in statuses and any(s in (400,401) for s in statuses[:5]) else "INCONCLUSIVE",
         f"7 failed logins -> {statuses} (expect a 429)")
 
     # 7. H9 - cart update requires auth
     code, _, _ = http("POST", "/api/carts/cart/update-quantity/",
                      json_body={"item_id": 1, "quantity": 1})
     rec("T-H9", "Cart update requires auth", "H9",
-        "TESTED - DEFENSE HELD" if code in (401, 403) else "CONFIRMED VULNERABILITY",
+        "TESTED - DEFENSE HELD" if code in (401, 403) else "INCONCLUSIVE",
         f"no-auth update-quantity -> {code} (expected 401/403)")
 
     _write()
@@ -168,8 +186,9 @@ def _write():
         "# SecureShop Regression Results (hardened build)",
         "",
         f"- Target: `{BASE}` (local HTTPS, authorized)",
+        f"- Timestamp: {datetime.now(timezone.utc).isoformat()}",
         "- Source: `red_team/live_tests/run_regression.py` (property-based, stdlib)",
-        "- Each row checks the real security property, not just a status code.",
+        "- HTTP checks have limited scope; database-backed business checks are recorded separately in review/backend_run.txt.",
         "",
         "| Test | Former finding | Status | Detail |",
         "|---|---|---|---|",

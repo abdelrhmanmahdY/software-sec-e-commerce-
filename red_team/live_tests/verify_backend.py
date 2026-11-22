@@ -5,6 +5,7 @@ Use the HTTP regression runner separately for the deployed nginx path.
 """
 import json
 import uuid
+import secrets
 from decimal import Decimal
 from datetime import datetime, timezone
 from django.contrib.auth.models import User
@@ -28,7 +29,8 @@ summary = dict(timestamp=datetime.now(timezone.utc).isoformat(), mode='Django Cl
     password_algorithms=sorted({u.password.split('$')[0] for u in User.objects.all()}))
 prefix = 'rt_' + uuid.uuid4().hex[:12]
 with transaction.atomic():
-    alice = User.objects.create_user(username=prefix+'a')
+    fixture_password = secrets.token_urlsafe(32)
+    alice = User.objects.create_user(username=prefix+'a', password=fixture_password)
     bob = User.objects.create_user(username=prefix+'b')
     category = Category.objects.create(name=prefix)
     product = Product.objects.create(name=prefix, category=category, price=Decimal('100'), stock=20)
@@ -91,6 +93,29 @@ with transaction.atomic():
     r=req('get','/admin/users/newslettersubscriber/')
     check('DB-customer-admin',r.status_code==302 and '/admin/login/' in r.get('Location',''),{'status':r.status_code,'location':r.get('Location')})
     summary['fixture_audit_actions']=list(AuditLog.objects.filter(user=alice).values('action','path'))
+    # Lab 2 exceptional input: registration must reject an overlong email,
+    # rather than silently truncate it into a privileged domain.
+    long_email = 'x'*260 + '@example.test'
+    count=User.objects.count()
+    r=req('post','/api/users/signup/',{'username':prefix+'long','email':long_email,'password':fixture_password})
+    check('DB-overlong-registration',r.status_code==400 and User.objects.count()==count,{'status':r.status_code,'body':r.json(),'user_count_unchanged':User.objects.count()==count})
+    # Enroll only the disposable user. Compare browser-session and JWT MFA paths.
+    from users.totp import generate_totp_secret, get_totp_code
+    profile.totp_enabled=True; profile.totp_secret=generate_totp_secret(); profile.save()
+    anonymous=Client(HTTP_HOST='localhost')
+    r=anonymous.post('/api/auth/login/',data=json.dumps({'username':alice.username,'password':fixture_password}),content_type='application/json',secure=True)
+    tokens=r.json()
+    protected=anonymous.get('/api/orders/orders/',HTTP_AUTHORIZATION='Bearer '+tokens.get('access',''),secure=True)
+    bypass=r.status_code==200 and bool(tokens.get('access')) and protected.status_code==200
+    rows.append(dict(test='DB-MFA-JWT-bypass',status='CONFIRMED VULNERABILITY' if bypass else 'INCONCLUSIVE',detail={'totp_enabled':True,'password_only_status':r.status_code,'access_token_issued':bool(tokens.get('access')),'protected_orders_status':protected.status_code,'no_totp_submitted':True}))
+    session_client=Client(HTTP_HOST='localhost')
+    session=session_client.session; session['pre_2fa_user_id']=alice.id; session['pre_2fa_backend']='django.contrib.auth.backends.ModelBackend'; session.save()
+    valid=get_totp_code(profile.totp_secret)
+    invalid='000000' if valid!='000000' else '111111'
+    r=session_client.post('/dashboard/2fa/verify/',{'code':invalid,'verify':bob.id,'user_id':bob.id},secure=True)
+    check('DB-MFA-forged-identity', '_auth_user_id' not in session_client.session,{'status':r.status_code,'authenticated': '_auth_user_id' in session_client.session,'target_user':bob.id})
+    r=session_client.post('/dashboard/2fa/verify/',{'code':valid},secure=True)
+    check('DB-MFA-correct-identity',str(session_client.session.get('_auth_user_id'))==str(alice.id),{'status':r.status_code,'authenticated_user':session_client.session.get('_auth_user_id'),'expected':alice.id})
     transaction.set_rollback(True)
 summary['rollback_verified']=not User.objects.filter(username__startswith=prefix).exists() and not Product.objects.filter(name=prefix).exists()
 summary['results']=rows
