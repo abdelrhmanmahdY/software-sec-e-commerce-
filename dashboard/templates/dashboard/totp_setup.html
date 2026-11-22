@@ -19,13 +19,25 @@
           <a href="{% url 'profile' %}" class="btn btn-secondary ms-2">Back to Profile</a>
         </form>
       {% else %}
-        <p class="text-muted">Add this secret key to Google Authenticator, Authy, or any TOTP app (SHA1, 6 digits, 30s):</p>
+        <p class="text-muted">Scan this QR code with Google Authenticator, Authy, or any TOTP app (or enter the secret key manually):</p>
+        <div class="text-center mb-3">
+          <div id="totp-qr" class="d-inline-block p-3 bg-white border rounded"></div>
+        </div>
         <div class="p-3 bg-light rounded border mb-3">
           <div class="small text-muted">Secret Key</div>
           <code class="fs-5">{{ totp_secret }}</code>
           <div class="small text-muted mt-2">otpauth URI</div>
           <code class="small text-break">{{ otpauth_uri }}</code>
         </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+        <script>
+          new QRCode(document.getElementById("totp-qr"), {
+            text: "{{ otpauth_uri|escapejs }}",
+            width: 192,
+            height: 192,
+            correctLevel: QRCode.CorrectLevel.M
+          });
+        </script>
         <form method="POST">
           {% csrf_token %}
           <input type="hidden" name="action" value="enable">

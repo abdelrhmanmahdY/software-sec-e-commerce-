@@ -93,9 +93,12 @@
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="d-flex gap-3 justify-content-between">
+                <div class="d-flex flex-wrap gap-2 justify-content-between">
                     <a href="{% url 'settings' %}" class="btn btn-primary rounded-pill px-4 py-2">
                         <i class="fas fa-edit me-2"></i>Edit Profile
+                    </a>
+                    <a href="{% url 'totp_setup' %}" class="btn btn-outline-primary rounded-pill px-4 py-2">
+                        <i class="fas fa-shield-alt me-2"></i>2FA Security
                     </a>
                     <a href="{% url 'shop' %}" class="btn btn-outline-secondary rounded-pill px-4 py-2">
                         <i class="fas fa-shopping-bag me-2"></i>Back to Shop
