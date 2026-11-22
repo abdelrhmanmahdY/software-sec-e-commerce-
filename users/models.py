@@ -10,6 +10,11 @@ class UserProfile(models.Model):
     email_confirmed = models.BooleanField(default=False)
     totp_secret = models.CharField(max_length=64, blank=True, default="")
     totp_enabled = models.BooleanField(default=False)
+    last_totp_counter = models.BigIntegerField(
+        null=True,
+        blank=True,
+        editable=False
+    )
 
     def __str__(self):
         return f"{self.user.username} profile"

@@ -35,3 +35,18 @@ Thumbs.db
 .idea/
 certs/*.pem
 report up/
+
+# Temporary security testing files
+/brute-login.json
+/brute-response.json
+/cart-before-update.json
+/order-test.json
+/price-test.json
+/quantity-response.json
+/quantity-test.json
+/rt-coupon-cookies.txt
+/stock-*.json
+
+# Temporary test responses and payloads
+*-test-response.json
+*-checkout-response.json

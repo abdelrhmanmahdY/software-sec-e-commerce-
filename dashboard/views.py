@@ -7,7 +7,14 @@ from django.conf import settings as django_settings
 from django.core.mail import send_mail
 from django.views.decorators.http import require_POST
 from users.permissions import staff_required
-from audit.utils import get_client_ip
+from audit.utils import (
+    get_client_ip,
+    is_totp_locked_out,
+    record_totp_failure,
+    clear_throttle,
+)
+
+from audit.models import AuditLog
 from django.contrib.auth.models import User
 from django.utils.timezone import now, timedelta
 from django.core.paginator import Paginator
@@ -21,6 +28,11 @@ from carts.models import Cart, CartItem
 from products.models import Product, Category
 from users.models import Coupon, NewsletterSubscriber
 from django.core import signing
+from users.totp import (
+    generate_totp_secret,
+    get_otpauth_uri,
+    consume_totp_code
+)
 
 @login_required
 @staff_required
@@ -129,56 +141,179 @@ def login_view(request):
     return render(request, "dashboard/login.html", {"form": form})
 
 
-def totp_verify(request):
-    from users.totp import verify_totp_code
 
+def totp_verify(request):
     user_id = request.session.get("pre_2fa_user_id")
+
     if not user_id:
         return redirect("login")
 
     user = get_object_or_404(User, pk=user_id)
+
     profile = getattr(user, "profile", None)
+
     if not profile or not profile.totp_enabled or not profile.totp_secret:
         request.session.pop("pre_2fa_user_id", None)
+        request.session.pop("pre_2fa_backend", None)
         return redirect("login")
 
-    if request.method == "POST":
-        code = request.POST.get("code", "").strip()
-        if verify_totp_code(profile.totp_secret, code):
-            backend = request.session.pop("pre_2fa_backend", django_settings.AUTHENTICATION_BACKENDS[0])
-            request.session.pop("pre_2fa_user_id", None)
-            login(request, user, backend=backend)
-            return redirect("dashboard_home" if user.is_staff else "shop")
-        messages.error(request, "Invalid 6-digit verification code. Please try again.")
+    ip = get_client_ip(request)
 
-    return render(request, "dashboard/totp_verify.html", {"username": user.username})
+    # Check account-level and IP-level lockout
+    if is_totp_locked_out(user.pk, ip):
+
+        if request.method == "POST":
+            AuditLog.record(
+                AuditLog.Action.TOTP_LOCKED,
+                request=request,
+                user=user,
+                object_type="UserProfile",
+                object_id=str(profile.pk),
+                object_repr=str(profile),
+                changes={"reason": "TOTP lockout active"},
+            )
+
+        messages.error(
+            request,
+            "Too many verification attempts. Try again in 10 minutes."
+        )
+
+        return render(
+            request,
+            "dashboard/totp_verify.html",
+            {
+                "username": user.username,
+                "locked": True,
+            }
+        )
+
+    if request.method == "POST":
+
+        code = request.POST.get("code", "").strip()
+
+        # Validate and atomically consume the TOTP counter
+        if consume_totp_code(
+            profile,
+            code,
+            require_enabled=True
+        ):
+
+            # Reset account failures only.
+            # Keep IP-level failures to prevent password/2FA spraying.
+            clear_throttle("totp_user", user.pk)
+
+            backend = request.session.pop(
+                "pre_2fa_backend",
+                django_settings.AUTHENTICATION_BACKENDS[0]
+            )
+
+            request.session.pop("pre_2fa_user_id", None)
+
+            login(request, user, backend=backend)
+
+            return redirect(
+                "dashboard_home" if user.is_staff else "shop"
+            )
+
+        # Record failed verification
+        result = record_totp_failure(
+            user_id=user.pk,
+            ip=ip
+        )
+
+        AuditLog.record(
+            AuditLog.Action.TOTP_FAILED,
+            request=request,
+            user=user,
+            object_type="UserProfile",
+            object_id=str(profile.pk),
+            object_repr=str(profile),
+            changes={
+                "user_failures": result["user"]["failures"],
+                "ip_failures": result["ip"]["failures"],
+            },
+        )
+
+        if result["locked"]:
+
+            AuditLog.record(
+                AuditLog.Action.TOTP_LOCKED,
+                request=request,
+                user=user,
+                object_type="UserProfile",
+                object_id=str(profile.pk),
+                object_repr=str(profile),
+                changes={
+                    "user_locked": result["user"]["locked"],
+                    "ip_locked": result["ip"]["locked"],
+                },
+            )
+
+            messages.error(
+                request,
+                "Too many failed attempts. Try again in 10 minutes."
+            )
+
+        else:
+
+            messages.error(
+                request,
+                "Invalid 6-digit verification code. Please try again."
+            )
+
+    return render(
+        request,
+        "dashboard/totp_verify.html",
+        {
+            "username": user.username,
+        }
+    )
 
 
 @login_required
 def totp_setup(request):
-    from users.totp import generate_totp_secret, get_otpauth_uri, verify_totp_code
-
     profile = request.user.profile
-    if not profile.totp_secret:
-        profile.totp_secret = generate_totp_secret()
-        profile.save(update_fields=["totp_secret"])
 
     if request.method == "POST":
         action = request.POST.get("action", "enable")
+
         if action == "disable":
             profile.totp_enabled = False
             profile.totp_secret = ""
-            profile.save(update_fields=["totp_enabled", "totp_secret"])
+            profile.last_totp_counter = None
+            profile.save(
+                update_fields=[
+                    "totp_enabled",
+                    "totp_secret",
+                    "last_totp_counter",
+                ]
+            )
             messages.success(request, "Two-Factor Authentication (2FA) has been disabled.")
             return redirect("totp_setup")
 
         code = request.POST.get("code", "").strip()
-        if verify_totp_code(profile.totp_secret, code):
+
+        if consume_totp_code(
+            profile,
+            code,
+            require_enabled=False,
+        ):
             profile.totp_enabled = True
             profile.save(update_fields=["totp_enabled"])
             messages.success(request, "Two-Factor Authentication (2FA) is now enabled!")
             return redirect("totp_setup")
-        messages.error(request, "Invalid 6-digit code. Make sure your authenticator app time is synced.")
+
+        messages.error(
+            request,
+            "Invalid 6-digit code. Make sure your authenticator app time is synced."
+        )
+
+    if not profile.totp_secret:
+        profile.totp_secret = generate_totp_secret()
+        profile.last_totp_counter = None
+        profile.save(
+            update_fields=["totp_secret", "last_totp_counter"]
+        )
 
     return render(request, "dashboard/totp_setup.html", {
         "totp_enabled": profile.totp_enabled,

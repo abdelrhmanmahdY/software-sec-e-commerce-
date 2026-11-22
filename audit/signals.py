@@ -12,7 +12,10 @@ from .models import AuditLog
 
 TRACKED_MODELS = (User, UserProfile, Product, Category, Order, Coupon)
 IGNORED_FIELDS = {"last_login", "updated_at"}   # noise, not a business change
-SECRET_FIELDS = {"password"}                    # record *that* it changed, never the value
+SECRET_FIELDS = {
+    "password",
+    "totp_secret",
+}                  # record *that* it changed, never the value
 
 
 def _repr(instance):
