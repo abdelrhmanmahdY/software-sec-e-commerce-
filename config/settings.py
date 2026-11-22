@@ -224,3 +224,25 @@ LOGGING = {
     "handlers": {"audit_console": {"class": "logging.StreamHandler", "formatter": "audit"}},
     "loggers": {"audit": {"handlers": ["audit_console"], "level": "INFO", "propagate": False}},
 }
+
+# --------------------------------------------------------------------------
+# Password storage: bcrypt + SHA-256 + server-side pepper
+# bcrypt supplies a random per-password salt. PASSWORD_PEPPER is a separate
+# application secret and must remain stable and outside the database.
+# --------------------------------------------------------------------------
+PASSWORD_PEPPER = os.getenv("PASSWORD_PEPPER", "")
+if not PASSWORD_PEPPER:
+    _pepper_file = Path(os.getenv("PASSWORD_PEPPER_FILE", "/data/password_pepper"))
+    PASSWORD_PEPPER = _pepper_file.read_text().strip() if _pepper_file.is_file() else ""
+if not PASSWORD_PEPPER:
+    if DEBUG:
+        PASSWORD_PEPPER = "insecure-local-development-pepper"
+    else:
+        raise ImproperlyConfigured("PASSWORD_PEPPER must be set when DEBUG is False.")
+
+PASSWORD_HASHERS = [
+    "audit.hashers.PepperBCryptSHA256PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+]
+
+BCRYPT_ROUNDS = int(os.getenv("BCRYPT_ROUNDS", "12"))

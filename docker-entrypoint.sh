@@ -13,6 +13,17 @@ if [ -z "$SECRET_KEY" ] || [ "${SECRET_KEY#change-this}" != "$SECRET_KEY" ]; the
   export SECRET_KEY
 fi
 
+# Generate a persistent PASSWORD_PEPPER on first start if none was provided.
+if [ -z "$PASSWORD_PEPPER" ]; then
+  if [ ! -s /data/password_pepper ]; then
+    python -c "import secrets; print(secrets.token_urlsafe(64))" > /data/password_pepper
+    chmod 600 /data/password_pepper
+    echo "Generated a persistent PASSWORD_PEPPER in /data/password_pepper"
+  fi
+  PASSWORD_PEPPER="$(cat /data/password_pepper)"
+  export PASSWORD_PEPPER
+fi
+
 python manage.py migrate --noinput
 python manage.py collectstatic --noinput
 
