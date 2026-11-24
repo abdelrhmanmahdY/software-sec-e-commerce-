@@ -53,6 +53,7 @@ Seeded by `make seed` (`users/management/commands/seed_data.py`):
 - **Django Admin:** `https://localhost/admin/`
 - **Audit Log (Staff only):** `https://localhost/dashboard/audit/`
 - **API Docs / Swagger (Admin only):** `https://localhost/api/docs/`
+- **Local Email Inbox (Mailpit — account confirmation):** `http://localhost:8025/`
 
 ---
 
