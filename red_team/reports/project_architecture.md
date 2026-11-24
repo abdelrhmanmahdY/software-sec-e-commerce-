@@ -27,7 +27,7 @@
 - **DRF throttling:** `anon 60/min`, `user 300/min`.
 - **JWT:** access 15 min, refresh 1 day, rotate + blacklist after rotation; logout blacklists the refresh token.
 - **Passwords:** Django PBKDF2; validators incl. min length 10.
-- **TOTP:** `users/totp.py` + profile fields — MFA groundwork (verify whether enforced).
+- **TOTP:** `users/totp.py` + profile fields. **Enforced when enabled** (opt-in enrolment): a TOTP-enabled account must pass the 6-digit code — password-only JWT is rejected with 401, and the dashboard login redirects to `/dashboard/2fa/verify/` before granting a session. Codes are single-use (`last_totp_counter`), with per-user and per-IP TOTP lockout.
 - **Sessions:** 30-min sliding idle timeout; HttpOnly, SameSite=Lax, Secure (HTTPS).
 
 ## 4. Authorization
@@ -48,16 +48,21 @@
 - `GET /api/docs/` (admin-only now — was H22)
 - `GET /admin/users/newslettersubscriber/` (Django admin — access by role)
 
-## 7. Status of my earlier baseline (code review only — NOT yet live-verified)
-| ID | Baseline | Code now | Live status |
-|---|---|---|---|
-| H5 | IDOR orders | Fixed (`orders/views.py:18`) | **RE-TEST** |
-| H6 | price/status tamper | Fixed (`orders/serializers.py:10,29`) | RE-TEST |
-| H1/H2 | checkout bypass | Fixed (`carts/views.py:106`, `orders/views.py:45`) | RE-TEST |
-| H3 | coupon reuse | Fixed (`CouponUsage`) | RE-TEST |
-| H4 | predictable coupon | Needs reading `dashboard/views.py` newsletter (reported random in matrix) | RE-TEST |
-| H13 | no lockout | Fixed (`audit/backends.py`, throttling) | RE-TEST |
-| H19 | JWT after logout | Fixed (blacklist) | RE-TEST |
-| H22 | public docs | Fixed (`config/urls.py:22`) | RE-TEST |
+## 7. Baseline findings — verified live on the current build (2026-11-25)
+Re-tested against the running Docker/HTTPS/PostgreSQL stack with `live_tests/run_regression.py`
+and the 22-test Django suite. Every row is now **DEFENSE HELD** (not just "fixed in code").
 
-> "Fixed in code" ≠ "verified". Each row must be re-tested against the running app and recorded as its own result (DEFENSE HELD / CONFIRMED VULNERABILITY / INCONCLUSIVE). This is a **regression assessment** against the Blue Team's current build, kept separate from the earlier baseline.
+| ID | Baseline | Fix location | Live result (2026-11-25) |
+|---|---|---|---|
+| H5 | IDOR orders | `orders/views.py:18` (`get_queryset` owner scope) | DEFENSE HELD — `GET /api/orders/orders/3/` → 404; list returns own orders only |
+| H6 | price/status tamper | `orders/serializers.py:10,29` (price read-only) | DEFENSE HELD — non-staff `POST order-items` price=0.01 → 403; live checkout charged real $604.99 for a client-sent $0.01 |
+| H1/H2 | checkout bypass | `carts/views.py:106`, `orders/views.py:45` (atomic credit+stock) | DEFENSE HELD — checkout requires store credit + stock; no replayable confirm step |
+| H3 | coupon reuse | `users/models.py` `CouponUsage` unique constraint | DEFENSE HELD — second redemption → 400 "Coupon has already been used." |
+| H4 | predictable coupon | `dashboard/views.py` newsletter (`secrets.token_hex`) | DEFENSE HELD — codes are random `NEWS-<12 hex>`, unique per request |
+| H13 | no lockout | `audit/backends.py`, `AuthThrottle` | DEFENSE HELD — 429 after 5 failures on a clean DB; `audit/0002` migration present |
+| H19 | JWT after logout | `audit/views.py` (blacklist on logout) | DEFENSE HELD — reused refresh after logout → 401 |
+| H22 | public docs | `config/urls.py` (`IsAdminUser`) | DEFENSE HELD — unauth `/api/docs/` → 403 |
+
+Additional previously-"open" items, now re-verified **resolved**: password-only JWT for a
+TOTP-enabled account → 401 (a valid code is required); every signup route creates an inactive,
+unconfirmed user. See `SUBMISSION_STATUS_2026-11-25.md` for the full evidence table.

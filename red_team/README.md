@@ -1,8 +1,8 @@
 # CET431 Red Team — SecureShop
 
-> **Current assessment status (2026-11-22):** Naive Shop V1–V7 passed on loopback. SecureShop was tested only with disposable in-memory SQLite fixtures and Django tests; live HTTPS/Docker/PostgreSQL testing is **NOT TESTED**. Open findings include password-only JWT issuance for TOTP-enabled users, an HTML signup route active before email confirmation, and a missing `AuthThrottle` migration. Do not treat older live-test summaries below as current evidence.
+> **Current assessment status (2026-11-25):** Naive Shop V1–V7 reproduce on loopback, and the equivalent attacks are blocked by SecureShop — verified **live** against the Docker/HTTPS/PostgreSQL stack (`live_tests/run_regression.py`, every row *DEFENSE HELD*) and by the 22-test Django suite plus the in-memory verifiers. The three previously-open findings are now **RESOLVED and re-verified on the current build**: (1) password-only JWT for a TOTP-enabled account is rejected (HTTP 401 — a valid code is required); (2) the `AuthThrottle` migration (`audit/0002`) exists and locks out on a clean database (HTTP 429); (3) every signup route (HTML, dashboard, API) creates an **inactive, unconfirmed** user. See `reports/SUBMISSION_STATUS_2026-11-25.md`.
 
-The current topic mapping is [security_compliance_matrix.md](reports/security_compliance_matrix.md); the authoritative final assessment is [FINAL_SECURITY_ASSESSMENT_REPORT.pdf](reports/FINAL_SECURITY_ASSESSMENT_REPORT.pdf).
+The authoritative current status + architecture is [SUBMISSION_STATUS_2026-11-25.md](reports/SUBMISSION_STATUS_2026-11-25.md); the topic mapping is [security_compliance_matrix.md](reports/security_compliance_matrix.md); the single final assessment PDF is [FINAL_SECURITY_ASSESSMENT_REPORT.pdf](reports/FINAL_SECURITY_ASSESSMENT_REPORT.pdf).
 
 This is the **Red Team** workspace for the SecureShop project. Everything here covers attack preparation, reproducing the course Labs, preparing test cases, and the reports.
 
